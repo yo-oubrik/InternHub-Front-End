@@ -1,6 +1,4 @@
 "use client";
-import Footer from "@/Components/Footer";
-import Header from "@/Components/Header";
 import JobCard from "@/Components/JobItem/JobCard";
 import { useGlobalContext } from "@/context/globalContext";
 import { useJobsContext } from "@/context/jobsContext";
@@ -63,8 +61,6 @@ function page() {
 
   return (
     <main>
-      <Header />
-
       <div className="p-8 mb-8 mx-auto w-[90%] rounded-md flex gap-8">
         <div className="w-[26%] flex flex-col gap-8">
           <JobCard activeJob job={job} />
@@ -250,7 +246,6 @@ function page() {
         </div>
       </div>
 
-      <Footer />
     </main>
   );
 }
