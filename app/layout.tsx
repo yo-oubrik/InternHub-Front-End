@@ -1,7 +1,10 @@
+"use client"
+import Header from "@/Components/Header";
 import "./globals.css";
 import ContextProvider from "@/providers/ContextProvider";
 import { Roboto } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import Footer from "@/Components/Footer";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -26,7 +29,11 @@ export default function RootLayout({
       </head>
       <body className={`${roboto.className} antialiased`}>
         <Toaster position="top-center" />
-        <ContextProvider>{children}</ContextProvider>
+        <ContextProvider>
+          <Header />
+          {children}
+          <Footer />
+        </ContextProvider>
       </body>
     </html>
   );

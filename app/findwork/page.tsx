@@ -1,7 +1,5 @@
 "use client";
 import Filters from "@/Components/Filters";
-import Footer from "@/Components/Footer";
-import Header from "@/Components/Header";
 import JobCard from "@/Components/JobItem/JobCard";
 import SearchForm from "@/Components/SearchForm";
 import { useJobsContext } from "@/context/jobsContext";
@@ -45,8 +43,6 @@ function page() {
 
   return (
     <main>
-      <Header />
-
       <div className="relative px-16 bg-[#D7DEDC] overflow-hidden">
         <h1 className="py-8 text-black font-bold text-3xl">
           Find Your Next Job Here
@@ -116,8 +112,6 @@ function page() {
           </div>
         </div>
       </div>
-
-      <Footer />
     </main>
   );
 }

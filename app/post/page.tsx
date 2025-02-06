@@ -1,5 +1,4 @@
 "use client";
-import Header from "@/Components/Header";
 import JobForm from "@/Components/JobPost/JobForm";
 import { useGlobalContext } from "@/context/globalContext";
 import { useRouter } from "next/navigation";
@@ -16,8 +15,6 @@ function page() {
   }, [isAuthenticated]);
   return (
     <div className="flex flex-col">
-      <Header />
-
       <h2 className="flex-1 pt-8 mx-auto w-[90%] text-3xl font-bold text-black">
         Create a Job Post
       </h2>
