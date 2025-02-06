@@ -6,12 +6,13 @@ import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { X } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 function JobSkills() {
   const { skills, setSkills, tags, setTags } = useGlobalContext();
 
   const [newSkill, setNewSkill] = React.useState("");
-  const [newTag, setNewTag] = React.useState("");
+  const [newTag, setNewTag] = React.useState<string>("");
 
   const handleAddSkill = () => {
     if (newSkill.trim() && !skills.includes(newSkill.trim())) {
@@ -24,15 +25,9 @@ function JobSkills() {
     setSkills(skills.filter((skill: string) => skill !== skillToRemove));
   };
 
-  const handleAddTag = () => {
-    if (newTag.trim() && !tags.includes(newTag.trim())) {
-      setTags((prev: string) => [...prev, newTag.trim()]);
-      setNewTag("");
-    }
-  };
-
-  const handleRemoveTag = (tagToRemove: string) => {
-    setTags(tags.filter((tag: string) => tag !== tagToRemove));
+  const handleAddTag = (value : string) => {
+    setNewTag(value)
+    setTags(newTag);
   };
 
   return (
@@ -88,44 +83,31 @@ function JobSkills() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold">Tags</h3>
+          <h3 className="text-lg font-semibold">Type</h3>
           <Label htmlFor="tags" className="text-sm text-muted-foreground mt-2">
-            Add relevant tags for the job position.
+            Add relevant Type for the job position.
           </Label>
         </div>
 
-        <div className="flex-1 flex flex-col gap-2">
-          <div className="flex gap-2">
-            <Input
-              type="text"
-              id="tags"
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-              className="flex-1"
-              placeholder="Enter a tag"
-            />
-            <Button type="button" onClick={handleAddTag}>
-              Add Tag
-            </Button>
-          </div>
-          <div className="flex flex-wrap gap-2 mt-2">
-            {tags.map((tag: string, index: number) => (
-              <div
-                key={index}
-                className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full flex items-center space-x-1"
-              >
-                <span>{tag}</span>
-                <button
-                  onClick={() => handleRemoveTag(tag)}
-                  className="text-secondary-foreground hover:text-red-500 focus:outline-none"
-                  aria-label={`Remove tag ${tag}`}
-                >
-                  <X size={14} />
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
+        <RadioGroup
+          value={newTag}
+          onValueChange={handleAddTag} // Use onValueChange here!
+          className="flex flex-row justify-between w-full"
+          defaultValue="PFA"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="PFA" id="PFA" />
+              <Label htmlFor="PFA">PFA</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="PFE" id="PFE" />
+              <Label htmlFor="PFE">PFE</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="initiation" id="initiation" />
+              <Label htmlFor="initiation">Initiation</Label>
+            </div>
+          </RadioGroup> 
       </div>
     </div>
   );

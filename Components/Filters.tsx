@@ -4,50 +4,36 @@ import { Button } from "./ui/button";
 import { useJobsContext } from "@/context/jobsContext";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
-import { Slider } from "./ui/slider";
-import formatMoney from "@/utils/formatMoney";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 
 function Filters() {
   const {
     handleFilterChange,
     filters,
     setFilters,
-    minSalary,
-    maxSalary,
-    setMinSalary,
-    setMaxSalary,
+    renumerated , 
+    setRenumerated , 
     searchJobs,
     setSearchQuery,
   } = useJobsContext();
 
   const clearAllFilters = () => {
     setFilters({
-      fullTime: false,
-      partTime: false,
-      contract: false,
-      internship: false,
-      fullStack: false,
-      backend: false,
-      devOps: false,
-      uiUx: false,
+      remote: false,
+      onSite: false,
+      pfa : false , 
+      pfe : false , 
+      initiation : false
     });
 
+    setRenumerated(false);
     setSearchQuery({ tags: "", location: "", title: "" });
   };
 
-  const handleMinSalaryChange = (value: number[]) => {
-    setMinSalary(value[0]);
-    if (value[0] > maxSalary) {
-      setMaxSalary(value[0]);
-    }
-  };
-
-  const handleMaxSalaryChange = (value: number[]) => {
-    setMaxSalary(value[0]);
-    if (value[0] < minSalary) {
-      setMinSalary(value[0]);
-    }
-  };
+  function handleRenumeratedChange(value: string): void {
+    setRenumerated(!renumerated);
+    handleFilterChange('renumerated');
+  }
 
   return (
     <div className="w-[22rem] pr-4 space-y-6">
@@ -69,112 +55,71 @@ function Filters() {
         <div className="space-y-4">
           <div className="flex items-center space-x-2">
             <Checkbox
-              id="fullTime"
-              checked={filters.fullTime}
-              onCheckedChange={() => handleFilterChange("fullTime")}
+              id="remote"
+              checked={filters.remote}
+              onCheckedChange={() => handleFilterChange("remote")}
             />
-            <Label htmlFor="fullTime">Full Time</Label>
+            <Label htmlFor="remote">Remote</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox
-              id="partTime"
-              checked={filters.partTime}
-              onCheckedChange={() => handleFilterChange("partTime")}
+              id="onSite"
+              checked={filters.onSite}
+              onCheckedChange={() => handleFilterChange("onSite")}
             />
-            <Label htmlFor="partTime">Part Time</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="contract"
-              checked={filters.contract}
-              onCheckedChange={() => handleFilterChange("contract")}
-            />
-            <Label htmlFor="contract">Contract</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="internship"
-              checked={filters.internship}
-              onCheckedChange={() => handleFilterChange("internship")}
-            />
-            <Label htmlFor="internship">Internship</Label>
+            <Label htmlFor="onSite">On-site</Label>
           </div>
         </div>
       </div>
 
       <div>
-        <h2 className="text-lg font-semibold mb-4">Tags</h2>
+        <h2 className="text-lg font-semibold mb-4">Type</h2>
         <div className="space-y-4">
           <div className="flex items-center space-x-2">
             <Checkbox
-              id="fullStack"
-              checked={filters.fullStack}
-              onCheckedChange={() => handleFilterChange("fullStack")}
+              id="pfa"
+              checked={filters.pfa}
+              onCheckedChange={() => handleFilterChange("PFA")}
             />
-            <Label htmlFor="fullStack">FullStack</Label>
+            <Label htmlFor="PFA">PFA</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox
-              id="backend"
-              checked={filters.backend}
-              onCheckedChange={() => handleFilterChange("backend")}
+              id="pfe"
+              checked={filters.pfe}
+              onCheckedChange={() => handleFilterChange("PFE")}
             />
-            <Label htmlFor="backend">Backend</Label>
+            <Label htmlFor="PFE">PFE</Label>
           </div>
           <div className="flex items-center space-x-2">
             <Checkbox
-              id="devOps"
-              checked={filters.devOps}
-              onCheckedChange={() => handleFilterChange("devOps")}
+              id="initiation"
+              checked={filters.initiation}
+              onCheckedChange={() => handleFilterChange("initiation")}
             />
-            <Label htmlFor="devOps">DevOps</Label>
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="uiUx"
-              checked={filters.uiUx}
-              onCheckedChange={() => handleFilterChange("uiUx")}
-            />
-            <Label htmlFor="uiUx">UI/UX</Label>
+            <Label htmlFor="initiation">Initiation</Label>
           </div>
         </div>
       </div>
 
       <div>
-        <h2 className="text-lg font-semibold mb-4">Salary Range</h2>
-        <div className="flex flex-col gap-4">
-          <Label htmlFor="minSalary">Minimum Salary</Label>
-          <Slider
-            id="minSalary"
-            min={0}
-            max={200000}
-            step={50}
-            value={[minSalary]}
-            onValueChange={handleMinSalaryChange}
-            className="w-full"
-          />
-          <span className="text-sm text-gray-500">
-            {formatMoney(minSalary, "GBP")}
-          </span>
-        </div>
-      </div>
-      <div className="flex flex-col gap-4">
-        <Label htmlFor="maxSalary">Maximum Salary</Label>
-        <Slider
-          id="maxSalary"
-          min={0}
-          max={200000}
-          step={50}
-          value={[maxSalary]}
-          onValueChange={handleMaxSalaryChange}
-          className="w-full"
-        />
-        <span className="text-sm text-gray-500">
-          {formatMoney(maxSalary, "GBP")}
-        </span>
-      </div>
+        <h2 className="text-lg font-semibold mb-4">Include Salary</h2>
+        <RadioGroup
+          onValueChange={handleRenumeratedChange} // Use onValueChange here!
+          className="flex flex-col gap-5"
+          defaultValue="nonRenumerated"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="nonRenumerated" id="nonRenumerated" />
+            <Label htmlFor="nonRenumerated">Non Renumerated</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="renumerated" id="renumerated" />
+            <Label htmlFor="renumerated">Renumerated</Label>
+          </div>
+        </RadioGroup>
     </div>
+  </div>
   );
 }
 

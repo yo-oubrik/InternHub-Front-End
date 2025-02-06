@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 const JobsContext = createContext();
 
-axios.defaults.baseURL = "https://jobfindr-q1cl.onrender.com";
+axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
 export const JobsContextProvider = ({ children }) => {
@@ -16,6 +16,8 @@ export const JobsContextProvider = ({ children }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userJobs, setUserJobs] = useState([]);
+  
+  const [renumerated, setRenumerated] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState({
     tags: "",
@@ -25,18 +27,14 @@ export const JobsContextProvider = ({ children }) => {
 
   //filters
   const [filters, setFilters] = useState({
-    fullTime: false,
-    partTime: false,
-    internship: false,
-    contract: false,
-    fullStack: false,
-    backend: false,
-    devOps: false,
-    uiux: false,
+    remote : false,
+    onSite : false,
+    pfa: false,
+    pfe: false,
+    initiation: false,
+    remunerated : false
   });
 
-  const [minSalary, setMinSalary] = useState(30000);
-  const [maxSalary, setMaxSalary] = useState(120000);
 
   const getJobs = async () => {
     setLoading(true);
@@ -178,6 +176,8 @@ export const JobsContextProvider = ({ children }) => {
   };
 
   const handleFilterChange = (filterName) => {
+    console.log("filter changed" , filterName);
+    console.log("filter changed" , filters[filterName]);
     setFilters((prev) => ({ ...prev, [filterName]: !prev[filterName] }));
   };
 
@@ -209,10 +209,8 @@ export const JobsContextProvider = ({ children }) => {
         setSearchQuery,
         handleFilterChange,
         filters,
-        minSalary,
-        setMinSalary,
-        maxSalary,
-        setMaxSalary,
+        renumerated,
+        setRenumerated,
         setFilters,
       }}
     >

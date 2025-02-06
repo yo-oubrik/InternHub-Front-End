@@ -8,11 +8,8 @@ import { Input } from "../ui/input";
 import { Checkbox } from "../ui/checkbox";
 
 interface EmployementTypeProps {
-  "Full Time": string;
-  "Part Time": string;
-  Contract: boolean;
-  Internship: boolean;
-  Temporary: boolean;
+  remote : boolean;
+  onSite : boolean;
 }
 
 function JobTitle() {
@@ -21,11 +18,8 @@ function JobTitle() {
 
   const [employmentTypes, setEmploymentTypes] =
     React.useState<EmployementTypeProps>({
-      "Full Time": "",
-      "Part Time": "",
-      Contract: false,
-      Internship: false,
-      Temporary: false,
+      remote : false ,
+      onSite : false,
     });
 
   const handleEmploymentTypeChange = (type: keyof EmployementTypeProps) => {
