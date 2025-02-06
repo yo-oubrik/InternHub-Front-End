@@ -1,12 +1,10 @@
-import React, {
+import axios from "axios";
+import {
   createContext,
-  use,
   useContext,
   useEffect,
-  useState,
+  useState
 } from "react";
-import axios from "axios";
-import { useRouter } from "next/navigation";
 
 const GlobalContext = createContext();
 

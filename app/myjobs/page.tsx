@@ -1,6 +1,5 @@
 "use client";
 import Footer from "@/Components/Footer";
-import Header from "@/Components/Header";
 import MyJob from "@/Components/JobItem/MyJob";
 import { useGlobalContext } from "@/context/globalContext";
 import { useJobsContext } from "@/context/jobsContext";
@@ -35,8 +34,6 @@ function page() {
 
   return (
     <div>
-      <Header />
-
       <div className="mt-8 w-[90%] mx-auto flex flex-col">
         <div className="self-center flex items-center gap-6">
           <button
