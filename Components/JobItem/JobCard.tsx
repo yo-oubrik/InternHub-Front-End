@@ -53,7 +53,9 @@ function JobCard({ job, activeJob }: JobProps) {
         return "bg-green-500/20 text-green-600";
       case "On-site":
         return "bg-purple-500/20 text-purple-600";
-      default:
+      case 'Hybrid' :
+        return "bg-blue-500/20 text-blue-600";
+      default : 
         return "bg-gray-500/20 text-gray-600";
     }
   };
@@ -106,16 +108,9 @@ function JobCard({ job, activeJob }: JobProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        {jobType.map((type, index) => (
-          <span
-            key={index}
-            className={`py-1 px-3 text-xs font-medium rounded-md border ${jobTypeBg(
-              type
-            )}`}
-          >
-            {type}
-          </span>
-        ))}
+        <span className={`py-1 px-3 text-xs font-medium rounded-md border ${jobTypeBg(jobType)}`}>
+          {jobType}
+        </span>
       </div>
 
       <p>

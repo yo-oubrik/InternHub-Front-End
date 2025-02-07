@@ -16,8 +16,6 @@ export const JobsContextProvider = ({ children }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [userJobs, setUserJobs] = useState([]);
-  
-  const [renumerated, setRenumerated] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState({
     tags: "",
@@ -29,10 +27,11 @@ export const JobsContextProvider = ({ children }) => {
   const [filters, setFilters] = useState({
     remote : false,
     onSite : false,
+    hybrid : false,
     pfa: false,
     pfe: false,
     initiation: false,
-    remunerated : false
+    renumerated : false
   });
 
 
@@ -95,7 +94,6 @@ export const JobsContextProvider = ({ children }) => {
       if (title) query.append("title", title);
 
       // send the request
-
       const res = await axios.get(`/api/v1/jobs/search?${query.toString()}`);
 
       // set jobs to the response data
@@ -176,8 +174,6 @@ export const JobsContextProvider = ({ children }) => {
   };
 
   const handleFilterChange = (filterName) => {
-    console.log("filter changed" , filterName);
-    console.log("filter changed" , filters[filterName]);
     setFilters((prev) => ({ ...prev, [filterName]: !prev[filterName] }));
   };
 
@@ -209,8 +205,6 @@ export const JobsContextProvider = ({ children }) => {
         setSearchQuery,
         handleFilterChange,
         filters,
-        renumerated,
-        setRenumerated,
         setFilters,
       }}
     >

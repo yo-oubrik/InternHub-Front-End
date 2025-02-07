@@ -18,12 +18,13 @@ export const GlobalContextProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
 
   // input state
-  const [jobTitle, setJobTitle] = useState("");
-  const [jobDescription, setJobDescription] = useState("");
+  const [InternshipTitle, setInternshipTitle] = useState("");
+  const [internshipDescription, setInternshipDescription] = useState("");
   const [salary, setSalary] = useState(0);
-  const [activeEmploymentTypes, setActiveEmploymentTypes] = useState([]);
-  const [salaryType, setSalaryType] = useState("Year");
+  const [activeInternshipType, setActiveInternshipType] = useState("");
+  const [salaryType, setSalaryType] = useState("");
   const [negotiable, setNegotiable] = useState(false);
+  const [renumerated, setRenumerated] = useState(false);
   const [tags, setTags] = useState([]);
   const [skills, setSkills] = useState([]);
   const [location, setLocation] = useState({
@@ -62,23 +63,24 @@ export const GlobalContextProvider = ({ children }) => {
 
   // handle input change
   const handleTitleChange = (e) => {
-    setJobTitle(e.target.value.trimStart());
+    console.log(InternshipTitle);
+    setInternshipTitle(e.target.value.trimStart());
   };
 
   const handleDescriptionChange = (e) => {
-    setJobDescription(e.target.value.trimStart());
+    setInternshipDescription(e.target.value.trimStart());
   };
 
   const handleSalaryChange = (e) => {
     setSalary(e.target.value);
   };
 
-  const resetJobForm = () => {
-    setJobTitle("");
-    setJobDescription("");
+  const resetInternshipForm = () => {
+    setInternshipTitle("");
+    setInternshipDescription("");
     setSalary(0);
-    setActiveEmploymentTypes([]);
-    setSalaryType("Year");
+    setActiveInternshipType("");
+    setSalaryType("");
     setNegotiable(false);
     setTags([]);
     setSkills([]);
@@ -104,26 +106,28 @@ export const GlobalContextProvider = ({ children }) => {
         userProfile,
         getUserProfile,
         loading,
-        jobTitle,
-        jobDescription,
+        InternshipTitle,
+        internshipDescription,
         salary,
-        activeEmploymentTypes,
+        activeInternshipType,
         salaryType,
         negotiable,
         tags,
         skills,
         location,
+        renumerated ,
         handleTitleChange,
         handleDescriptionChange,
         handleSalaryChange,
-        setActiveEmploymentTypes,
-        setJobDescription,
+        setActiveInternshipType,
+        setInternshipDescription,
         setSalaryType,
         setNegotiable,
         setTags,
         setSkills,
         setLocation,
-        resetJobForm,
+        setRenumerated,
+        resetInternshipForm,
       }}
     >
       {children}

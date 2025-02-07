@@ -120,11 +120,11 @@ function page() {
                     /
                     {salaryType
                       ? `${
-                          salaryType === "Yearly"
+                          salaryType === "Year"
                             ? "per year"
-                            : salaryType === "Monthly"
+                            : salaryType === "Month"
                             ? "per month"
-                            : salaryType === "Weekly"
+                            : salaryType === "Week"
                             ? "per week"
                             : "per hour"
                         }`
@@ -145,7 +145,7 @@ function page() {
 
               <p className="flex-1 py-2 px-4 flex flex-col items-center justify-center gap-1 bg-yellow-500/20 rounded-xl">
                 <span className="text-sm">Job Type</span>
-                <span className="font-bold">{jobType[0]}</span>
+                <span className="font-bold">{jobType}</span>
               </p>
             </div>
 
@@ -204,7 +204,7 @@ function page() {
               </p>
 
               <p>
-                <span className="font-bold">Job Type:</span> {jobType[0]}
+                <span className="font-bold">Job Type:</span> {jobType}
               </p>
             </div>
           </div>
@@ -233,12 +233,12 @@ function page() {
             </p>
 
             <div className="flex flex-wrap gap-4">
-              {job.tags.map((tag: string, index: number) => (
+              {job.skills.map((skill: string, index: number) => (
                 <span
                   key={index}
                   className="px-4 py-1 rounded-full text-sm font-medium flex items-center bg-indigo-500/20 text-[#7263f3]"
                 >
-                  {tag}
+                  {skill}
                 </span>
               ))}
             </div>

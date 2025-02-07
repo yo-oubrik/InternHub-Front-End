@@ -1,33 +1,40 @@
 "use client";
 import { useGlobalContext } from "@/context/globalContext";
-import React from "react";
+import React, { useRef } from "react";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button"; // Ensure lowercase 'components'
 import { X } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import CheckboxButton from "../CheckboxButton";
+import { useJobsContext } from "@/context/jobsContext";
 
 function JobSkills() {
   const { skills, setSkills, tags, setTags } = useGlobalContext();
+  const { filters , handleFilterChange } = useJobsContext();
 
-  const [newSkill, setNewSkill] = React.useState("");
-  const [newTag, setNewTag] = React.useState<string>("");
+  const skillInputRef = useRef<HTMLInputElement>(null);
 
   const handleAddSkill = () => {
-    if (newSkill.trim() && !skills.includes(newSkill.trim())) {
-      setSkills((prev: string) => [...prev, newSkill.trim()]);
-      setNewSkill("");
+    if (!skillInputRef.current) return; // Prevent errors
+  
+    const skillValue = skillInputRef.current.value.trim(); // Get input value
+    if (skillValue && !skills.includes(skillValue)) {
+      setSkills([...skills, skillValue]);
+      skillInputRef.current.value = ""; // Clear input field after adding
     }
   };
 
   const handleRemoveSkill = (skillToRemove: string) => {
-    setSkills(skills.filter((skill: string) => skill !== skillToRemove));
+    setSkills(skills.filter((skill : string ) => skill !== skillToRemove));
   };
 
   const handleAddTag = (value : string) => {
-    setNewTag(value)
-    setTags(newTag);
+    console.log('from handle add tag function: ',value)
+    handleFilterChange(value.toLowerCase());
+    if (!tags.includes(value.trim())) {
+      setTags((prev: string) => [...prev, value.trim()]);
+    }
   };
 
   return (
@@ -45,11 +52,10 @@ function JobSkills() {
 
         <div className="flex-1 flex flex-col gap-2">
           <div className="flex gap-2">
-            <Input
+          <Input
+              ref={skillInputRef} // Attach the ref to input
               type="text"
               id="skills"
-              value={newSkill}
-              onChange={(e) => setNewSkill(e.target.value)}
               className="flex-1"
               placeholder="Enter a skill"
             />
@@ -85,29 +91,14 @@ function JobSkills() {
         <div className="flex-1">
           <h3 className="text-lg font-semibold">Type</h3>
           <Label htmlFor="tags" className="text-sm text-muted-foreground mt-2">
-            Add relevant Type for the job position.
+            Add relevant tags for the internship position.
           </Label>
         </div>
-
-        <RadioGroup
-          value={newTag}
-          onValueChange={handleAddTag} // Use onValueChange here!
-          className="flex flex-row justify-between w-full"
-          defaultValue="PFA"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="pfa" id="PFA" />
-              <Label htmlFor="PFA">PFA</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="pfe" id="PFE" />
-              <Label htmlFor="PFE">PFE</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="initiation" id="initiation" />
-              <Label htmlFor="initiation">Initiation</Label>
-            </div>
-          </RadioGroup> 
+        <CheckboxButton
+          items={['PFA','PFE',"Initiation"]}
+          itemsValue={[filters.pfa,filters.pfe,filters.initiation]}
+          onCheckedFunction={handleAddTag}
+        />
       </div>
     </div>
   );

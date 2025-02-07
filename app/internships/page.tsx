@@ -18,24 +18,28 @@ function page() {
   };
 
   const filetredJobs =
-    filters.remote || filters.onSite
+    filters.remote || filters.onSite || filters.hybrid
       ? jobs.filter((job: Job) => {
-          if (filters.remote && job.jobType.includes("Remote"))
+          if (filters.remote && job.jobType === "Remote")
             return true;
-          if (filters.onSite && job.jobType.includes("On-site"))
+          if (filters.onSite && job.jobType === "On-site")
+            return true;
+          if (filters.hybrid && job.jobType === "Hybrid")
             return true;
 
           if (filters.pfa && job.tags.includes("PFA")) return true;
           if (filters.pfe && job.tags.includes("PFE")) return true;
           if (filters.initiation && job.tags.includes("Initiation")) return true;
+
+          if (filters.renumerated && job.renumerated) return true;
         })
       : jobs;
 
   return (
     <main>
       <div className="w-[90%] mx-auto mb-14">
-          <div className="flex items-center justify-end py-10">
-            <div className="relative px-2 overflow-hidden">
+          <div className="flex items-center justify-end py-10 ml-72">
+            <div className="relative px-2 overflow-hidden flex justify-center w-full">
               <SearchForm />
             </div>
             <div className="flex flex-row h-[3.1rem]">

@@ -93,9 +93,9 @@ function MyJob({ job }: JobProps) {
               ))}
             </div>
             <div className="flex flex-wrap gap-2 mb-4">
-              {job.tags.map((skill, index) => (
+              {job.tags.map((tag, index) => (
                 <Badge key={index} variant="outline">
-                  {skill}
+                  {tag}
                 </Badge>
               ))}
             </div>

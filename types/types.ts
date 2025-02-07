@@ -4,10 +4,11 @@ interface Job {
   description: string;
   location: string;
   salary: number;
-  salaryType: "Year" | "Month" | "Week" | "Hour";
+  salaryType: "Year" | "Month" | "Week" | "Hour" | "" ;
   negotiable: boolean;
-  jobType: string[];
-  tags : string ;
+  renumerated: boolean;
+  jobType: string;
+  tags : string[] ;
   likes: string[];
   skills: string[];
   applicants: string[];
