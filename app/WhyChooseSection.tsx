@@ -50,7 +50,7 @@ const generateFeatures = ({ internshipListings, internshipCategories, verifiedCo
 
 const WhyChooseSection = () => {
     return (
-        <section className="py-20 bg-[#f0f5fa]">
+        <section className="py-20 bg-background-dark">
             <div className="container mx-auto px-4">
                 <h2 className="text-3xl font-bold text-center mb-12">
                     Why Choose {" "}

@@ -1,39 +1,39 @@
 import { LucideIcon } from "lucide-react";
 import React from "react";
-import clsx from "clsx"; // Ensure clsx is installed: `npm install clsx`
+import clsx from "clsx";
 
-interface IButton {
+interface IButton extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     label: string;
-    disabled?: boolean;
-    customClass?: string;
-    outline?: boolean;
     Icon?: LucideIcon;
-    IconSize?: number;
-    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    iconSize?: number;
+    outline?: boolean;
 }
 
 const Button: React.FC<IButton> = ({
     label,
-    disabled = false,
     Icon,
-    customClass = "",
+    iconSize = 20,
     outline = false,
-    IconSize = 20,
+    disabled,
+    className,
     onClick,
+    ...props
 }) => {
     return (
         <button
             className={clsx(
-                "py-2 px-6 rounded-md border flex items-center gap-3 transition-all duration-200 ease-in-out disabled:cursor-not-allowed disabled:opacity-75",
+                "py-2 px-6 rounded-md border flex items-center gap-3 transition-all duration-200 ease-in-out outline-none border-primary hover:opacity-75",
+                "disabled:cursor-not-allowed disabled:opacity-75",
                 outline
-                    ? "bg-transparent border border-primary text-primary hover:bg-primary hover:text-white"
-                    : "bg-primary text-white hover:bg-primary-hover",
-                customClass
+                    ? "bg-transparent text-primary "
+                    : "bg-primary text-white",
+                className
             )}
             onClick={onClick}
             disabled={disabled}
+            {...props}
         >
-            {Icon && <Icon size={IconSize} />}
+            {Icon && <Icon size={iconSize} />}
             <span>{label}</span>
         </button>
     );

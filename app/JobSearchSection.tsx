@@ -2,9 +2,9 @@ import Image from "next/image";
 
 const JobSearchSection = () => {
     return (
-        <section className="px-20 bg-gradient-to-b from-[#d7dedc] to-[#7263f3]/5 text-primary-foreground min-h-[calc(100vh-105px)] flex items-center justify-between">
+        <section className="px-20 bg-background min-h-[calc(100vh-105px)] flex items-center justify-between">
             <div className="text-center text-black">
-                <h1 className="text-4xl text-primary md:text-5xl font-bold mb-10">
+                <h1 className="text-4xl text-primary md:text-5xl font-bold mb-10 max-w-[700px]">
                     Find Your Dream Internship or Perfect Candidate
                 </h1>
                 <p className="text-xl mb-8">
