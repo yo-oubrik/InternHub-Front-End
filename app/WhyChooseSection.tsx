@@ -58,12 +58,14 @@ const WhyChooseSection = () => {
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {generateFeatures({ internshipCategories: 0, internshipListings: 0, studentApplicants: 0, verifiedCompanies: 0 }).map((feature, index) => (
-                        <FeatureCard {...feature} key={index} />
-                    ))}
-                </div>
-            </div>
-        </section>
+                    {
+                        generateFeatures({ internshipCategories: 0, internshipListings: 0, studentApplicants: 0, verifiedCompanies: 0 }).map((feature, index) => (
+                            <FeatureCard {...feature} key={index} />
+                        ))
+                    }
+                </div >
+            </div >
+        </section >
     );
 };
 

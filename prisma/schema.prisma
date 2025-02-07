@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id              String       @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  logo            String?
+  industry        String
+  size            String
+  description     String?
+  address         String?
+  website         String?
+  email           String
+  phone           String
+  socialLinks     Json?
+  ice             String
+  rc              String?
+  internshipPosts Internship[]
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+}
+
+model Student {
+  id                    String        @id @default(auto()) @map("_id") @db.ObjectId
+  firstName             String
+  lastName              String
+  profilePicture        String?
+  email                 String        @unique
+  phone                 String
+  address               String?
+  birthDate             DateTime?
+  linkedin              String?
+  portfolio             String?
+  github                String?
+  university            String
+  studyLevel            String
+  specialization        String
+  currentYear           Int
+  resume                String?
+  experiences           Json?
+  skills                String[]
+  languages             Json?
+  internshipPreferences Json?
+  applications          Application[]
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+}
+
+model Internship {
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  companyId   String
+  company     Company       @relation(fields: [companyId], references: [id])
+  location    String
+  duration    Int
+  startDate   DateTime?
+  type        String
+  applicants  Application[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model Application {
+  id           String            @id @default(auto()) @map("_id") @db.ObjectId
+  studentId    String
+  internshipId String
+  student      Student           @relation(fields: [studentId], references: [id])
+  internship   Internship        @relation(fields: [internshipId], references: [id])
+  status       ApplicationStatus @default(PENDING)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  MODERATOR
+  HR_MANAGER
+}
+
+model Admin {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  firstName String
+  lastName  String
+  email     String   @unique
+  phone     String?
+  role      UserRole @default(SUPER_ADMIN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
