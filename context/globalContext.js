@@ -90,6 +90,7 @@ export const GlobalContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    console.log(isAuthenticated ? "Authenticated" : "Not Authenticated");
     if (isAuthenticated && auth0User) {
       getUserProfile(auth0User.sub);
     }

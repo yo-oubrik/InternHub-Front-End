@@ -7,7 +7,7 @@ interface Job {
   salaryType: "Yearly" | "Monthly" | "Weekly" | "Hourly";
   negotiable: boolean;
   jobType: string[];
-  tags: string[];
+  tags : string ;
   likes: string[];
   skills: string[];
   applicants: string[];

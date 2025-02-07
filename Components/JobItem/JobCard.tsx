@@ -50,14 +50,10 @@ function JobCard({ job, activeJob }: JobProps) {
 
   const jobTypeBg = (type: string) => {
     switch (type) {
-      case "Full Time":
+      case "Remote":
         return "bg-green-500/20 text-green-600";
-      case "Part Time":
+      case "On-site":
         return "bg-purple-500/20 text-purple-600";
-      case "Contract":
-        return "bg-red-500/20 text-red-600";
-      case "Internship":
-        return "bg-indigo-500/20 text-indigo-600";
       default:
         return "bg-gray-500/20 text-gray-600";
     }

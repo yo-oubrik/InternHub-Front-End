@@ -121,12 +121,12 @@ function page() {
                     {salaryType
                       ? `${
                           salaryType === "Yearly"
-                            ? "pa"
+                            ? "per year"
                             : salaryType === "Monthly"
-                            ? "pcm"
+                            ? "per month"
                             : salaryType === "Weekly"
-                            ? "pw"
-                            : "ph"
+                            ? "per week"
+                            : "per hour"
                         }`
                       : ""}
                   </span>
