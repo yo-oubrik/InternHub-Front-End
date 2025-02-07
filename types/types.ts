@@ -4,7 +4,7 @@ interface Job {
   description: string;
   location: string;
   salary: number;
-  salaryType: "Yearly" | "Monthly" | "Weekly" | "Hourly";
+  salaryType: "Year" | "Month" | "Week" | "Hour";
   negotiable: boolean;
   jobType: string[];
   tags : string ;

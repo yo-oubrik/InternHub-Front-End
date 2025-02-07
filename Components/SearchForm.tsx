@@ -8,18 +8,18 @@ function SearchForm() {
   const { searchJobs, handleSearchChange, searchQuery } = useJobsContext();
   return (
     <form
-      className="relative flex items-center justify-center"
+      className="relative flex items-center justify-end mr-4"
       onSubmit={(e) => {
         e.preventDefault();
         searchJobs(searchQuery.tags, searchQuery.location, searchQuery.title);
       }}
     >
-      <div className="flex bg-white rounded-full px-2 items-stretch w-[60%]">
+      <div className="flex bg-white rounded-full px-2 items-stretch h-[3.3rem] w-[50rem]">
         <div className="flex flex-row items-center w-[45%]">
           <span>
             <Search
               size={30}
-              className="text-gray-400 text-2xl"
+              className="text-primary-hover text-2xl"
             />
           </span>
           <input
@@ -32,9 +32,9 @@ function SearchForm() {
             className="w-full py-4 text-xl text-black pl-[0.7rem] pr-3 rounded-tl-full rounded-bl-full focus:outline-none"
           />
         </div>
-        <div className="w-[2px] h-11 bg-gray-300 mr-2 mt-2"></div>
+        <div className="w-[2px] h-11 bg-gray-300 my-auto"></div>
         <div className="flex flex-row items-center w-[55%]">
-          <span className="text-gray-400 text-3xl ml-2">
+          <span className="text-primary text-3xl ml-2">
             {location}
           </span>
           <input
@@ -48,7 +48,7 @@ function SearchForm() {
           />
           <button
             type="submit"
-            className="bg-[#7263F3] hover:bg-[#7263F3]/90 text-white text-xl px-10 rounded-3xl h-[calc(100%-0.7rem)]"
+            className="bg-primary hover:bg-primary-hover text-white text-xl px-10 rounded-full h-[calc(100%-0.6rem)]"
           >
             Search
           </button>

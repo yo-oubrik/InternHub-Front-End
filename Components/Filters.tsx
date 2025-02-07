@@ -23,10 +23,9 @@ function Filters() {
       onSite: false,
       pfa : false , 
       pfe : false , 
-      initiation : false
+      initiation : false , 
+      renumerated : false ,
     });
-
-    setRenumerated(false);
     setSearchQuery({ tags: "", location: "", title: "" });
   };
 
@@ -36,14 +35,14 @@ function Filters() {
   }
 
   return (
-    <div className="w-[22rem] pr-4 space-y-6">
+    <div className="w-[18rem] pr-4 space-y-6 border-r-gray-300 border-r-2">
       <div>
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold mb-4">Job Type</h2>
 
           <Button
             variant={"ghost"}
-            className="h-auto p-0 text-red-500 hover:text-red-700"
+            className="h-auto p-0 text-primary hover:text-primary-hover"
             onClick={() => {
               clearAllFilters();
               searchJobs();
@@ -79,7 +78,7 @@ function Filters() {
             <Checkbox
               id="pfa"
               checked={filters.pfa}
-              onCheckedChange={() => handleFilterChange("PFA")}
+              onCheckedChange={() => handleFilterChange("pfa")}
             />
             <Label htmlFor="PFA">PFA</Label>
           </div>
@@ -87,7 +86,7 @@ function Filters() {
             <Checkbox
               id="pfe"
               checked={filters.pfe}
-              onCheckedChange={() => handleFilterChange("PFE")}
+              onCheckedChange={() => handleFilterChange("pfe")}
             />
             <Label htmlFor="PFE">PFE</Label>
           </div>

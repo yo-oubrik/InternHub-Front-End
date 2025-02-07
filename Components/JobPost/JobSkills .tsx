@@ -96,11 +96,11 @@ function JobSkills() {
           defaultValue="PFA"
         >
           <div className="flex items-center space-x-2">
-            <RadioGroupItem value="PFA" id="PFA" />
+            <RadioGroupItem value="pfa" id="PFA" />
               <Label htmlFor="PFA">PFA</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="PFE" id="PFE" />
+              <RadioGroupItem value="pfe" id="PFE" />
               <Label htmlFor="PFE">PFE</Label>
             </div>
             <div className="flex items-center space-x-2">

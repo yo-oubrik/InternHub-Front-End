@@ -23,7 +23,6 @@ function JobCard({ job, activeJob }: JobProps) {
 
   const {
     title,
-
     salaryType,
     salary,
     createdBy,
@@ -73,7 +72,7 @@ function JobCard({ job, activeJob }: JobProps) {
           className="group flex gap-1 items-center cursor-pointer"
           onClick={() => router.push(`/job/${job._id}`)}
         >
-          <div className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center">
+          <div className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center mr-2">
             <Image
               src={profilePicture || "/user.png"}
               alt={name || "User"}
@@ -94,7 +93,7 @@ function JobCard({ job, activeJob }: JobProps) {
 
         <button
           className={`text-2xl ${
-            isLiked ? "text-[#7263f3]" : "text-gray-400"
+            isLiked ? "text-primary" : "text-gray-400"
           } `}
           onClick={() => {
             isAuthenticated
@@ -132,13 +131,13 @@ function JobCard({ job, activeJob }: JobProps) {
           <span className="font-bold">{formatMoney(salary, "GBP")}</span>
           <span className="font-medium text-gray-400 text-lg">
             /
-            {salaryType === "Yearly"
-              ? "pa"
-              : salaryType === "Monthly"
-              ? "pcm"
-              : salaryType === "Weekly"
-              ? "pw"
-              : "ph"}
+            {salaryType === "Year"
+              ? "per year"
+              : salaryType === "Month"
+              ? "per month"
+              : salaryType === "Week"
+              ? "per week"
+              : "per hour"}
           </span>
         </p>
 

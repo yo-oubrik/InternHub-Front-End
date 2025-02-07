@@ -33,50 +33,25 @@ function page() {
 
   return (
     <main>
-      <div className="relative px-16 bg-[#D7DEDC] overflow-hidden">
-        <h1 className="py-8 text-black font-bold text-3xl">
-          Find Your Next Job Here
-        </h1>
-
-        <div className="pb-8 relative z-10">
-          <SearchForm />
-        </div>
-{/* 
-        <Image
-          src="/woman-on-phone.jpg"
-          alt="hero"
-          width={200}
-          height={500}
-          className="clip-path w-[15rem] absolute z-0 top-[0] right-[10rem] h-full object-cover"
-        />
-
-        <Image
-          src="/team.jpg"
-          alt="hero"
-          width={200}
-          height={500}
-          className="clip-path-2 rotate-6 w-[15rem] absolute z-0 top-[0] right-[32rem] h-full object-cover"
-        /> */}
-      </div>
-
       <div className="w-[90%] mx-auto mb-14">
-        <div className="flex justify-between items-center">
-          <h2 className="text-3xl font-bold text-black py-8">Recent Jobs</h2>
-
-          <div className="flex flex-row">
-            <button
-              onClick={() => setColumns(2)}
-              className="flex items-center gap-4 border border-gray-400 px-5 py-2 rounded-l-full font-medium"
-            >
-              <span className="text-lg">{getIcon(2)}</span>
-            </button>
-            <button
-              onClick={() => setColumns(1)}
-              className="flex items-center gap-4 border border-gray-400 px-5 py-2 rounded-r-full font-medium"
-            >
-              <span className="text-lg">{getIcon(1)}</span>
-            </button>
-          </div>
+          <div className="flex items-center justify-end py-10">
+            <div className="relative px-2 overflow-hidden">
+              <SearchForm />
+            </div>
+            <div className="flex flex-row h-[3.1rem]">
+              <button
+                onClick={() => setColumns(2)}
+                className="flex items-center hover:text-primary-hover gap-4 border border-gray-400 px-5 py-2 rounded-l-full font-medium"
+              >
+                <span className="text-lg">{getIcon(2)}</span>
+              </button>
+              <button
+                onClick={() => setColumns(1)}
+                className="flex items-center hover:text-primary-hover gap-4 border border-gray-400 px-5 py-2 rounded-r-full font-medium"
+              >
+                <span className="text-lg">{getIcon(1)}</span>
+              </button>
+            </div>
         </div>
 
         <div className="flex gap-8">
@@ -89,7 +64,7 @@ function page() {
               columns === 2
                 ? "grid-cols-2"
                 : "grid-cols-1"
-              : 'w-full h-full'
+              : 'w-full'
             }`}
           >
             {jobs.length > 0 ? (
@@ -97,8 +72,8 @@ function page() {
                 <JobCard key={job._id} job={job} />
               ))
             ) : (
-              <div className="ml-24 flex items-center flex-col w-[80%] h-[80%]">
-                <img src="notFound.png" alt="Not Found" />
+              <div className="mx-24 flex items-center flex-col">
+                <img src="notFound.png" alt="Not Found" width={'600rem'} height={'600rem'}/>
                 <p className="text-3xl font-bold text-[#ff5a31]">No Jobs Found!</p>
               </div>
             )}
