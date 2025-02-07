@@ -1,6 +1,5 @@
-"use client";
 import JobSearchSection from "./JobSearchSection";
-import WhyChooseSection from "./WhyChooseSection";
+import { WhyChooseSection } from "./WhyChooseSection";
 
 export default function Home() {
 
@@ -8,7 +7,6 @@ export default function Home() {
     <main>
       <JobSearchSection />
       <WhyChooseSection />
-      {/* <ReadyToStartSection /> */}
     </main>
   );
 }
