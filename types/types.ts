@@ -7,7 +7,7 @@ interface Job {
   salaryType: "Year" | "Month" | "Week" | "Hour";
   negotiable: boolean;
   jobType: string[];
-  tags : string ;
+  tags: string;
   likes: string[];
   skills: string[];
   applicants: string[];
@@ -19,4 +19,17 @@ interface Job {
   createdAt: string;
   updatedAt: string;
 }
-export type { Job };
+interface User {
+  given_name: string;
+  family_name: string;
+  nickname: string;
+  name: string;
+  picture: string;
+  updated_at: string;
+  email: string;
+  email_verified: boolean;
+  sub: string;
+  sid: string;
+}
+
+export type { Job, User };

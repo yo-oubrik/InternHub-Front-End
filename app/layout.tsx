@@ -5,6 +5,7 @@ import ContextProvider from "@/providers/ContextProvider";
 import { Roboto } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/Components/Footer";
+import { AuthProvider } from "@/context/authContext";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -30,9 +31,11 @@ export default function RootLayout({
       <body className={`${roboto.className} antialiased`}>
         <Toaster position="top-center" />
         <ContextProvider>
-          <Header />
-          {children}
-          <Footer />
+          <AuthProvider>
+            <Header />
+            {children}
+            <Footer />
+          </AuthProvider>
         </ContextProvider>
       </body>
     </html>
