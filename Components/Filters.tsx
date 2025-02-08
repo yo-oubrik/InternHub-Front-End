@@ -1,18 +1,17 @@
 "use client";
 import React from "react";
-import { Button } from "./ui/button";
 import { useJobsContext } from "@/context/jobsContext";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import RadioButton from "./RadioButton";
+import { Button } from "@/components/ui/button"; // Ensure lowercase 'components'
+
 
 function Filters() {
   const {
     handleFilterChange,
     filters,
     setFilters,
-    renumerated , 
-    setRenumerated , 
     searchJobs,
     setSearchQuery,
   } = useJobsContext();
@@ -21,16 +20,16 @@ function Filters() {
     setFilters({
       remote: false,
       onSite: false,
+      hybrid: false,
       pfa : false , 
       pfe : false , 
       initiation : false , 
       renumerated : false ,
     });
-    setSearchQuery({ tags: "", location: "", title: "" });
+    setSearchQuery({ tags: [] , location: "", title: "" });
   };
 
-  function handleRenumeratedChange(value: string): void {
-    setRenumerated(!renumerated);
+  function handleRenumeratedChange(value: boolean): void {
     handleFilterChange('renumerated');
   }
 
@@ -68,6 +67,14 @@ function Filters() {
             />
             <Label htmlFor="onSite">On-site</Label>
           </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="hybrid"
+              checked={filters.hybrid}
+              onCheckedChange={() => handleFilterChange("hybrid")}
+            />
+            <Label htmlFor="hybrid">Hybrid</Label>
+          </div>
         </div>
       </div>
 
@@ -103,20 +110,15 @@ function Filters() {
 
       <div>
         <h2 className="text-lg font-semibold mb-4">Include Salary</h2>
-        <RadioGroup
-          onValueChange={handleRenumeratedChange} // Use onValueChange here!
-          className="flex flex-col gap-5"
-          defaultValue="nonRenumerated"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="nonRenumerated" id="nonRenumerated" />
-            <Label htmlFor="nonRenumerated">Non Renumerated</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="renumerated" id="renumerated" />
-            <Label htmlFor="renumerated">Renumerated</Label>
-          </div>
-        </RadioGroup>
+        <RadioButton
+          value={filters.renumerated}
+          items={['Renumerated','Non Renumerated']}
+          itemsValue={[true,false]}
+          onValueChange={() => handleFilterChange('renumerated')} // Use onCheckedChange here!
+          classNameGroup="flex flex-col gap-5"
+          classNameItem="flex items-center space-x-2"
+          defaultValue={false}
+        />
     </div>
   </div>
   );

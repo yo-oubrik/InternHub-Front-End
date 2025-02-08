@@ -2,57 +2,42 @@
 import { useGlobalContext } from "@/context/globalContext";
 import { Separator } from "@/Components/ui/separator";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { Checkbox } from "../ui/checkbox";
-
-interface EmployementTypeProps {
-  remote : boolean;
-  onSite : boolean;
-}
+import RadioButton from "../RadioButton";
+import { useJobsContext } from "@/context/jobsContext";
 
 function JobTitle() {
-  const { handleTitleChange, jobTitle, setActiveEmploymentTypes } =
+  const { handleTitleChange, InternshipTitle ,activeInternshipType , setActiveInternshipType } =
     useGlobalContext();
 
-  const [employmentTypes, setEmploymentTypes] =
-    React.useState<EmployementTypeProps>({
-      remote : false ,
-      onSite : false,
-    });
+  const handleInternshipTypeChange = (value : string) => {
+    console.log('from handle internship type change ' ,value);
+    setActiveInternshipType(value);
+  }
 
-  const handleEmploymentTypeChange = (type: keyof EmployementTypeProps) => {
-    setEmploymentTypes((prev) => ({ ...prev, [type]: !prev[type] }));
-  };
-
-  useEffect(() => {
-    const selectedTypes = Object.keys(employmentTypes).filter((type) => {
-      return employmentTypes[type as keyof EmployementTypeProps];
-    });
-
-    setActiveEmploymentTypes(selectedTypes);
-  }, [employmentTypes]);
-
+  console.log(activeInternshipType);
   return (
     <div className="p-6 flex flex-col gap-4 bg-background border border-border rounded-lg">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold">Job Title</h3>
+          <h3 className="text-lg font-semibold">Post Title</h3>
           <Label
-            htmlFor="jobTitle"
+            htmlFor="InternshipTitle"
             className="text-sm text-muted-foreground mt-2"
           >
-            A job title is a specific designation of a post in an organization.
+            An internship title defines the role and responsibilities of an
+            intern in an organization.
           </Label>
         </div>
         <Input
           type="text"
-          id="jobTitle"
-          value={jobTitle}
+          id="InternshipTitle"
+          value={InternshipTitle}
           onChange={handleTitleChange}
           className="flex-1 w-full mt-2"
-          placeholder="Enter Job Title"
+          placeholder="Enter Post Title"
         />
       </div>
 
@@ -60,37 +45,23 @@ function JobTitle() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold">Employment Type</h3>
+          <h3 className="text-lg font-semibold">Internship Type</h3>
           <Label
-            htmlFor="employmentType"
+            htmlFor="internshipType"
             className="text-sm text-muted-foreground mt-2"
           >
-            Select the type of employment.
+            Select the type of internship.
           </Label>
         </div>
-        <div className="flex-1 flex flex-col gap-2">
-          {Object.entries(employmentTypes).map(([type, checked]) => (
-            <div
-              key={type}
-              className="flex items-center space-x-2 border border-input rounded-md p-2"
-            >
-              <Checkbox
-                id={type}
-                checked={checked}
-                onCheckedChange={() => {
-                  handleEmploymentTypeChange(
-                    type as keyof EmployementTypeProps
-                  );
-                }}
-              />
-              <Label
-                htmlFor={type}
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                {type}
-              </Label>
-            </div>
-          ))}
+        <div className="flex items-center gap-2">
+          <RadioButton
+            value={activeInternshipType}
+            items={["remote", "on-site", "hybrid"]}
+            itemsValue={["Remote", "On-site", "Hybrid"]}
+            onValueChange={handleInternshipTypeChange}
+            classNameGroup="flex flex-col"
+            classNameItem="py-1 pl-1 border-border border rounded-md"
+          />
         </div>
       </div>
     </div>
