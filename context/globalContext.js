@@ -9,7 +9,6 @@ import {
 const GlobalContext = createContext();
 
 axios.defaults.baseURL = "http://localhost:8000";
-axios.defaults.withCredentials = true;
 
 export const GlobalContextProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -37,7 +36,7 @@ export const GlobalContextProvider = ({ children }) => {
     const checkAuth = async () => {
       setLoading(true);
       try {
-        const res = await axios.get("/api/v1/check-auth");
+        const res = await axios.get("http://localhost:8000/api/check-auth");
         setIsAuthenticated(res.data.isAuthenticated);
         setAuth0User(res.data.user);
         setLoading(false);

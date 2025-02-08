@@ -7,7 +7,11 @@ interface IButton extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     Icon?: LucideIcon;
     iconSize?: number;
     outline?: boolean;
+    disabled?: boolean;
+    className?: string;
+    onClick?: () => void;  // Corrected onClick type definition
 }
+
 
 const Button: React.FC<IButton> = ({
     label,
@@ -17,7 +21,6 @@ const Button: React.FC<IButton> = ({
     disabled,
     className,
     onClick,
-    ...props
 }) => {
     return (
         <button
@@ -31,7 +34,6 @@ const Button: React.FC<IButton> = ({
             )}
             onClick={onClick}
             disabled={disabled}
-            {...props}
         >
             {Icon && <Icon size={iconSize} />}
             <span>{label}</span>

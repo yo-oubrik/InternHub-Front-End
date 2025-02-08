@@ -11,22 +11,22 @@ import {
 import { Settings, LogOut } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useGlobalContext } from "@/context/globalContext";
 import { Badge } from "./ui/badge";
+import { useAuth } from "@/context/authContext";
 
 function Profile() {
-  const { userProfile } = useGlobalContext();
+  const { auth0User, logout } = useAuth()
 
-  const { profilePicture, name, profession, email } = userProfile;
+  const { picture, name, email } = auth0User;
 
   const router = useRouter();
   return (
     <DropdownMenu>
       <div className="flex items-center gap-4">
-        <Badge>{profession}</Badge>
+        <Badge>idk</Badge>
         <DropdownMenuTrigger asChild className="cursor-pointer">
           <Image
-            src={profilePicture ? profilePicture : "/user.png"}
+            src={picture ? picture : "/user.png"}
             alt="avatar"
             width={36}
             height={36}
@@ -53,7 +53,7 @@ function Profile() {
         <DropdownMenuItem
           className="cursor-pointer"
           onClick={() => {
-            router.push("http://localhost:8000/logout");
+            logout()
           }}
         >
           <LogOut className="mr-2 h-4 w-4" />
