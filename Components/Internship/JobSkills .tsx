@@ -4,33 +4,33 @@ import React, { useRef } from "react";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
-import { Button } from "@/components/ui/button"; // Ensure lowercase 'components'
 import { X } from "lucide-react";
 import CheckboxButton from "../CheckboxButton";
 import { useJobsContext } from "@/context/jobsContext";
+import Button from "../Button";
 
 function JobSkills() {
   const { skills, setSkills, tags, setTags } = useGlobalContext();
-  const { filters , handleFilterChange } = useJobsContext();
+  const { filters, handleFilterChange } = useJobsContext();
 
   const skillInputRef = useRef<HTMLInputElement>(null);
 
   const handleAddSkill = () => {
-    if (!skillInputRef.current) return; // Prevent errors
-  
-    const skillValue = skillInputRef.current.value.trim(); // Get input value
+    if (!skillInputRef.current) return;
+
+    const skillValue = skillInputRef.current.value.trim();
     if (skillValue && !skills.includes(skillValue)) {
       setSkills([...skills, skillValue]);
-      skillInputRef.current.value = ""; // Clear input field after adding
+      skillInputRef.current.value = "";
     }
   };
 
   const handleRemoveSkill = (skillToRemove: string) => {
-    setSkills(skills.filter((skill : string ) => skill !== skillToRemove));
+    setSkills(skills.filter((skill: string) => skill !== skillToRemove));
   };
 
-  const handleAddTag = (value : string) => {
-    console.log('from handle add tag function: ',value)
+  const handleAddTag = (value: string) => {
+    console.log('from handle add tag function: ', value)
     handleFilterChange(value.toLowerCase());
     if (!tags.includes(value.trim())) {
       setTags((prev: string) => [...prev, value.trim()]);
@@ -52,17 +52,15 @@ function JobSkills() {
 
         <div className="flex-1 flex flex-col gap-2">
           <div className="flex gap-2">
-          <Input
-              ref={skillInputRef} // Attach the ref to input
+            <Input
+              ref={skillInputRef}
               type="text"
               id="skills"
               className="flex-1"
               placeholder="Enter a skill"
             />
 
-            <Button type="button" onClick={handleAddSkill}>
-              Add Skill
-            </Button>
+            <Button label="Add Skill" type="button" onClick={handleAddSkill} />
           </div>
 
           <div className="flex flex-wrap gap-2 mt-2">
@@ -95,8 +93,8 @@ function JobSkills() {
           </Label>
         </div>
         <CheckboxButton
-          items={['PFA','PFE',"Initiation"]}
-          itemsValue={[filters.pfa,filters.pfe,filters.initiation]}
+          items={['PFA', 'PFE', "Initiation"]}
+          itemsValue={[filters.pfa, filters.pfe, filters.initiation]}
           onCheckedFunction={handleAddTag}
         />
       </div>

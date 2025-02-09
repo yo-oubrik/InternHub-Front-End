@@ -1,15 +1,15 @@
 "use client";
 import { useGlobalContext } from "@/context/globalContext";
+import { useJobsContext } from "@/context/jobsContext";
 import React from "react";
+import AlertModal from "../AlertModal";
+import Button from "../Button";
 import JobDetails from "./JobDetails";
 import JobSkills from "./JobSkills ";
-import JobLocation from "./JobLocation";
-import { useJobsContext } from "@/context/jobsContext";
-import Button from "../Button";
 import JobTitle from "./JobTitle";
-import AlertModal from "../AlertModal";
+import { useInternship } from "@/context/internshipContext";
 
-function JobForm() {
+function Form() {
   const {
     InternshipTitle,
     internshipDescription,
@@ -19,23 +19,23 @@ function JobForm() {
     location,
     skills,
     tags,
-    negotiable , 
+    negotiable,
     renumerated,
     resetInternshipForm,
   } = useGlobalContext();
-  const { createJob } = useJobsContext();
+  const { createInternship } = useInternship();
 
-  const sections = ["About", "Post Details", "Skills", "Location", "Summary"];
-  const [currentSection, setCurrentSection] = React.useState<Set<string>>(
+  const sections = ["About", "Post Details", "Skills", "Summary"];
+  const [visitedSections, setVisitedSections] = React.useState<Set<string>>(
     new Set([sections[0]])
   );
   const [activeSection, setActiveSection] = React.useState<string>(sections[0]);
 
   const handleSectionChange = (section: string, Type: string) => {
-    setCurrentSection((prev) => {
+    setVisitedSections((prev) => {
       const updatedSet = new Set(prev);
       Type === "add" ? updatedSet.add(section) : updatedSet.delete(section);
-      return updatedSet; // ✅ New reference ensures state updates
+      return updatedSet;
     });
   };
 
@@ -47,8 +47,6 @@ function JobForm() {
         return <JobDetails />;
       case "Skills":
         return <JobSkills />;
-      case "Location":
-        return <JobLocation />;
     }
   };
 
@@ -57,28 +55,26 @@ function JobForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log({InternshipTitle , internshipDescription , salaryType , activeInternshipType , salary , skills , tags });
-    const loc = `${location.address ? location.address + ", " : ""}${
-      location.city ? location.city + ", " : ""
-    }${location.country}`;
+    const loc = `${location.address ? location.address + ", " : ""}${location.city ? location.city + ", " : ""
+      }${location.country}`;
 
-    if( activeSection === 'Summary'){
-      if(InternshipTitle === "" || activeInternshipType === "" || tags.length === 0 || internshipDescription === "" || loc === ""){
+    if (activeSection === 'Summary') {
+      if (InternshipTitle === "" || activeInternshipType === "" || tags.length === 0 || internshipDescription === "" || loc === "") {
         setShowAlert(true);
         return;
       }
     }
 
-    createJob({
+    createInternship({
       title: InternshipTitle,
       description: internshipDescription,
       salaryType,
       jobType: activeInternshipType,
       salary,
-      location : loc ,
+      location: loc,
       skills,
       tags,
-      negotiable , 
+      negotiable,
       renumerated
     });
 
@@ -90,17 +86,15 @@ function JobForm() {
         {sections.map((section, index) => (
           <div
             key={index}
-            className={`w-full flex items-center justify-center ${
-              currentSection.size > index + 1 ? "bg-primary" : "bg-transparent"
-            }`}
+            className={`w-full flex items-center justify-center ${visitedSections.size > index + 1 ? "bg-primary" : "bg-transparent"
+              }`}
           >
             <div
               className={`py-3 relative gap-2 w-full text-center font-medium rounded-r-full border-r-2
-                  ${
-                    currentSection.has(section)
-                      ? "text-white bg-primary"
-                      : "text-black"
-                  }
+                  ${visitedSections.has(section)
+                  ? "text-white bg-primary"
+                  : "text-black"
+                }
                   `}
             >
               {section}
@@ -169,4 +163,4 @@ function JobForm() {
   );
 }
 
-export default JobForm;
+export default Form;

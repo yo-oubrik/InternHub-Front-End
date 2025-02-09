@@ -40,18 +40,37 @@ model Company {
   website     String
 }
 
+enum WorkMode {
+  REMOTE
+  ON_SITE
+  HYBRID
+}
+
+enum InternshipType {
+  PFA
+  PFE
+  INITIATION
+}
+
+enum PaymentStatus {
+  PAID
+  UNPAID
+}
+
 model Internship {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
   companyId   String
-  createdAt   DateTime @db.Date
+  createdAt   DateTime       @db.Date
   description String
   duration    BigInt
   industry    String
   location    String
-  startDate   DateTime @db.Date
+  startDate   DateTime       @db.Date
   title       String
-  type        String
-  updatedAt   DateTime @db.Date
+  updatedAt   DateTime       @db.Date
+  workMode    WorkMode
+  type        InternshipType
+  payment     PaymentStatus
 }
 
 model Student {

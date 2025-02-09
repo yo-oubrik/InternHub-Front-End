@@ -33,7 +33,9 @@ export default function RootLayout({
         <ContextProvider>
           <AuthProvider>
             <Header />
-            {children}
+            <div className="min-h-[calc(100vh-var(--header-height)-var(--footer-height))]">
+              {children}
+            </div>
             <Footer />
           </AuthProvider>
         </ContextProvider>

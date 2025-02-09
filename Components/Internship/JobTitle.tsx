@@ -7,13 +7,14 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import RadioButton from "../RadioButton";
 import { useJobsContext } from "@/context/jobsContext";
+import JobLocation from "./JobLocation";
 
 function JobTitle() {
-  const { handleTitleChange, InternshipTitle ,activeInternshipType , setActiveInternshipType } =
+  const { handleTitleChange, InternshipTitle, activeInternshipType, setActiveInternshipType } =
     useGlobalContext();
 
-  const handleInternshipTypeChange = (value : string) => {
-    console.log('from handle internship type change ' ,value);
+  const handleInternshipTypeChange = (value: string) => {
+    console.log('from handle internship type change ', value);
     setActiveInternshipType(value);
   }
 
@@ -63,6 +64,7 @@ function JobTitle() {
             classNameItem="py-1 pl-1 border-border border rounded-md"
           />
         </div>
+        <JobLocation />
       </div>
     </div>
   );
