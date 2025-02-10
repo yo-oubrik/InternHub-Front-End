@@ -1,6 +1,6 @@
 import { LucideIcon } from "lucide-react";
-import Button from "./Button";
 import { Input } from "./ui/input";
+import Button from "./Button";
 
 interface SearchBoxProps {
     placeholder: string; // Placeholder text for the input field
@@ -35,8 +35,8 @@ const SearchBar = ({
                 label={buttonLabel}
                 Icon={Icon}
                 onClick={() => { }}
-                customClass="text-xl"
-                IconSize={IconSize}
+                className="text-xl"
+                iconSize={IconSize}
             />
         </form>
     );

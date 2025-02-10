@@ -1,3 +1,6 @@
+
+// source for prisma many-to-many relationships : https://www.prisma.io/docs/orm/prisma-schema/data-model/relations/many-to-many-relations#mongodb
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,31 +17,29 @@ type CompanySocialLinks {
 
 model Admin {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
-  /// Field referred in an index, but found no data to define the type.
-  email String @db.String
-}
-
-model Application {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  userId  String @unique @db.ObjectId // Same as the User's id
+  user    User   @relation(fields: [userId], references: [id]) // Specify the relation only here
 }
 
 model Company {
   id          String             @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String             @unique @db.ObjectId // Same as the User's id
+  user        User               @relation(fields: [userId], references: [id])  // Specify the relation only here
   address     String
   createdAt   DateTime           @db.Date
   description String
-  email       String
   ice         String
-  industry    String
-  logo        String
-  name        String
-  phone       String
   rc          String
+  domain      String
+  logo        String
+  phone       String
   size        String
   socialLinks CompanySocialLinks
   updatedAt   DateTime           @db.Date
   website     String
+  internships Internship[]       @relation("CompanyToInternship") // Relation to internships
 }
+
 
 enum WorkMode {
   REMOTE
@@ -52,28 +53,228 @@ enum InternshipType {
   INITIATION
 }
 
-enum PaymentStatus {
-  PAID
-  UNPAID
+enum SalaryType {
+  YEAR 
+  MONTH
+  HOUR
 }
 
 model Internship {
   id          String         @id @default(auto()) @map("_id") @db.ObjectId
-  companyId   String
+  createdBy   String         @db.ObjectId  // Foreign key referencing Company
+  company     Company        @relation("CompanyToInternship", fields: [createdBy], references: [id]) // Define the relation
   createdAt   DateTime       @db.Date
   description String
-  duration    BigInt
-  industry    String
+  duration    Int
+  salary      Float
+  salaryType  SalaryType
+  domain    String
   location    String
-  startDate   DateTime       @db.Date
+  // startDate   DateTime       @db.Date
   title       String
   updatedAt   DateTime       @db.Date
   workMode    WorkMode
-  type        InternshipType
-  payment     PaymentStatus
+  tags        InternshipType[]
+  skills      String[]
+  negotiable  Boolean
+  renumerated Boolean
+  applicationIDs String[] @db.ObjectId
+  applicants  Student[] @relation(fields: [applicationIDs] , references: [id] , name: "StudentApplications")
+  likeIDs     String[] @db.ObjectId
+  likes       Student[]  @relation(fields: [likeIDs] , references: [id] , name: "StudentLikes")
+}
+model Student {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String       @unique  @db.ObjectId // Same as the User's id
+  user         User         @relation(fields: [userId], references: [id])  // Specify the relation only here
+  applicationIDs String[] @db.ObjectId
+  applications Internship[] @relation(fields: [applicationIDs], references: [id] , name: "StudentApplications")
+  InternshipsIDs String[] @db.ObjectId
+  likedInternships Internship[]    @relation(fields: [InternshipsIDs] , references: [id] , name: "StudentLikes")
+}
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @db.String
+  role      Role     // To differentiate between Student, Company, and Admin
+  profilePicture String @db.String
+  name String @db.String
+  student   Student? 
+  company Company?
+  admin   Admin?  
 }
 
-model Student {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  email String @db.String
+
+enum Role {
+  STUDENT
+  COMPANY
+  ADMIN
 }
+// enum Domain {
+//   SOFTWARE_DEVELOPMENT
+//   DEVOPS
+//   DATA_SCIENCE
+//   MACHINE_LEARNING
+//   WEB_DEVELOPMENT
+//   MOBILE_DEVELOPMENT
+//   GAME_DEVELOPMENT
+//   CLOUD_COMPUTING
+//   CYBER_SECURITY
+//   NETWORK_ENGINEERING
+//   ARTIFICIAL_INTELLIGENCE
+//   IOT
+//   DATABASE_ADMINISTRATION
+//   QUALITY_ASSURANCE
+//   PRODUCT_MANAGEMENT
+//   BUSINESS_ANALYSIS
+//   DIGITAL_MARKETING
+// }
+
+
+
+
+
+
+
+
+
+
+// // Postgresql
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
+// enum Role {
+//   STUDENT
+//   COMPANY
+//   ADMIN
+// }
+
+// enum WorkMode {
+//   REMOTE
+//   ON_SITE
+//   HYBRID
+// }
+
+// enum InternshipType {
+//   PFA
+//   PFE
+//   INITIATION
+// }
+
+// enum SalaryType {
+//   YEAR
+//   MONTH
+//   HOUR
+// }
+
+// model CompanySocialLinks {
+//   id        String  @id @default(uuid()) @db.Uuid
+//   companyId String  @unique @db.Uuid
+//   company   Company @relation(fields: [companyId], references: [id] , name: "CompanyToSocialLinks") // Define only here
+//   linkedin  String?
+//   twitter   String?
+// }
+
+
+// model User {
+//   id        String   @id @default(uuid()) @db.Uuid
+//   email     String   @unique
+//   role      Role
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   student   Student?
+//   company   Company?
+//   admin     Admin?
+// }
+
+// model Admin {
+//   id      String @id @default(uuid()) @db.Uuid
+//   // Field referred in an index, but found no data to define the type.
+//   email   String
+//   userId  String @unique @db.Uuid
+//   user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+// }
+
+
+// model Student {
+//   id               String        @id @default(uuid()) @db.Uuid
+//   email            String
+//   userId           String        @unique @db.Uuid
+//   user             User          @relation(fields: [userId], references: [id])
+//   applications     Application[] // @relation
+//   likedInternships Like[]        @relation("StudentLikes")
+// }
+
+
+// model Company {
+//   id          String             @id @default(uuid()) @db.Uuid
+//   userId      String             @unique @db.Uuid
+//   user        User               @relation(fields: [userId], references: [id])
+//   address     String
+//   createdAt   DateTime           @default(now())
+//   updatedAt   DateTime           @updatedAt
+//   description String
+//   email       String
+//   ice         String
+//   rc          String
+//   domain      String
+//   logo        String
+//   name        String
+//   phone       String
+//   size        String
+//   socialLinks CompanySocialLinks?  @relation("CompanyToSocialLinks") // Define relation here
+//   website     String
+//   internships Internship[] @relation("CompanyToInternship")
+// }
+
+
+
+// model Internship {
+//   id          String         @id @default(uuid()) @db.Uuid
+//   companyId   String         @db.Uuid
+//   company     Company        @relation("CompanyToInternship", fields: [companyId], references: [id], onDelete: Cascade)
+//   createdAt   DateTime       @default(now())
+//   updatedAt   DateTime       @updatedAt
+//   description String
+//   duration    Int
+//   salary      Float
+//   salaryType  SalaryType
+//   domain      String
+//   location    String
+//   // startDate   DateTime
+//   title       String
+//   workMode    WorkMode
+//   tags        InternshipType[]
+//   skills      String[]
+//   negotiable  Boolean
+//   renumerated Boolean
+//   applicants  Application[] @relation("InternshipToApplication")
+//   likes       Like[] @relation("InternshipLikes")
+// }
+
+
+// model Application {
+//   id           String    @id @default(uuid()) @db.Uuid
+//   studentId    String    @db.Uuid
+//   internshipId String    @db.Uuid
+//   createdAt    DateTime  @default(now())
+
+//   student     Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+//   internship  Internship @relation(fields: [internshipId], references: [id], onDelete: Cascade, name: "InternshipToApplication")
+// }
+
+// model Like {
+//   id           String   @id @default(uuid()) @db.Uuid
+//   studentId    String   @db.Uuid
+//   internshipId String   @db.Uuid
+//   createdAt    DateTime @default(now())
+
+//   student      Student    @relation(fields: [studentId], references: [id], onDelete: Cascade, name: "StudentLikes")
+//   internship   Internship @relation(fields: [internshipId], references: [id], onDelete: Cascade, name: "InternshipLikes")
+// }

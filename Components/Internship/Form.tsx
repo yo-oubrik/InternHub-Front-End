@@ -1,6 +1,4 @@
 "use client";
-import { useGlobalContext } from "@/context/globalContext";
-import { useJobsContext } from "@/context/jobsContext";
 import React from "react";
 import AlertModal from "../AlertModal";
 import Button from "../Button";
@@ -11,19 +9,20 @@ import { useInternship } from "@/context/internshipContext";
 
 function Form() {
   const {
+    createInternship,
     InternshipTitle,
     internshipDescription,
     salaryType,
     activeInternshipType,
     salary,
+    duration,
     location,
     skills,
     tags,
     negotiable,
     renumerated,
     resetInternshipForm,
-  } = useGlobalContext();
-  const { createInternship } = useInternship();
+  } = useInternship();
 
   const sections = ["About", "Post Details", "Skills", "Summary"];
   const [visitedSections, setVisitedSections] = React.useState<Set<string>>(
@@ -59,21 +58,24 @@ function Form() {
       }${location.country}`;
 
     if (activeSection === 'Summary') {
-      if (InternshipTitle === "" || activeInternshipType === "" || tags.length === 0 || internshipDescription === "" || loc === "") {
+      if (InternshipTitle === "" || tags.length === 0 || internshipDescription === "" || loc === "" ) {
         setShowAlert(true);
         return;
       }
     }
 
     createInternship({
+      id : '' ,
       title: InternshipTitle,
       description: internshipDescription,
       salaryType,
-      jobType: activeInternshipType,
+      workMode: activeInternshipType,
       salary,
+      duration,
       location: loc,
       skills,
       tags,
+      domain : '' ,
       negotiable,
       renumerated
     });

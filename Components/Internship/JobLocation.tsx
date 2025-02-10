@@ -1,16 +1,15 @@
 "use client";
-import { useGlobalContext } from "@/context/globalContext";
 import React from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import { Location , useInternship } from "@/context/internshipContext";
 
 function JobLocation() {
-  const { setLocation, location } = useGlobalContext();
+  const { setLocation, location } = useInternship();
 
   const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    setLocation((prev: {}) => ({ ...prev, [name]: value }));
+    const { name , value } = e.target;
+    setLocation((prev: Location) => ({ ...prev, [name]: value }));
   };
 
   return (

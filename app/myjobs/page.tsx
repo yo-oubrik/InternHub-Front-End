@@ -1,31 +1,33 @@
 "use client";
 import Footer from "@/Components/Footer";
 import MyJob from "@/Components/JobItem/MyJob";
-import { useGlobalContext } from "@/context/globalContext";
-import { useJobsContext } from "@/context/jobsContext";
-import { Job } from "@/types/types";
+import { useAuth } from "@/context/authContext";
+import { useInternship } from "@/context/internshipContext";
+import { useUser } from "@/context/userContext";
+import { Internship } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 function page() {
-  const { userJobs, jobs } = useJobsContext();
-  const { isAuthenticated, loading, userProfile } = useGlobalContext();
+  const { userInternships, internships } = useInternship();
+  const { userProfile } = useUser();
+  const { isAuthenticated , loading } = useAuth(); {/* to check for loading */}
 
   const [activeTab, setActiveTab] = React.useState("posts");
 
-  const userId = userProfile?._id;
+  const userId = userProfile?.id;
 
   const router = useRouter();
 
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      router.push("http://localhost:8000/login");
+      router.push("http://localhost:3000/api/login"); {/* to check */}
     }
   }, [isAuthenticated]);
 
-  const likedJobs = jobs.filter((job: Job) => {
-    return job.likes.includes(userId);
+  const likedJobs = internships.filter((internship: Internship) => {
+    return internship.likes.includes(userId);
   });
 
   if (loading) {
@@ -60,7 +62,7 @@ function page() {
           </button>
         </div>
 
-        {activeTab === "posts" && userJobs.length === 0 && (
+        {activeTab === "posts" && userInternships.length === 0 && (
           <div className="mt-8 flex items-center">
             <p className="text-2xl font-bold">No job posts found.</p>
           </div>
@@ -74,10 +76,10 @@ function page() {
 
         <div className="my-8 grid grid-cols-2 gap-6">
           {activeTab === "posts" &&
-            userJobs.map((job: Job) => <MyJob key={job._id} job={job} />)}
+            userInternships.map((internship: Internship) => <MyJob key={internship.id} internship={internship} />)}
 
           {activeTab === "likes" &&
-            likedJobs.map((job: Job) => <MyJob key={job._id} job={job} />)}
+            likedJobs.map((internship: Internship) => <MyJob key={internship.id} internship={internship} />)}
         </div>
       </div>
 

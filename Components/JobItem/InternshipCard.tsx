@@ -1,24 +1,26 @@
 "use client";
-import { useGlobalContext } from "@/context/globalContext";
-import { useJobsContext } from "@/context/jobsContext";
-import { Job } from "@/types/types";
 import { Calendar } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Separator } from "../ui/separator";
 import formatMoney from "@/utils/formatMoney";
 import { formatDates } from "@/utils/fotmatDates";
 import { bookmark, bookmarkEmpty } from "@/utils/Icons";
+import { Internship, SalaryType, User, WorkMode } from "@prisma/client";
+import { useInternship } from "@/context/internshipContext";
+import { useUser } from "@/context/userContext";
+import { useAuth } from "@/context/authContext";
+import axios from "axios";
 
-interface JobProps {
-  job: Job;
-  activeJob?: boolean;
+interface InternshipProps {
+  internship: Internship ;
+  activeinternship?: boolean;
 }
 
-function JobCard({ job, activeJob }: JobProps) {
-  const { likeJob } = useJobsContext();
-  const { userProfile, isAuthenticated } = useGlobalContext();
+function InternshipCard({ internship, activeinternship }: InternshipProps) {
+  const { likeInternship } = useInternship();
+  const { userProfile , user , getUser } = useUser() ; 
+  const { isAuthenticated } = useAuth(); {/* to check */} 
   const [isLiked, setIsLiked] = React.useState(false);
 
   const {
@@ -27,33 +29,33 @@ function JobCard({ job, activeJob }: JobProps) {
     salary,
     createdBy,
     applicants,
-    jobType,
+    workMode,
     createdAt,
-  } = job;
+  } = internship;
 
-  const { name, profilePicture } = createdBy;
-
-  const router = useRouter();
+  useEffect(()=> {
+    getUser(createdBy);
+  },[createdBy]);
 
   const handleLike = (id: string) => {
     setIsLiked((prev) => !prev);
-    likeJob(id);
+    likeInternship(id);
   };
 
   useEffect(() => {
-    setIsLiked(job.likes.includes(userProfile._id));
-  }, [job.likes, userProfile._id]);
+    setIsLiked(internship.likes.includes(userProfile?.id));
+  }, [internship.likes, userProfile?.id]);
 
   const companyDescription =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget nunc.";
 
-  const jobTypeBg = (type: string) => {
+  const workModeBg = (type: WorkMode) => {
     switch (type) {
-      case "Remote":
+      case WorkMode.REMOTE :
         return "bg-green-500/20 text-green-600";
-      case "On-site":
+      case WorkMode.ON_SITE:
         return "bg-purple-500/20 text-purple-600";
-      case 'Hybrid' :
+      case WorkMode.HYBRID :
         return "bg-blue-500/20 text-blue-600";
       default : 
         return "bg-gray-500/20 text-gray-600";
@@ -64,7 +66,7 @@ function JobCard({ job, activeJob }: JobProps) {
     <div
       className={`p-8 rounded-xl flex flex-col gap-5
     ${
-      activeJob
+      activeinternship
         ? "bg-gray-50 shadow-md border-b-2 border-[#7263f3]"
         : "bg-white"
     }`}
@@ -72,12 +74,12 @@ function JobCard({ job, activeJob }: JobProps) {
       <div className="flex justify-between">
         <div
           className="group flex gap-1 items-center cursor-pointer"
-          onClick={() => router.push(`/job/${job._id}`)}
-        >
+          onClick={() => axios.get(`/internship/${internship.id}`)}
+        > { /* to check */}
           <div className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center mr-2">
             <Image
-              src={profilePicture || "/user.png"}
-              alt={name || "User"}
+              src={ user?.profilePicture || "/user.png"}
+              alt={ user?.name || "User"}
               width={40}
               height={40}
               className="rounded-md"
@@ -99,8 +101,8 @@ function JobCard({ job, activeJob }: JobProps) {
           } `}
           onClick={() => {
             isAuthenticated
-              ? handleLike(job._id)
-              : router.push("http://localhost:8000/login");
+              ? handleLike(internship.id)
+              : axios.get("http://localhost:3000/api/login"); {/* to check */}
           }}
         >
           {isLiked ? bookmark : bookmarkEmpty}
@@ -108,8 +110,8 @@ function JobCard({ job, activeJob }: JobProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        <span className={`py-1 px-3 text-xs font-medium rounded-md border ${jobTypeBg(jobType)}`}>
-          {jobType}
+        <span className={`py-1 px-3 text-xs font-medium rounded-md border ${workModeBg(workMode)}`}>
+          {workMode}
         </span>
       </div>
 
@@ -126,12 +128,10 @@ function JobCard({ job, activeJob }: JobProps) {
           <span className="font-bold">{formatMoney(salary, "GBP")}</span>
           <span className="font-medium text-gray-400 text-lg">
             /
-            {salaryType === "Year"
+            {salaryType === SalaryType.YEAR
               ? "per year"
-              : salaryType === "Month"
+              : salaryType === SalaryType.MONTH
               ? "per month"
-              : salaryType === "Week"
-              ? "per week"
               : "per hour"}
           </span>
         </p>
@@ -140,11 +140,11 @@ function JobCard({ job, activeJob }: JobProps) {
           <span className="text-lg">
             <Calendar size={16} />
           </span>
-          Posted: {formatDates(createdAt)}
+          Posted: {formatDates(createdAt)} {/* to check */}
         </p>
       </div>
     </div>
   );
 }
 
-export default JobCard;
+export default InternshipCard;

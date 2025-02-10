@@ -1,5 +1,4 @@
 "use client";
-import { useGlobalContext } from "@/context/globalContext";
 import { LogIn, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";

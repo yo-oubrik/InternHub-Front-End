@@ -8,7 +8,7 @@ import {
 
 const GlobalContext = createContext();
 
-axios.defaults.baseURL = "http://localhost:8000";
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_BASE_URL ;
 
 export const GlobalContextProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -16,27 +16,11 @@ export const GlobalContextProvider = ({ children }) => {
   const [userProfile, setUserProfile] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // input state
-  const [InternshipTitle, setInternshipTitle] = useState("");
-  const [internshipDescription, setInternshipDescription] = useState("");
-  const [salary, setSalary] = useState(0);
-  const [activeInternshipType, setActiveInternshipType] = useState("");
-  const [salaryType, setSalaryType] = useState("");
-  const [negotiable, setNegotiable] = useState(false);
-  const [renumerated, setRenumerated] = useState(false);
-  const [tags, setTags] = useState([]);
-  const [skills, setSkills] = useState([]);
-  const [location, setLocation] = useState({
-    country: "",
-    city: "",
-    address: "",
-  });
-
   useEffect(() => {
     const checkAuth = async () => {
       setLoading(true);
       try {
-        const res = await axios.get("http://localhost:8000/api/check-auth");
+        const res = await axios.get(`/api/auth/check-auth`);
         setIsAuthenticated(res.data.isAuthenticated);
         setAuth0User(res.data.user);
         setLoading(false);
@@ -52,42 +36,12 @@ export const GlobalContextProvider = ({ children }) => {
 
   const getUserProfile = async (id) => {
     try {
-      const res = await axios.get(`/api/v1/user/${id}`);
+      const res = await axios.get(`/api/user/${id}`);
 
       setUserProfile(res.data);
     } catch (error) {
       console.log("Error getting user profile", error);
     }
-  };
-
-  // handle input change
-  const handleTitleChange = (e) => {
-    console.log(InternshipTitle);
-    setInternshipTitle(e.target.value.trimStart());
-  };
-
-  const handleDescriptionChange = (e) => {
-    setInternshipDescription(e.target.value.trimStart());
-  };
-
-  const handleSalaryChange = (e) => {
-    setSalary(e.target.value);
-  };
-
-  const resetInternshipForm = () => {
-    setInternshipTitle("");
-    setInternshipDescription("");
-    setSalary(0);
-    setActiveInternshipType("");
-    setSalaryType("");
-    setNegotiable(false);
-    setTags([]);
-    setSkills([]);
-    setLocation({
-      country: "",
-      city: "",
-      address: "",
-    });
   };
 
   useEffect(() => {
@@ -105,28 +59,6 @@ export const GlobalContextProvider = ({ children }) => {
         userProfile,
         getUserProfile,
         loading,
-        InternshipTitle,
-        internshipDescription,
-        salary,
-        activeInternshipType,
-        salaryType,
-        negotiable,
-        tags,
-        skills,
-        location,
-        renumerated ,
-        handleTitleChange,
-        handleDescriptionChange,
-        handleSalaryChange,
-        setActiveInternshipType,
-        setInternshipDescription,
-        setSalaryType,
-        setNegotiable,
-        setTags,
-        setSkills,
-        setLocation,
-        setRenumerated,
-        resetInternshipForm,
       }}
     >
       {children}

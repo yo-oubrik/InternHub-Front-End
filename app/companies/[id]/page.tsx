@@ -1,20 +1,21 @@
 "use client";
-import JobCard from "@/Components/JobItem/JobCard";
-import { useGlobalContext } from "@/context/globalContext";
-import { useJobsContext } from "@/context/jobsContext";
-import { Job } from "@/types/types";
 import formatMoney from "@/utils/formatMoney";
 import { formatDates } from "@/utils/fotmatDates";
-import { Bookmark } from "lucide-react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 import { bookmark, bookmarkEmpty } from "@/utils/Icons";
+import { useAuth } from "@/context/authContext";
+import InternshipCard from "@/Components/JobItem/InternshipCard";
+import { useInternship } from "@/context/internshipContext";
+import { Internship, SalaryType } from "@prisma/client";
+import { useUser } from "@/context/userContext";
 
 function page() {
-  const { jobs, likeJob, applyToJob } = useJobsContext();
-  const { userProfile, isAuthenticated } = useGlobalContext();
+  const { internships, likeInternship, applyToInternship } = useInternship();
+  const { userProfile } = useUser();
+  const { isAuthenticated } = useAuth() ;
   const params = useParams();
   const router = useRouter();
   const { id } = params;
@@ -22,22 +23,22 @@ function page() {
   const [isLiked, setIsLiked] = React.useState(false);
   const [isApplied, setIsApplied] = React.useState(false);
 
-  const job = jobs.find((job: Job) => job._id === id);
-  const otherJobs = jobs.filter((job: Job) => job._id !== id);
+  const internship = internships.find((internship : Internship) => internship.id === id);
+  const otherJobs = internships.filter((internship : Internship) => internship.id !== id);
 
   useEffect(() => {
-    if (job) {
-      setIsApplied(job.applicants.includes(userProfile._id));
+    if (internship && userProfile?.id) {
+      setIsApplied(internship.applicationIDs.includes(userProfile?.id));
     }
-  }, [job, userProfile._id]);
+  }, [internship, userProfile?.id]);
 
   useEffect(() => {
-    if (job) {
-      setIsLiked(job.likes.includes(userProfile._id));
+    if (internship) {
+      setIsLiked(internship.likes.includes(userProfile?.id));
     }
-  }, [job, userProfile._id]);
+  }, [internship, userProfile?.id]);
 
-  if (!job) return null;
+  if (!internship) return null;
 
   const {
     title,
@@ -46,27 +47,27 @@ function page() {
     salary,
     createdBy,
     applicants,
-    jobType,
+    workMode,
     createdAt,
     salaryType,
     negotiable,
-  } = job;
+  } = internship;
 
-  const { name, profilePicture } = createdBy;
+  const { name , profilePicture } = createdBy ;
 
   const handleLike = (id: string) => {
     setIsLiked((prev) => !prev);
-    likeJob(id);
+    likeInternship(id);
   };
 
   return (
     <main>
       <div className="p-8 mb-8 mx-auto w-[90%] rounded-md flex gap-8">
         <div className="w-[26%] flex flex-col gap-8">
-          <JobCard activeJob job={job} />
+          <InternshipCard activeinternship internship={{...internship , _id : internship.id , likes : [""] , applicants : [""] }} />
 
-          {otherJobs.map((job: Job) => (
-            <JobCard job={job} key={job._id} />
+          {otherJobs.map((internship) => (
+            <InternshipCard internship={internship} key={internship.id} />
           ))}
         </div>
 
@@ -95,8 +96,8 @@ function page() {
                 }`}
                 onClick={() => {
                   isAuthenticated
-                    ? handleLike(job._id)
-                    : router.push("http://localhost:8000/login");
+                    ? handleLike(internship.id)
+                    : router.push("http://localhost:3000/api/login"); // to check
                 }}
               >
                 {isLiked ? bookmark : bookmarkEmpty}
@@ -120,12 +121,10 @@ function page() {
                     /
                     {salaryType
                       ? `${
-                          salaryType === "Year"
+                          salaryType === SalaryType.YEAR
                             ? "per year"
-                            : salaryType === "Month"
+                            : salaryType === SalaryType.MONTH
                             ? "per month"
-                            : salaryType === "Week"
-                            ? "per week"
                             : "per hour"
                         }`
                       : ""}
@@ -135,7 +134,7 @@ function page() {
 
               <p className="flex-1 py-2 px-4 flex flex-col items-center justify-center gap-1 bg-purple-500/20 rounded-xl">
                 <span className="text-sm">Posted</span>
-                <span className="font-bold">{formatDates(createdAt)}</span>
+                <span className="font-bold">{formatDates(createdAt)}</span> {/* to check */}
               </p>
 
               <p className="flex-1 py-2 px-4 flex flex-col items-center justify-center gap-1 bg-blue-500/20 rounded-xl">
@@ -145,7 +144,7 @@ function page() {
 
               <p className="flex-1 py-2 px-4 flex flex-col items-center justify-center gap-1 bg-yellow-500/20 rounded-xl">
                 <span className="text-sm">Job Type</span>
-                <span className="font-bold">{jobType}</span>
+                <span className="font-bold">{workMode}</span>
               </p>
             </div>
 
@@ -166,13 +165,13 @@ function page() {
             onClick={() => {
               if (isAuthenticated) {
                 if (!isApplied) {
-                  applyToJob(job._id);
+                  applyToInternship(internship.id);
                   setIsApplied(true);
                 } else {
                   toast.error("You have already applied to this job");
                 }
               } else {
-                router.push("http://localhost:8000/login");
+                router.push("http://localhost:3000/api/login"); {/* to check */}
               }
             }}
           >
@@ -185,7 +184,7 @@ function page() {
             <div className="flex flex-col gap-2">
               <p>
                 <span className="font-bold">Posted:</span>{" "}
-                {formatDates(createdAt)}
+                {formatDates(createdAt)} {/* to check */}
               </p>
 
               <p>
@@ -204,7 +203,7 @@ function page() {
               </p>
 
               <p>
-                <span className="font-bold">Job Type:</span> {jobType}
+                <span className="font-bold">Job Type:</span> {workMode}
               </p>
             </div>
           </div>
@@ -214,7 +213,7 @@ function page() {
             <p>Other relevant tags for the job position.</p>
 
             <div className="flex flex-wrap gap-4">
-              {job.tags.map((tag: string, index: number) => (
+              {internship.tags.map((tag: string, index: number) => (
                 <span
                   key={index}
                   className="px-4 py-1 rounded-full text-sm font-medium flex items-center bg-red-500/20 text-red-600"
@@ -233,7 +232,7 @@ function page() {
             </p>
 
             <div className="flex flex-wrap gap-4">
-              {job.skills.map((skill: string, index: number) => (
+              {internship.skills.map((skill: string, index: number) => (
                 <span
                   key={index}
                   className="px-4 py-1 rounded-full text-sm font-medium flex items-center bg-indigo-500/20 text-[#7263f3]"

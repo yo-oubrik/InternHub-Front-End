@@ -1,20 +1,20 @@
 "use client";
 import React from "react";
-import { useJobsContext } from "@/context/jobsContext";
+import { useInternshipContext } from "@/context/jobsContext";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
-import RadioButton from "./RadioButton";
-import { Button } from "@/components/ui/button"; // Ensure lowercase 'components'
+import RadioButton from "./RadioButton"; // Ensure lowercase 'components'
+import { Button } from "./ui/button";
+import { useFilters } from "@/context/FiltersContext";
 
 
 function Filters() {
   const {
-    handleFilterChange,
-    filters,
-    setFilters,
     searchJobs,
     setSearchQuery,
-  } = useJobsContext();
+  } = useInternshipContext();
+
+  const { handleFilterChange, filters, setFilters } = useFilters() ;
 
   const clearAllFilters = () => {
     setFilters({
@@ -26,12 +26,8 @@ function Filters() {
       initiation : false , 
       renumerated : false ,
     });
-    setSearchQuery({ tags: [] , location: "", title: "" });
+    setSearchQuery({ location: "", title: "" });
   };
-
-  function handleRenumeratedChange(value: boolean): void {
-    handleFilterChange('renumerated');
-  }
 
   return (
     <div className="w-[18rem] pr-4 space-y-6 border-r-gray-300 border-r-2">

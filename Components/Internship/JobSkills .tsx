@@ -1,17 +1,16 @@
 "use client";
-import { useGlobalContext } from "@/context/globalContext";
 import React, { useRef } from "react";
 import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
 import { X } from "lucide-react";
 import CheckboxButton from "../CheckboxButton";
-import { useJobsContext } from "@/context/jobsContext";
 import Button from "../Button";
+import { InternshipType } from "@prisma/client";
+import { useInternship } from "@/context/internshipContext";
 
 function JobSkills() {
-  const { skills, setSkills, tags, setTags } = useGlobalContext();
-  const { filters, handleFilterChange } = useJobsContext();
+  const { skills, setSkills, tags, setTags } = useInternship();
 
   const skillInputRef = useRef<HTMLInputElement>(null);
 
@@ -29,11 +28,9 @@ function JobSkills() {
     setSkills(skills.filter((skill: string) => skill !== skillToRemove));
   };
 
-  const handleAddTag = (value: string) => {
-    console.log('from handle add tag function: ', value)
-    handleFilterChange(value.toLowerCase());
-    if (!tags.includes(value.trim())) {
-      setTags((prev: string) => [...prev, value.trim()]);
+  const handleAddTag = (value: InternshipType ) => {
+    if (!tags.includes(value)) {
+      setTags((prev: InternshipType[]) => [...prev, value]);
     }
   };
 
@@ -46,7 +43,7 @@ function JobSkills() {
             htmlFor="skills"
             className="text-sm text-muted-foreground mt-2"
           >
-            Add relevant skills for the job position.
+            Add relevant skills for this internship post.
           </Label>
         </div>
 
@@ -93,8 +90,8 @@ function JobSkills() {
           </Label>
         </div>
         <CheckboxButton
-          items={['PFA', 'PFE', "Initiation"]}
-          itemsValue={[filters.pfa, filters.pfe, filters.initiation]}
+          items={['PFA', 'PFE', 'Initiation']}
+          itemsValue={[ InternshipType.PFA , InternshipType.PFE , InternshipType.INITIATION ]}
           onCheckedFunction={handleAddTag}
         />
       </div>

@@ -1,13 +1,17 @@
-interface Job {
-  _id: string;
+import { InternshipType, SalaryType, WorkMode } from "@prisma/client";
+
+interface Internship {
+  id: string;
   title: string;
   description: string;
   location: string;
   salary: number;
-  salaryType: "Year" | "Month" | "Week" | "Hour";
+  duration : number ;
+  salaryType: SalaryType ;
   negotiable: boolean;
-  jobType: string[];
-  tags: string;
+  renumerated : boolean ; 
+  workMode: WorkMode;
+  tags: InternshipType[] ;
   likes: string[];
   skills: string[];
   applicants: string[];
@@ -32,4 +36,4 @@ interface User {
   sid: string;
 }
 
-export type { Job, User };
+export type { Internship , User };

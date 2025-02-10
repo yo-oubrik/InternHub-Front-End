@@ -4,7 +4,7 @@ import { Briefcase, Building, Users } from "lucide-react";
 
 export interface Statistics {
     internshipListings: number;
-    internshipIndustries: number;
+    internshipdomains: number;
     verifiedCompanies: number;
     studentApplicants: number;
 }
@@ -17,10 +17,10 @@ const WhyChooseClient: React.FC<WhyChooseClientProps> = ({ statistics }) => {
             icon: <Briefcase className="w-6 h-6 text-primary" />,
             title: "Diverse Internship Opportunities",
             description:
-                "Explore a wide range of internship listings across various industries.",
+                "Explore a wide range of internship listings across various domains.",
             benefits: [
                 `${statistics.internshipListings}+ active internship listings`,
-                `${statistics.internshipIndustries}+ internship industries`,
+                `${statistics.internshipdomains}+ internship domains`,
                 "Remote and on-site internships",
             ],
             actionLabel: "Browse Internships",

@@ -3,7 +3,12 @@ import prisma from "@/lib/prisma";
 
 export async function GET() {
     try {
-        const internships = await prisma.internship.findMany();
+        const internships = await prisma.internship.findMany({
+            include : {
+                applicants : true , 
+                likes : true 
+            }
+        });
 
         return NextResponse.json(internships, { status: 200 });
     } catch (error) {
@@ -11,11 +16,16 @@ export async function GET() {
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }
-export async function POST(req: NextRequest) {
+export async function PUT(req: NextRequest) {
     try {
         const data = await req.json();
+        console.log("this is the data : ",data);
         const internship = await prisma.internship.create({
-            data
+            data , 
+            include : {
+                applicants : true , 
+                likes : true 
+            }
         })
         return NextResponse.json(internship, { status: 200 });
     } catch (error) {

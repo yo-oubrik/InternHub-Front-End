@@ -30,6 +30,7 @@
     "lucide-react": "^0.460.0",
     "moment": "^2.30.1",
     "next": "^14.0.0",
+    "nookies": "^2.5.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-hot-toast": "^2.4.1",

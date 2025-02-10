@@ -1,24 +1,18 @@
 "use client";
-import { useGlobalContext } from "@/context/globalContext";
 import { Separator } from "@/Components/ui/separator";
 
 import React, { useEffect, useState } from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import RadioButton from "../RadioButton";
-import { useJobsContext } from "@/context/jobsContext";
 import JobLocation from "./JobLocation";
+import { useInternship } from "@/context/internshipContext";
+import { WorkMode } from "@prisma/client";
 
 function JobTitle() {
-  const { handleTitleChange, InternshipTitle, activeInternshipType, setActiveInternshipType } =
-    useGlobalContext();
+  const { InternshipTitle, setInternshipTitle , activeInternshipType, setActiveInternshipType } =
+    useInternship();
 
-  const handleInternshipTypeChange = (value: string) => {
-    console.log('from handle internship type change ', value);
-    setActiveInternshipType(value);
-  }
-
-  console.log(activeInternshipType);
   return (
     <div className="p-6 flex flex-col gap-4 bg-background border border-border rounded-lg">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -36,7 +30,7 @@ function JobTitle() {
           type="text"
           id="InternshipTitle"
           value={InternshipTitle}
-          onChange={handleTitleChange}
+          onChange={(e) => setInternshipTitle(e.target.value.trimStart())}
           className="flex-1 w-full mt-2"
           placeholder="Enter Post Title"
         />
@@ -58,8 +52,8 @@ function JobTitle() {
           <RadioButton
             value={activeInternshipType}
             items={["remote", "on-site", "hybrid"]}
-            itemsValue={["Remote", "On-site", "Hybrid"]}
-            onValueChange={handleInternshipTypeChange}
+            itemsValue={[WorkMode.REMOTE , WorkMode.ON_SITE , WorkMode.HYBRID]}
+            onValueChange={setActiveInternshipType}
             classNameGroup="flex flex-col"
             classNameItem="py-1 pl-1 border-border border rounded-md"
           />
