@@ -1,16 +1,15 @@
 "use client";
 import { Calendar } from "lucide-react";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { Separator } from "../ui/separator";
+import React, { useEffect } from "react";
 import formatMoney from "@/utils/formatMoney";
 import { formatDates } from "@/utils/fotmatDates";
 import { bookmark, bookmarkEmpty } from "@/utils/Icons";
-import { Internship, SalaryType, User, WorkMode } from "@prisma/client";
 import { useInternship } from "@/context/internshipContext";
 import { useUser } from "@/context/userContext";
 import { useAuth } from "@/context/authContext";
 import axios from "axios";
+import { Separator } from "@/components/ui/separator";
 
 interface InternshipProps {
   internship: Internship ;
@@ -19,7 +18,7 @@ interface InternshipProps {
 
 function InternshipCard({ internship, activeinternship }: InternshipProps) {
   const { likeInternship } = useInternship();
-  const { userProfile , user , getUser } = useUser() ; 
+  const { userProfile , company , getCompany } = useUser() ; 
   const { isAuthenticated } = useAuth(); {/* to check */} 
   const [isLiked, setIsLiked] = React.useState(false);
 
@@ -31,10 +30,11 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
     applicants,
     workMode,
     createdAt,
+    likes,
   } = internship;
 
   useEffect(()=> {
-    getUser(createdBy);
+    getCompany(createdBy);
   },[createdBy]);
 
   const handleLike = (id: string) => {
@@ -43,8 +43,8 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
   };
 
   useEffect(() => {
-    setIsLiked(internship.likes.includes(userProfile?.id));
-  }, [internship.likes, userProfile?.id]);
+    userProfile && setIsLiked(likes.includes(userProfile.id));
+  }, [likes, userProfile?.id]);
 
   const companyDescription =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget nunc.";
@@ -78,8 +78,8 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
         > { /* to check */}
           <div className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center mr-2">
             <Image
-              src={ user?.profilePicture || "/user.png"}
-              alt={ user?.name || "User"}
+              src={ company?.logo || "/user.png"}
+              alt={ company?.name || "User"}
               width={40}
               height={40}
               className="rounded-md"
@@ -89,7 +89,7 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
           <div className="flex flex-col gap-1">
             <h4 className="group-hover:underline font-bold">{title}</h4>
             <p className="text-xs">
-              {name}: {applicants.length}{" "}
+              {company?.name}: {applicants.length}{" "}
               {applicants.length > 1 ? "Applicants" : "Applicant"}
             </p>
           </div>

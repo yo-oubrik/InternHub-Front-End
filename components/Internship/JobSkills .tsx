@@ -6,7 +6,6 @@ import { Input } from "../ui/input";
 import { X } from "lucide-react";
 import CheckboxButton from "../CheckboxButton";
 import Button from "../Button";
-import { InternshipType } from "@prisma/client";
 import { useInternship } from "@/context/internshipContext";
 
 function JobSkills() {

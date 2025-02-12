@@ -1,18 +1,17 @@
 "use client";
 import React, { useEffect } from "react";
 import Image from "next/image";
-import { CardTitle } from "../ui/card";
 import { formatDates } from "@/utils/fotmatDates";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
 import { Pencil, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { bookmark, bookmarkEmpty } from "@/utils/Icons";
-import { Internship } from "@prisma/client";
 import { useInternship } from "@/context/internshipContext";
 import { useAuth } from "@/context/authContext";
 import { useUser } from "@/context/userContext";
 import axios from "axios";
+import { CardTitle } from "../ui/card";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
 
 interface InternshipProps {
   internship: Internship;
@@ -32,10 +31,10 @@ function Myinternship({ internship }: InternshipProps) {
   };
 
   useEffect(() => {
-    if (isAuthenticated && internship.createdBy.id) {
-      getUserProfile(internship.createdBy.id);
+    if (isAuthenticated && internship.company.id) {
+      getUserProfile(internship.company.id);
     }
-  }, [isAuthenticated, internship.createdBy.id]);
+  }, [isAuthenticated, internship.company.id]);
 
   useEffect(() => {
     if (userProfile?.id) {
@@ -52,7 +51,7 @@ function Myinternship({ internship }: InternshipProps) {
         >
           <Image
             alt={`logo`}
-            src={internship.createdBy.profilePicture || "/user.png"}
+            src={internship.company.logo || "/user.png"}
             width={48}
             height={48}
             className="rounded-full shadow-sm"
@@ -63,7 +62,7 @@ function Myinternship({ internship }: InternshipProps) {
               {internship.title}
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              {internship.createdBy.name}
+              {internship.company.name}
             </p>
           </div>
         </div>
@@ -103,7 +102,7 @@ function Myinternship({ internship }: InternshipProps) {
               ))}
             </div>
           </div>
-          {internship.createdBy.id === userProfile?.id && (
+          {internship.company.id === userProfile?.id && (
             <div className="self-end">
               <Button variant="ghost" size="icon" className="text-gray-500">
                 <Pencil size={14} />

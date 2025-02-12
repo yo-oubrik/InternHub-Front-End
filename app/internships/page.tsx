@@ -1,11 +1,10 @@
 "use client";
-import Filters from "@/Components/Filters";
-import InternshipCard from "@/Components/JobItem/InternshipCard";
-import SearchForm from "@/Components/SearchForm";
+import Filters from "@/components/Filters";
+import InternshipCard from "@/components/JobItem/InternshipCard";
+import SearchForm from "@/components/SearchForm";
 import { useFilters } from "@/context/FiltersContext";
 import { useInternship } from "@/context/internshipContext";
 import { list, table } from "@/utils/Icons";
-import { Internship, InternshipType, WorkMode } from "@prisma/client";
 import React from "react";
 
 function page() {
@@ -13,7 +12,7 @@ function page() {
   const { filters } = useFilters() ;
   const [columns, setColumns] = React.useState(2); 
 
-  const getIcon = ( col : number ) => {
+  const getIcon = (col: number) => {
     if (col === 2) return table;
     return list;
   };
@@ -39,24 +38,24 @@ function page() {
   return (
     <main>
       <div className="w-[90%] mx-auto mb-14">
-          <div className="flex items-center justify-end py-10 ml-72">
-            <div className="relative px-2 overflow-hidden flex justify-center w-full">
-              <SearchForm />
-            </div>
-            <div className="flex flex-row h-[3.1rem]">
-              <button
-                onClick={() => setColumns(2)}
-                className="flex items-center hover:text-primary-hover gap-4 border border-gray-400 px-5 py-2 rounded-l-full font-medium"
-              >
-                <span className="text-lg">{getIcon(2)}</span>
-              </button>
-              <button
-                onClick={() => setColumns(1)}
-                className="flex items-center hover:text-primary-hover gap-4 border border-gray-400 px-5 py-2 rounded-r-full font-medium"
-              >
-                <span className="text-lg">{getIcon(1)}</span>
-              </button>
-            </div>
+        <div className="flex items-center justify-end py-10 ml-72">
+          <div className="relative px-2 overflow-hidden flex justify-center w-full">
+            <SearchForm />
+          </div>
+          <div className="flex flex-row h-[3.1rem]">
+            <button
+              onClick={() => setColumns(2)}
+              className="flex items-center hover:text-primary-hover gap-4 border border-gray-400 px-5 py-2 rounded-l-full font-medium"
+            >
+              <span className="text-lg">{getIcon(2)}</span>
+            </button>
+            <button
+              onClick={() => setColumns(1)}
+              className="flex items-center hover:text-primary-hover gap-4 border border-gray-400 px-5 py-2 rounded-r-full font-medium"
+            >
+              <span className="text-lg">{getIcon(1)}</span>
+            </button>
+          </div>
         </div>
 
         <div className="flex gap-8">
@@ -74,7 +73,7 @@ function page() {
           >
             {internships.length > 0 ? (
               filetredJobs.map((internship : Internship) => (
-                <InternshipCard key={internship.id} internship={{...internship , likes : [""] , applicants : [""] ,  }}  />
+                <InternshipCard key={internship.id} internship={internship}  />
               ))
             ) : (
               <div className="mx-24 flex items-center flex-col">

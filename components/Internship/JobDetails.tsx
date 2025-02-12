@@ -1,6 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
-import { Label } from "../ui/label";
+import React from "react";
 import "react-quill-new/dist/quill.snow.css";
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
@@ -12,10 +11,10 @@ import {
   SelectValue,
 } from "../ui/select";
 import dynamic from "next/dynamic";
-import RadioButton from "../RadioButton";
 import { Switch } from "../ui/switch";
 import { useInternship } from "@/context/internshipContext";
-import { SalaryType } from "@prisma/client";
+import { Label } from "../ui/label";
+import RadioButton from "../RadioButton";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,

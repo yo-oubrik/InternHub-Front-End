@@ -21,7 +21,7 @@ export async function PUT(req: NextRequest, { params }: { params: { internshipId
     }
 
     // Check if the student has already applied to this internship
-    const hasApplied = internship.applicants.some((applicant) => applicant.studentId === studentId);
+    const hasApplied = internship.applicants.some((applicant) => applicant.id === studentId);
     if (hasApplied) {
       return NextResponse.json({ message: "You have already applied to this internship" }, { status: 400 });
     }

@@ -2,7 +2,6 @@
 import axios from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./authContext";
-import { User } from "@prisma/client";
 
 axios.defaults.baseURL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 axios.defaults.withCredentials = true;
@@ -11,7 +10,11 @@ interface UserContextType {
     userProfile : User | null  ,
     getUserProfile : ( id : string ) => void ,
     user : User | null , 
+    company : Company | null , 
+    student : Student | null , 
     getUser : ( id : string ) => void ,
+    getCompany : ( id : string ) => void ,
+    getStudent : ( id : string ) => void ,
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -21,6 +24,8 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const { isAuthenticated , auth0User } = useAuth() ;
     const [userProfile, setUserProfile] = useState<User | null>(null);
     const [user, setUser] = useState<User | null>(null);
+    const [company, setCompany] = useState<Company | null>(null);
+    const [student, setStudent] = useState<Student | null>(null);
   
     const getUserProfile = async (id : string) => {
       try {
@@ -40,6 +45,23 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         console.error("Failed to fetch user", error);
       }
   };
+
+    const getCompany = async (id: string) => {
+      try {
+        const res = await axios.get<Company>(`/api/company/${id}`);
+        setCompany(res.data);
+      } catch (error) {
+        console.error("Failed to fetch company", error);
+      }
+  };
+    const getStudent = async (id: string) => {
+      try {
+        const res = await axios.get<Student>(`/api/student/${id}`);
+        setStudent(res.data);
+      } catch (error) {
+        console.error("Failed to fetch student", error);
+      }
+  };
   
   
     useEffect(() => {
@@ -55,7 +77,11 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
         userProfile , 
         getUserProfile , 
         user,
-        getUser ,
+        getUser,
+        company ,
+        getCompany ,
+        student ,
+        getStudent ,
       }}
     >
       {children}

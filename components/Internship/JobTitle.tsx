@@ -1,5 +1,5 @@
 "use client";
-import { Separator } from "@/Components/ui/separator";
+import { Separator } from "@/components/ui/separator";
 
 import React, { useEffect, useState } from "react";
 import { Label } from "../ui/label";
@@ -7,7 +7,6 @@ import { Input } from "../ui/input";
 import RadioButton from "../RadioButton";
 import JobLocation from "./JobLocation";
 import { useInternship } from "@/context/internshipContext";
-import { WorkMode } from "@prisma/client";
 
 function JobTitle() {
   const { InternshipTitle, setInternshipTitle , activeInternshipType, setActiveInternshipType } =

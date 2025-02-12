@@ -1,5 +1,4 @@
 "use client";
-import { Internship, InternshipType, SalaryType, WorkMode } from "@prisma/client";
 import axios from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -62,8 +61,8 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
   const [internshipDescription, setInternshipDescription] = useState<string>("");
   const [salary, setSalary] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
-  const [activeInternshipType, setActiveInternshipType] = useState<WorkMode>("ON_SITE");
-  const [salaryType, setSalaryType] = useState<SalaryType>("MONTH");
+  const [activeInternshipType, setActiveInternshipType] = useState<WorkMode>(WorkMode.ON_SITE);
+  const [salaryType, setSalaryType] = useState<SalaryType>(SalaryType.MONTH);
   const [negotiable, setNegotiable] = useState<boolean>(false);
   const [renumerated, setRenumerated] = useState<boolean>(false);
   const [tags, setTags] = useState<InternshipType[]>([]);
@@ -89,8 +88,8 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
     setInternshipDescription("");
     setSalary(0);
     setDuration(0);
-    setActiveInternshipType("ON_SITE");
-    setSalaryType("MONTH");
+    setActiveInternshipType(WorkMode.ON_SITE);
+    setSalaryType(SalaryType.MONTH);
     setNegotiable(false);
     setTags([]);
     setSkills([]);

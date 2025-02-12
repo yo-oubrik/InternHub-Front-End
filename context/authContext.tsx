@@ -1,7 +1,6 @@
 "use client"
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { User } from "@prisma/client";
 
 interface AuthContextType {
     isAuthenticated: boolean;
