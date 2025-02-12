@@ -6,8 +6,8 @@ export async function GET() {
     try {
         const internships = await prisma.internship.count();
         const industries = await prisma.internship.findMany({
-            distinct: ["industry"],
-            select: { industry: true },
+            distinct: ["domain"],
+            select: { domain: true },
         });
         const companies = await prisma.company.count();
         const students = await prisma.student.count();

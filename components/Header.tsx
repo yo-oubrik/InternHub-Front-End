@@ -1,11 +1,11 @@
 "use client";
-import { useGlobalContext } from "@/context/globalContext";
-import { LogIn, UserPlus } from "lucide-react";
+import { useAuth } from "@/context/authContext";
+import { LogIn } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import Profile from "./Profile";
-import Button from "./Button";
-import { useAuth } from "@/context/authContext";
+import SignUpDropDown from "./SignUpDropDown";
+import { Button } from "@/components/ui/button";
 
 function Header() {
   const { isAuthenticated } = useAuth();
@@ -16,18 +16,15 @@ function Header() {
         <img src="/logo.svg" alt="logo" width={105} height={105} />
       </Link>
 
-
       <div className="flex items-center gap-4">
         {isAuthenticated ? (
           <Profile />
         ) : (
           <div className="flex items-center gap-6">
-            <Button label="Login" Icon={
-              LogIn
-            } onClick={() => { router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/login`) }} />
-            <Button label="Register" Icon={
-              UserPlus
-            } onClick={() => { router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/login`) }} outline />
+            <Button onClick={() => { router.push("/login") }}>
+              <LogIn /> {" "} Sign In
+            </Button>
+            <SignUpDropDown />
           </div>
         )}
       </div>

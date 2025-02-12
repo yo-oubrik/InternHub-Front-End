@@ -29,7 +29,7 @@ model Company {
   description String
   email       String
   ice         String
-  industry    String
+  domain      String
   logo        String
   name        String
   phone       String
@@ -63,7 +63,7 @@ model Internship {
   createdAt   DateTime       @db.Date
   description String
   duration    BigInt
-  industry    String
+  domain      String
   location    String
   startDate   DateTime       @db.Date
   title       String

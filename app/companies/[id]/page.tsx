@@ -1,5 +1,5 @@
 "use client";
-import JobCard from "@/Components/JobItem/JobCard";
+import JobCard from "@/components/JobItem/JobCard";
 import { useGlobalContext } from "@/context/globalContext";
 import { useJobsContext } from "@/context/jobsContext";
 import { Job } from "@/types/types";
@@ -90,9 +90,8 @@ function page() {
                 </div>
               </div>
               <button
-                className={`text-2xl  ${
-                  isLiked ? "text-[#7263f3]" : "text-gray-400"
-                }`}
+                className={`text-2xl  ${isLiked ? "text-[#7263f3]" : "text-gray-400"
+                  }`}
                 onClick={() => {
                   isAuthenticated
                     ? handleLike(job._id)
@@ -119,15 +118,14 @@ function page() {
                   <span className="font-medium text-gray-500 text-lg">
                     /
                     {salaryType
-                      ? `${
-                          salaryType === "Year"
-                            ? "per year"
-                            : salaryType === "Month"
-                            ? "per month"
-                            : salaryType === "Week"
+                      ? `${salaryType === "Year"
+                        ? "per year"
+                        : salaryType === "Month"
+                          ? "per month"
+                          : salaryType === "Week"
                             ? "per week"
                             : "per hour"
-                        }`
+                      }`
                       : ""}
                   </span>
                 </span>
@@ -160,9 +158,8 @@ function page() {
 
         <div className="w-[26%] flex flex-col gap-8">
           <button
-            className={`text-white py-4 rounded-full hover:bg-[#7263f3]/90 hover:text-white ${
-              isApplied ? "bg-green-500" : "bg-[#7263f3]"
-            }`}
+            className={`text-white py-4 rounded-full hover:bg-[#7263f3]/90 hover:text-white ${isApplied ? "bg-green-500" : "bg-[#7263f3]"
+              }`}
             onClick={() => {
               if (isAuthenticated) {
                 if (!isApplied) {
@@ -191,9 +188,8 @@ function page() {
               <p>
                 <span className="font-bold">Salary negotiable: </span>
                 <span
-                  className={`${
-                    negotiable ? "text-green-500" : "text-red-500"
-                  }`}
+                  className={`${negotiable ? "text-green-500" : "text-red-500"
+                    }`}
                 >
                   {negotiable ? "Yes" : "No"}
                 </span>

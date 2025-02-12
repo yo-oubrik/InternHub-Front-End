@@ -1,6 +1,6 @@
 "use client";
-import Footer from "@/Components/Footer";
-import MyJob from "@/Components/JobItem/MyJob";
+import Footer from "@/components/Footer";
+import MyJob from "@/components/JobItem/MyJob";
 import { useGlobalContext } from "@/context/globalContext";
 import { useJobsContext } from "@/context/jobsContext";
 import { Job } from "@/types/types";
@@ -38,22 +38,20 @@ function page() {
         <div className="self-center flex items-center gap-6">
           <button
             className={`border border-gray-400 px-8 py-2 rounded-full font-medium
-          ${
-            activeTab === "posts"
-              ? "border-transparent bg-[#7263F3] text-white"
-              : "border-gray-400"
-          }`}
+          ${activeTab === "posts"
+                ? "border-transparent bg-[#7263F3] text-white"
+                : "border-gray-400"
+              }`}
             onClick={() => setActiveTab("posts")}
           >
             My Job Posts
           </button>
           <button
             className={`border border-gray-400 px-8 py-2 rounded-full font-medium
-          ${
-            activeTab === "likes"
-              ? "border-transparent bg-[#7263F3] text-white"
-              : "border-gray-400"
-          }`}
+          ${activeTab === "likes"
+                ? "border-transparent bg-[#7263F3] text-white"
+                : "border-gray-400"
+              }`}
             onClick={() => setActiveTab("likes")}
           >
             Liked Jobs
