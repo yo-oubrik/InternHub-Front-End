@@ -7,7 +7,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
+} from "@/components/ui/dropdown-menu";
 import { Settings, LogOut } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -16,9 +16,9 @@ import { useAuth } from "@/context/authContext";
 
 function Profile() {
   const { auth0User, logout } = useAuth()
-
-  const { picture, name, email } = auth0User;
-
+  const picture = "";
+  const email = "";
+  const name = "";
   const router = useRouter();
   return (
     <DropdownMenu>

@@ -1,10 +1,10 @@
 "use client"
-import FeatureCard from "@/Components/Cards/FeatureCard";
+import FeatureCard from "@/components/Cards/FeatureCard";
 import { Briefcase, Building, Users } from "lucide-react";
 
 export interface Statistics {
     internshipListings: number;
-    internshipdomains: number;
+    internshipDomains: number;
     verifiedCompanies: number;
     studentApplicants: number;
 }
@@ -20,7 +20,7 @@ const WhyChooseClient: React.FC<WhyChooseClientProps> = ({ statistics }) => {
                 "Explore a wide range of internship listings across various domains.",
             benefits: [
                 `${statistics.internshipListings}+ active internship listings`,
-                `${statistics.internshipdomains}+ internship domains`,
+                `${statistics.internshipDomains}+ internship domains`,
                 "Remote and on-site internships",
             ],
             actionLabel: "Browse Internships",
@@ -32,7 +32,7 @@ const WhyChooseClient: React.FC<WhyChooseClientProps> = ({ statistics }) => {
             description:
                 "Connect with top Moroccan companies offering internships to bright students",
             benefits: [
-                `${statistics.verifiedCompanies}+ trusted Moroccan companies`,
+                `${statistics.verifiedCompanies}+ Trusted Moroccan companies`,
                 "Exclusive internship opportunities",
                 "Direct application process for internships",
             ],
@@ -45,7 +45,7 @@ const WhyChooseClient: React.FC<WhyChooseClientProps> = ({ statistics }) => {
             description:
                 "Access a diverse pool of Moroccan students graduates eager to start their professional",
             benefits: [
-                `${statistics.studentApplicants.toLocaleString()}+ registered students`,
+                `${statistics.studentApplicants.toLocaleString()}+ Registered students`,
                 "Advanced search filters to find the right match",
             ],
             actionLabel: "Post an Internship",

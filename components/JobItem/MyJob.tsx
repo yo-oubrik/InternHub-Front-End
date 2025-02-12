@@ -8,11 +8,11 @@ import { Button } from "../ui/button";
 import { Pencil, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { bookmark, bookmarkEmpty } from "@/utils/Icons";
-import { Internship } from "@prisma/client";
 import { useInternship } from "@/context/internshipContext";
 import { useAuth } from "@/context/authContext";
 import { useUser } from "@/context/userContext";
 import axios from "axios";
+import { Internship } from "@/types/types";
 
 interface InternshipProps {
   internship: Internship;
@@ -20,8 +20,8 @@ interface InternshipProps {
 
 function Myinternship({ internship }: InternshipProps) {
   const { deleteInternship, likeInternship } = useInternship();
-  const { userProfile , getUserProfile } = useUser();
-  const { isAuthenticated } = useAuth() ; 
+  const { userProfile, getUserProfile } = useUser();
+  const { isAuthenticated } = useAuth();
   const [isLiked, setIsLiked] = React.useState(false);
 
   const router = useRouter();
@@ -68,13 +68,12 @@ function Myinternship({ internship }: InternshipProps) {
           </div>
         </div>
         <button
-          className={`text-2xl ${
-            isLiked ? "text-[#7263f3]" : "text-gray-400"
-          } `}
+          className={`text-2xl ${isLiked ? "text-[#7263f3]" : "text-gray-400"
+            } `}
           onClick={() => {
             isAuthenticated
               ? handleLike(internship.id)
-              : axios.get("http://localhost:3000/api/login"); {/* to check */}
+              : axios.get("http://localhost:3000/api/login"); {/* to check */ }
           }}
         >
           {isLiked ? bookmark : bookmarkEmpty}

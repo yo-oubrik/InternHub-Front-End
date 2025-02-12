@@ -1,10 +1,11 @@
 "use client";
+import { useInternship } from "@/context/internshipContext";
 import { location } from "@/utils/Icons";
 import { Search } from "lucide-react";
 import React from "react";
 
 function SearchForm() {
-  const { searchJobs, handleSearchChange, searchQuery } = useInternshipContext();
+  const { searchJobs, handleSearchChange, searchQuery } = useInternship();
   return (
     <form
       className="relative flex items-center justify-end mr-4"

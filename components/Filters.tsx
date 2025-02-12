@@ -1,30 +1,30 @@
 "use client";
 import React from "react";
-import { useInternshipContext } from "@/context/jobsContext";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 import RadioButton from "./RadioButton"; // Ensure lowercase 'components'
 import { Button } from "./ui/button";
 import { useFilters } from "@/context/FiltersContext";
+import { useInternship } from "@/context/internshipContext";
 
 
 function Filters() {
   const {
     searchJobs,
     setSearchQuery,
-  } = useInternshipContext();
+  } = useInternship();
 
-  const { handleFilterChange, filters, setFilters } = useFilters() ;
+  const { handleFilterChange, filters, setFilters } = useFilters();
 
   const clearAllFilters = () => {
     setFilters({
       remote: false,
       onSite: false,
       hybrid: false,
-      pfa : false , 
-      pfe : false , 
-      initiation : false , 
-      renumerated : false ,
+      pfa: false,
+      pfe: false,
+      initiation: false,
+      renumerated: false,
     });
     setSearchQuery({ location: "", title: "" });
   };
@@ -108,15 +108,15 @@ function Filters() {
         <h2 className="text-lg font-semibold mb-4">Include Salary</h2>
         <RadioButton
           value={filters.renumerated}
-          items={['Renumerated','Non Renumerated']}
-          itemsValue={[true,false]}
+          items={['Renumerated', 'Non Renumerated']}
+          itemsValue={[true, false]}
           onValueChange={() => handleFilterChange('renumerated')} // Use onCheckedChange here!
           classNameGroup="flex flex-col gap-5"
           classNameItem="flex items-center space-x-2"
           defaultValue={false}
         />
+      </div>
     </div>
-  </div>
   );
 }
 

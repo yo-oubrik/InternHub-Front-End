@@ -15,7 +15,7 @@ import dynamic from "next/dynamic";
 import RadioButton from "../RadioButton";
 import { Switch } from "../ui/switch";
 import { useInternship } from "@/context/internshipContext";
-import { SalaryType } from "@prisma/client";
+import { SalaryType } from "@/types/types";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), {
   ssr: false,
@@ -45,11 +45,11 @@ function JobDetails() {
     setSalary,
     salary,
     setSalaryType,
-    duration , 
+    duration,
     setDuration,
     setNegotiable,
     negotiable,
-    renumerated ,
+    renumerated,
     setRenumerated,
   } = useInternship();
 
@@ -113,7 +113,7 @@ function JobDetails() {
             />
             <div className="w-1/3">
               <Select
-                onValueChange={(value: string) => setSalaryType(value as SalaryType)} 
+                onValueChange={(value: string) => setSalaryType(value as SalaryType)}
                 disabled={!renumerated ? true : false}
                 defaultValue={SalaryType.MONTH}
               >

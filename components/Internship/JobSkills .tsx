@@ -6,7 +6,6 @@ import { Input } from "../ui/input";
 import { X } from "lucide-react";
 import CheckboxButton from "../CheckboxButton";
 import Button from "../Button";
-import { InternshipType } from "@prisma/client";
 import { useInternship } from "@/context/internshipContext";
 
 function JobSkills() {
@@ -28,7 +27,7 @@ function JobSkills() {
     setSkills(skills.filter((skill: string) => skill !== skillToRemove));
   };
 
-  const handleAddTag = (value: InternshipType ) => {
+  const handleAddTag = (value: InternshipType) => {
     if (!tags.includes(value)) {
       setTags((prev: InternshipType[]) => [...prev, value]);
     }
@@ -91,7 +90,7 @@ function JobSkills() {
         </div>
         <CheckboxButton
           items={['PFA', 'PFE', 'Initiation']}
-          itemsValue={[ InternshipType.PFA , InternshipType.PFE , InternshipType.INITIATION ]}
+          itemsValue={[InternshipType.PFA, InternshipType.PFE, InternshipType.INITIATION]}
           onCheckedFunction={handleAddTag}
         />
       </div>

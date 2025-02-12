@@ -1,11 +1,10 @@
 "use client"
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { User } from "@prisma/client";
 
 interface AuthContextType {
     isAuthenticated: boolean;
-    auth0User: User ;
+    auth0User: User;
     loading: boolean;
     logout: () => void;
 }
@@ -47,11 +46,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     return (
-      <AuthContext.Provider
-        value={{ isAuthenticated, auth0User, loading, logout }}
-      >
-        {children}
-      </AuthContext.Provider>
+        <AuthContext.Provider
+            value={{ isAuthenticated, auth0User, loading, logout }}
+        >
+            {children}
+        </AuthContext.Provider>
     );
 };
 

@@ -1,17 +1,17 @@
 "use client";
-import Footer from "@/Components/Footer";
-import MyJob from "@/Components/JobItem/MyJob";
+import Footer from "@/components/Footer";
+import MyJob from "@/components/JobItem/MyJob";
 import { useAuth } from "@/context/authContext";
 import { useInternship } from "@/context/internshipContext";
 import { useUser } from "@/context/userContext";
-import { Internship } from "@prisma/client";
+import { Internship } from "@/types/types";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 function page() {
   const { userInternships, internships } = useInternship();
   const { userProfile } = useUser();
-  const { isAuthenticated , loading } = useAuth(); {/* to check for loading */}
+  const { isAuthenticated, loading } = useAuth(); {/* to check for loading */ }
 
   const [activeTab, setActiveTab] = React.useState("posts");
 
@@ -22,7 +22,7 @@ function page() {
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!loading && !isAuthenticated) {
-      router.push("http://localhost:3000/api/login"); {/* to check */}
+      router.push("http://localhost:3000/api/login"); {/* to check */ }
     }
   }, [isAuthenticated]);
 
@@ -40,22 +40,20 @@ function page() {
         <div className="self-center flex items-center gap-6">
           <button
             className={`border border-gray-400 px-8 py-2 rounded-full font-medium
-          ${
-            activeTab === "posts"
-              ? "border-transparent bg-[#7263F3] text-white"
-              : "border-gray-400"
-          }`}
+          ${activeTab === "posts"
+                ? "border-transparent bg-[#7263F3] text-white"
+                : "border-gray-400"
+              }`}
             onClick={() => setActiveTab("posts")}
           >
             My Job Posts
           </button>
           <button
             className={`border border-gray-400 px-8 py-2 rounded-full font-medium
-          ${
-            activeTab === "likes"
-              ? "border-transparent bg-[#7263F3] text-white"
-              : "border-gray-400"
-          }`}
+          ${activeTab === "likes"
+                ? "border-transparent bg-[#7263F3] text-white"
+                : "border-gray-400"
+              }`}
             onClick={() => setActiveTab("likes")}
           >
             Liked Jobs

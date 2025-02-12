@@ -1,26 +1,26 @@
 "use client";
 import { Calendar } from "lucide-react";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { Separator } from "../ui/separator";
+import React, { useEffect } from "react";
 import formatMoney from "@/utils/formatMoney";
 import { formatDates } from "@/utils/fotmatDates";
 import { bookmark, bookmarkEmpty } from "@/utils/Icons";
-import { Internship, SalaryType, User, WorkMode } from "@prisma/client";
 import { useInternship } from "@/context/internshipContext";
 import { useUser } from "@/context/userContext";
 import { useAuth } from "@/context/authContext";
 import axios from "axios";
+import { Separator } from "@/components/ui/separator";
+import { Internship } from "@/types/types";
 
 interface InternshipProps {
-  internship: Internship ;
+  internship: Internship;
   activeinternship?: boolean;
 }
 
 function InternshipCard({ internship, activeinternship }: InternshipProps) {
   const { likeInternship } = useInternship();
-  const { userProfile , user , getUser } = useUser() ; 
-  const { isAuthenticated } = useAuth(); {/* to check */} 
+  const { userProfile, user, getUser } = useUser();
+  const { isAuthenticated } = useAuth(); {/* to check */ }
   const [isLiked, setIsLiked] = React.useState(false);
 
   const {
@@ -28,14 +28,15 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
     salaryType,
     salary,
     createdBy,
-    applicants,
+    applicationIDs,
     workMode,
     createdAt,
+    likes,
   } = internship;
 
-  useEffect(()=> {
+  useEffect(() => {
     getUser(createdBy);
-  },[createdBy]);
+  }, [createdBy]);
 
   const handleLike = (id: string) => {
     setIsLiked((prev) => !prev);
@@ -51,13 +52,13 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
 
   const workModeBg = (type: WorkMode) => {
     switch (type) {
-      case WorkMode.REMOTE :
+      case WorkMode.REMOTE:
         return "bg-green-500/20 text-green-600";
       case WorkMode.ON_SITE:
         return "bg-purple-500/20 text-purple-600";
-      case WorkMode.HYBRID :
+      case WorkMode.HYBRID:
         return "bg-blue-500/20 text-blue-600";
-      default : 
+      default:
         return "bg-gray-500/20 text-gray-600";
     }
   };
@@ -65,11 +66,10 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
   return (
     <div
       className={`p-8 rounded-xl flex flex-col gap-5
-    ${
-      activeinternship
-        ? "bg-gray-50 shadow-md border-b-2 border-[#7263f3]"
-        : "bg-white"
-    }`}
+    ${activeinternship
+          ? "bg-gray-50 shadow-md border-b-2 border-[#7263f3]"
+          : "bg-white"
+        }`}
     >
       <div className="flex justify-between">
         <div
@@ -78,8 +78,8 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
         > { /* to check */}
           <div className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center mr-2">
             <Image
-              src={ user?.profilePicture || "/user.png"}
-              alt={ user?.name || "User"}
+              src={user?.profilePicture || "/user.png"}
+              alt={user?.name || "User"}
               width={40}
               height={40}
               className="rounded-md"
@@ -96,13 +96,12 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
         </div>
 
         <button
-          className={`text-2xl ${
-            isLiked ? "text-primary" : "text-gray-400"
-          } `}
+          className={`text-2xl ${isLiked ? "text-primary" : "text-gray-400"
+            } `}
           onClick={() => {
             isAuthenticated
               ? handleLike(internship.id)
-              : axios.get("http://localhost:3000/api/login"); {/* to check */}
+              : axios.get("http://localhost:3000/api/login"); {/* to check */ }
           }}
         >
           {isLiked ? bookmark : bookmarkEmpty}
@@ -131,8 +130,8 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
             {salaryType === SalaryType.YEAR
               ? "per year"
               : salaryType === SalaryType.MONTH
-              ? "per month"
-              : "per hour"}
+                ? "per month"
+                : "per hour"}
           </span>
         </p>
 

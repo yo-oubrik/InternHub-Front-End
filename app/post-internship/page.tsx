@@ -1,7 +1,5 @@
 "use client";
-import Form from "@/Components/Internship/Form";
-import { useAuth } from "@/context/authContext";
-import { useRouter } from "next/navigation";
+import Form from "@/components/Internship/Form";
 
 function page() {
   //const { isAuthenticated, loading } = useAuth();
