@@ -4,7 +4,7 @@ import { Briefcase, Building, Users } from "lucide-react";
 
 export interface Statistics {
     internshipListings: number;
-    internshipdomains: number;
+    internshipDomains: number;
     verifiedCompanies: number;
     studentApplicants: number;
 }
@@ -20,7 +20,7 @@ const WhyChooseClient: React.FC<WhyChooseClientProps> = ({ statistics }) => {
                 "Explore a wide range of internship listings across various domains.",
             benefits: [
                 `${statistics.internshipListings}+ active internship listings`,
-                `${statistics.internshipdomains}+ internship domains`,
+                `${statistics.internshipDomains}+ internship domains`,
                 "Remote and on-site internships",
             ],
             actionLabel: "Browse Internships",

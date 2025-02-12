@@ -1,7 +1,8 @@
 "use client";
 import React from "react";
-import { GlobalContextProvider } from "@/context/globalContext";
 import { InternshipContextProvider } from "@/context/internshipContext";
+import { UserContextProvider } from "@/context/userContext";
+import { AuthProvider } from "@/context/authContext";
 
 interface Props {
   children: React.ReactNode;
@@ -9,9 +10,13 @@ interface Props {
 
 function ContextProvider({ children }: Props) {
   return (
-    <GlobalContextProvider>
-      <InternshipContextProvider>{children}</InternshipContextProvider>
-    </GlobalContextProvider>
+    <AuthProvider>
+      <UserContextProvider>
+        <InternshipContextProvider>
+          {children}
+        </InternshipContextProvider>
+      </UserContextProvider>
+    </AuthProvider>
   );
 }
 

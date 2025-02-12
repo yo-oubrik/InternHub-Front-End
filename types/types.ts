@@ -1,15 +1,15 @@
-type CompanySocialLinks = {
+export type CompanySocialLinks = {
   linkedin?: string;
   twitter?: string;
 };
 
-enum Role {
+export enum Role {
   STUDENT = "STUDENT",
   COMPANY = "COMPANY",
   ADMIN = "ADMIN",
 }
 
-abstract class User {
+export abstract class User {
   id: string;
   email: string;
   role: Role;
@@ -21,32 +21,32 @@ abstract class User {
   }
 }
 
-class Admin extends User {
-  firstName : string ; 
-  lastName : string ; 
-  profilePicture : string ; 
-  constructor(id : string,email : string ,role=Role.ADMIN ,firstName: string, lastName: string , profilePicture : string ){
-    super(id,email,role);
+export class Admin extends User {
+  firstName: string;
+  lastName: string;
+  profilePicture: string;
+  constructor(id: string, email: string, role = Role.ADMIN, firstName: string, lastName: string, profilePicture: string) {
+    super(id, email, role);
     this.firstName = firstName;
     this.lastName = lastName;
     this.profilePicture = profilePicture;
   }
 }
 
-class Student extends User {
-  firstName : string ; 
-  lastName : string ; 
-  profilePicture : string ; 
-  constructor(id : string,email : string ,role=Role.STUDENT ,firstName: string, lastName: string , profilePicture : string ){
-    super(id,email,role);
+export class Student extends User {
+  firstName: string;
+  lastName: string;
+  profilePicture: string;
+  constructor(id: string, email: string, role = Role.STUDENT, firstName: string, lastName: string, profilePicture: string) {
+    super(id, email, role);
     this.firstName = firstName;
     this.lastName = lastName;
     this.profilePicture = profilePicture;
   }
 }
 
-class Company extends User {
-  name : string ;
+export class Company extends User {
+  name: string;
   address: string;
   createdAt: Date;
   description: string;
@@ -78,8 +78,8 @@ class Company extends User {
     website: string
   ) {
     super(id, email, Role.COMPANY);
-    this.name = name ; 
-    this.logo = logo ; 
+    this.name = name;
+    this.logo = logo;
     this.address = address;
     this.createdAt = createdAt;
     this.description = description;
@@ -94,28 +94,28 @@ class Company extends User {
   }
 }
 
-enum WorkMode {
+export enum WorkMode {
   REMOTE = "REMOTE",
   ON_SITE = "ON_SITE",
   HYBRID = "HYBRID",
 }
 
-enum InternshipType {
+export enum InternshipType {
   PFA = "PFA",
   PFE = "PFE",
   INITIATION = "INITIATION",
 }
 
-enum SalaryType {
+export enum SalaryType {
   YEAR = "YEAR",
   MONTH = "MONTH",
   HOUR = "HOUR",
 }
 
-class Internship {
+export class Internship {
   id: string;
   createdBy: string;
-  company: Company ; // Supports both ID reference and full object
+  company: Company | string;
   createdAt: Date;
   description: string;
   duration: number;
@@ -130,13 +130,13 @@ class Internship {
   skills: string[];
   negotiable: boolean;
   renumerated: boolean;
-  likes : string[] ;
-  applicants : string[] ;
+  likes : string[];
+  applicants : string[];
 
   constructor(
     id: string,
     createdBy: string,
-    company: Company,
+    company: Company | string,
     createdAt: Date,
     description: string,
     duration: number,
@@ -150,9 +150,7 @@ class Internship {
     tags: InternshipType[],
     skills: string[],
     negotiable: boolean,
-    renumerated: boolean , 
-    likes : string[] = [],
-    applicants : string[] = []
+    renumerated: boolean
   ) {
     this.id = id;
     this.createdBy = createdBy;
@@ -171,7 +169,5 @@ class Internship {
     this.skills = skills;
     this.negotiable = negotiable;
     this.renumerated = renumerated;
-    this.likes = likes;
-    this.applicants = applicants;
   }
 }

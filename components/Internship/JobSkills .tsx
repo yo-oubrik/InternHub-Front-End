@@ -27,7 +27,7 @@ function JobSkills() {
     setSkills(skills.filter((skill: string) => skill !== skillToRemove));
   };
 
-  const handleAddTag = (value: InternshipType ) => {
+  const handleAddTag = (value: InternshipType) => {
     if (!tags.includes(value)) {
       setTags((prev: InternshipType[]) => [...prev, value]);
     }
@@ -90,7 +90,7 @@ function JobSkills() {
         </div>
         <CheckboxButton
           items={['PFA', 'PFE', 'Initiation']}
-          itemsValue={[ InternshipType.PFA , InternshipType.PFE , InternshipType.INITIATION ]}
+          itemsValue={[InternshipType.PFA, InternshipType.PFE, InternshipType.INITIATION]}
           onCheckedFunction={handleAddTag}
         />
       </div>

@@ -5,13 +5,13 @@ import { useAuth } from "@/context/authContext";
 import { useInternship } from "@/context/internshipContext";
 import { useUser } from "@/context/userContext";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { Internship } from "@/types/types";
 import React, { useEffect } from "react";
 
 function page() {
   const { userInternships, internships } = useInternship();
   const { userProfile } = useUser();
-  const { isAuthenticated , loading } = useAuth(); {/* to check for loading */}
+  const { isAuthenticated, loading } = useAuth(); {/* to check for loading */ }
 
   const [activeTab, setActiveTab] = React.useState("posts");
 

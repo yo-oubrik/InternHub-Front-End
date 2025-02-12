@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
 
 // Define the GET method to get an internship by ID
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {

@@ -6,7 +6,9 @@ import { Roboto } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/context/authContext";
-import { usePathname } from "next/navigation";
+import { UserContextProvider } from "@/context/userContext";
+import { InternshipContextProvider } from "@/context/internshipContext";
+import { FiltersContextProvider } from "@/context/FiltersContext";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -32,13 +34,11 @@ export default function RootLayout({
       <body className={`${roboto.className} antialiased`}>
         <Toaster position="top-center" />
         <ContextProvider>
-          <AuthProvider>
-            <Header />
-            <div className="min-h-[calc(100vh-var(--header-height))]">
-              {children}
-            </div>
-            <Footer />
-          </AuthProvider>
+                  <Header />
+                  <div className="min-h-[calc(100vh-var(--header-height))]">
+                    {children}
+                  </div>
+                  <Footer />
         </ContextProvider>
       </body>
     </html>

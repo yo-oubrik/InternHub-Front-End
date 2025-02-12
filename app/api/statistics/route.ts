@@ -14,7 +14,7 @@ export async function GET() {
 
         const statistics: Statistics = {
             internshipListings: internships,
-            internshipdomains: domains.length,
+            internshipDomains: domains.length,
             verifiedCompanies: companies,
             studentApplicants: students,
         };

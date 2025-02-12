@@ -10,11 +10,12 @@ import { useAuth } from "@/context/authContext";
 import InternshipCard from "@/components/JobItem/InternshipCard";
 import { useInternship } from "@/context/internshipContext";
 import { useUser } from "@/context/userContext";
+import { Internship, SalaryType } from "@/types/types";
 
 function page() {
   const { internships, likeInternship, applyToInternship } = useInternship();
   const { userProfile } = useUser();
-  const { isAuthenticated } = useAuth() ;
+  const { isAuthenticated } = useAuth();
   const params = useParams();
   const router = useRouter();
   const { id } = params;
@@ -22,12 +23,12 @@ function page() {
   const [isLiked, setIsLiked] = React.useState(false);
   const [isApplied, setIsApplied] = React.useState(false);
 
-  const internship = internships.find((internship : Internship) => internship.id === id);
-  const otherJobs = internships.filter((internship : Internship) => internship.id !== id);
+  const internship = internships.find((internship: Internship) => internship.id === id);
+  const otherJobs = internships.filter((internship: Internship) => internship.id !== id);
 
   useEffect(() => {
     if (internship && userProfile?.id) {
-      setIsApplied(internship.applicationIDs.includes(userProfile?.id));
+      setIsApplied(internship.applicants.includes(userProfile?.id)); // TODO
     }
   }, [internship, userProfile?.id]);
 
@@ -52,7 +53,7 @@ function page() {
     negotiable,
   } = internship;
 
-  const { name , profilePicture } = createdBy ;
+  const { name, profilePicture } = createdBy;
 
   const handleLike = (id: string) => {
     setIsLiked((prev) => !prev);
@@ -63,7 +64,7 @@ function page() {
     <main>
       <div className="p-8 mb-8 mx-auto w-[90%] rounded-md flex gap-8">
         <div className="w-[26%] flex flex-col gap-8">
-          <InternshipCard activeinternship internship={{...internship , _id : internship.id , likes : [""] , applicants : [""] }} />
+          <InternshipCard activeinternship internship={{ ...internship, _id: internship.id, likes: [""], applicants: [""] }} />
 
           {otherJobs.map((internship) => (
             <InternshipCard internship={internship} key={internship.id} />
@@ -118,12 +119,11 @@ function page() {
                   <span className="font-medium text-gray-500 text-lg">
                     /
                     {salaryType
-                      ? `${
-                          salaryType === SalaryType.YEAR
-                            ? "per year"
-                            : salaryType === SalaryType.MONTH
-                            ? "per month"
-                            : "per hour"
+                      ? `${salaryType === SalaryType.YEAR
+                        ? "per year"
+                        : salaryType === SalaryType.MONTH
+                          ? "per month"
+                          : "per hour"
                       }`
                       : ""}
                   </span>
@@ -168,7 +168,7 @@ function page() {
                   toast.error("You have already applied to this job");
                 }
               } else {
-                router.push("http://localhost:3000/api/login"); {/* to check */}
+                router.push("http://localhost:3000/api/login"); {/* to check */ }
               }
             }}
           >

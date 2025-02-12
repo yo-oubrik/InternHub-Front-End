@@ -16,9 +16,9 @@ import { useAuth } from "@/context/authContext";
 
 function Profile() {
   const { auth0User, logout } = useAuth()
-
-  const { picture, name, email } = auth0User;
-
+  const picture = "";
+  const email = "";
+  const name = "";
   const router = useRouter();
   return (
     <DropdownMenu>

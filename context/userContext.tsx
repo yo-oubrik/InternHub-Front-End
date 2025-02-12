@@ -2,6 +2,7 @@
 import axios from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./authContext";
+import { Company, Student, User } from "@/types/types";
 
 axios.defaults.baseURL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 axios.defaults.withCredentials = true;
@@ -74,8 +75,8 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
   return (
     <UserContext.Provider
       value={{
-        userProfile , 
-        getUserProfile , 
+        userProfile,
+        getUserProfile,
         user,
         getUser,
         company ,
@@ -91,6 +92,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
 export const useUser = (): UserContextType => {
   const context = useContext(UserContext);
+  
   if (!context)
     throw new Error(
       "useUserContext must be used within an UserContextProvider"

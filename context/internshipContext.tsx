@@ -3,12 +3,13 @@ import axios from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useUser } from "./userContext";
+import { Internship, InternshipType, SalaryType, WorkMode } from "@/types/types";
 
 axios.defaults.baseURL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 axios.defaults.withCredentials = true;
 
 interface InternshipContextType {
-  internships : Internship[],
+  internships: Internship[],
   loading: boolean;
   createInternship: (data: Internship) => void;
   InternshipTitle: string;
@@ -40,8 +41,8 @@ interface InternshipContextType {
   applyToInternship: (id: string) => void;
   deleteInternship: (id: string) => void;
   handleSearchChange: (searchName: string, value: string) => void;
-  searchQuery:{location: string ,title: string} ;
-  setSearchQuery : React.Dispatch<React.SetStateAction<{location: string ,title: string}>>;
+  searchQuery: { location: string, title: string };
+  setSearchQuery: React.Dispatch<React.SetStateAction<{ location: string, title: string }>>;
   resetInternshipForm: () => void;
 }
 
@@ -75,7 +76,7 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
 
   // get the user context
   const { userProfile, getUserProfile } = useUser();
-  
+
   const [internships, setInternships] = useState<Internship[]>([]);
   const [userInternships, setUserInternships] = useState<Internship[]>([]);
   const [searchQuery, setSearchQuery] = useState({
@@ -115,7 +116,7 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
     }
   }; // i think it will work
 
-  
+
   const getInternships = async () => {
     setLoading(true);
     try {
@@ -128,7 +129,7 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
     }
   }; // i think it will work 
 
-  const getUserInternships = async (userId : string) => {
+  const getUserInternships = async (userId: string) => {
     setLoading(true);
     try {
       const res = await axios.get("/api/internships/user/" + userId);
@@ -142,7 +143,7 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
     }
   };
 
-  const searchInternships = async ( location : string , title : string ) => {
+  const searchInternships = async (location: string, title: string) => {
     setLoading(true);
     try {
       // build query string
@@ -165,7 +166,7 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
   };
 
   // get internship by id
-  const getInternshipById = async (id : string) => {
+  const getInternshipById = async (id: string) => {
     setLoading(true);
     try {
       const res = await axios.get(`/api/internship/${id}`); // to check
@@ -180,7 +181,7 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
   };
 
   // like an internship
-  const likeInternship = async (internshipId : string) => {
+  const likeInternship = async (internshipId: string) => {
     console.log("internship liked", internshipId);
     try {
       const res = await axios.put(`/api/internships/like/${internshipId}`);
@@ -194,7 +195,7 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
   };
 
   // apply to a internship
-  const applyToInternship = async (internshipId : string ) => {
+  const applyToInternship = async (internshipId: string) => {
     // const internship = internships.find((internship) => internship.id === internshipId);
 
     // if (internship && internship.applicants.includes(userProfile._id)) {
@@ -203,7 +204,7 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
     // }
 
     try {
-     await axios.put(`/api/internships/apply/${internshipId}`);
+      await axios.put(`/api/internships/apply/${internshipId}`);
 
       toast.success("Applied to internship successfully");
       getInternships();
@@ -214,7 +215,7 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
   };
 
   // delete a internship
-  const deleteInternship = async (internshipId : string) => {
+  const deleteInternship = async (internshipId: string) => {
     try {
       await axios.delete(`/api/internship/${internshipId}`);
       setInternships((prevInternships) => prevInternships.filter((internship) => internship.id !== internshipId));
@@ -225,22 +226,22 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
       console.log("Error deleting internship", error);
     }
   };
-  
+
   //
-  const handleSearchChange = ( searchName : string , value : string ) => {
+  const handleSearchChange = (searchName: string, value: string) => {
     setSearchQuery((prev) => ({ ...prev, [searchName]: value }));
   };
 
-  useEffect(() => {
-    getInternships();
-  }, []);
+  // useEffect(() => {
+  //   getInternships();
+  // }, []);
 
-  useEffect(() => {
-    if (userProfile?.id) {
-      getUserInternships(userProfile.id);
-      getUserProfile(userProfile.id);
-    }
-  }, [userProfile?.id]);
+  // useEffect(() => {
+  //   if (userProfile?.id) {
+  //     getUserInternships(userProfile.id);
+  //     getUserProfile(userProfile.id);
+  //   }
+  // }, [userProfile?.id]);
 
 
   return (
@@ -259,7 +260,7 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
         tags,
         skills,
         location,
-        renumerated ,
+        renumerated,
         setInternshipTitle,
         setInternshipDescription,
         setActiveInternshipType,
@@ -292,7 +293,7 @@ export const useInternship = (): InternshipContextType => {
   const context = useContext(InternshipContext);
   if (!context)
     throw new Error(
-      "useInternshipContext must be used within an InternshipContextProvider"
+      "useInternship must be used within an InternshipContextProvider"
     );
   return context;
 };

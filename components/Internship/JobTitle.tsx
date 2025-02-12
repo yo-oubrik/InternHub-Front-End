@@ -1,15 +1,15 @@
 "use client";
 import { Separator } from "@/components/ui/separator";
-
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import RadioButton from "../RadioButton";
 import JobLocation from "./JobLocation";
 import { useInternship } from "@/context/internshipContext";
+import { WorkMode } from "@/types/types";
 
 function JobTitle() {
-  const { InternshipTitle, setInternshipTitle , activeInternshipType, setActiveInternshipType } =
+  const { InternshipTitle, setInternshipTitle, activeInternshipType, setActiveInternshipType } =
     useInternship();
 
   return (
@@ -51,7 +51,7 @@ function JobTitle() {
           <RadioButton
             value={activeInternshipType}
             items={["remote", "on-site", "hybrid"]}
-            itemsValue={[WorkMode.REMOTE , WorkMode.ON_SITE , WorkMode.HYBRID]}
+            itemsValue={[WorkMode.REMOTE, WorkMode.ON_SITE, WorkMode.HYBRID]}
             onValueChange={setActiveInternshipType}
             classNameGroup="flex flex-col"
             classNameItem="py-1 pl-1 border-border border rounded-md"
