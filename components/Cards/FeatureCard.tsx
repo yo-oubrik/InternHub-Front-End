@@ -38,7 +38,8 @@ const FeatureCard = ({ icon, title, description, benefits, actionLabel, actionLi
             </CardContent>
             <CardFooter>
                 <Button label={actionLabel} onClick={() => {
-                    isAuthenticated ? router.push(actionLink) : router.push("http://localhost:8000/login");
+                    router.push('/profile');
+                    // isAuthenticated ? router.push(actionLink) : router.push("http://localhost:8000/login");
                 }} />
             </CardFooter>
         </Card>

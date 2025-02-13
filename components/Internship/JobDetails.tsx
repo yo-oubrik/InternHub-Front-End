@@ -10,36 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import dynamic from "next/dynamic";
 import { Switch } from "../ui/switch";
 import { useInternship } from "@/context/internshipContext";
 import { Label } from "../ui/label";
 import RadioButton from "../RadioButton";
 import { SalaryType } from "@/types/types";
+import TextEditor from "../TextEditor";
 
 
-const ReactQuill = dynamic(() => import("react-quill-new"), {
-  ssr: false,
-});
-
-function MyEditor() {
-  const { setInternshipDescription, internshipDescription } = useInternship();
-
-  return (
-    <ReactQuill
-      value={internshipDescription}
-      onChange={setInternshipDescription}
-      style={{
-        minHeight: "400px",
-        maxHeight: "900px",
-      }}
-      modules={{
-        toolbar: true,
-      }}
-      className="custom-quill-editor"
-    />
-  );
-}
 
 function JobDetails() {
   const {
@@ -52,6 +30,8 @@ function JobDetails() {
     negotiable,
     renumerated,
     setRenumerated,
+    internshipDescription,
+    setInternshipDescription
   } = useInternship();
 
   return (
@@ -64,7 +44,12 @@ function JobDetails() {
           </Label>
         </div>
         <div className="flex-1">
-          <MyEditor />
+          <TextEditor
+            value={internshipDescription}
+            onChange={setInternshipDescription}
+            style={{ minHeight: "400px", maxHeight: "900px" }}
+            modules={{ toolbar: true }}
+          />
         </div>
       </div>
 
@@ -114,7 +99,9 @@ function JobDetails() {
             />
             <div className="w-1/3">
               <Select
-                onValueChange={(value: string) => setSalaryType(value as SalaryType)}
+                onValueChange={(value: string) =>
+                  setSalaryType(value as SalaryType)
+                }
                 disabled={!renumerated ? true : false}
                 defaultValue={SalaryType.MONTH}
               >

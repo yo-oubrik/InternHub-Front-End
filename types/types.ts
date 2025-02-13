@@ -37,11 +37,13 @@ export class Student extends User {
   firstName: string;
   lastName: string;
   profilePicture: string;
-  constructor(id: string, email: string, role = Role.STUDENT, firstName: string, lastName: string, profilePicture: string) {
+  ecole : string ; 
+  constructor(id: string, email: string, role = Role.STUDENT, firstName: string, lastName: string, profilePicture: string , ecole : string ) {
     super(id, email, role);
     this.firstName = firstName;
     this.lastName = lastName;
     this.profilePicture = profilePicture;
+    this.ecole = ecole ; 
   }
 }
 
@@ -150,7 +152,9 @@ export class Internship {
     tags: InternshipType[],
     skills: string[],
     negotiable: boolean,
-    renumerated: boolean
+    renumerated: boolean,
+    likes: string[] = [] ,
+    applicants : string[] = []
   ) {
     this.id = id;
     this.createdBy = createdBy;
@@ -169,5 +173,7 @@ export class Internship {
     this.skills = skills;
     this.negotiable = negotiable;
     this.renumerated = renumerated;
+    this.likes = likes ; 
+    this.applicants = applicants ; 
   }
 }
