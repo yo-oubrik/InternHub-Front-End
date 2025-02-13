@@ -7,7 +7,7 @@ import JobSkills from "./JobSkills ";
 import JobTitle from "./JobTitle";
 import { useInternship } from "@/context/internshipContext";
 
-function Form() {
+function PostInternshipForm() {
   const {
     createInternship,
     InternshipTitle,
@@ -58,14 +58,14 @@ function Form() {
       }${location.country}`;
 
     if (activeSection === 'Summary') {
-      if (InternshipTitle === "" || tags.length === 0 || internshipDescription === "" || loc === "" ) {
+      if (InternshipTitle === "" || tags.length === 0 || internshipDescription === "" || loc === "") {
         setShowAlert(true);
         return;
       }
     }
 
     createInternship({
-      id : '' ,
+      id: '',
       title: InternshipTitle,
       description: internshipDescription,
       salaryType,
@@ -75,9 +75,15 @@ function Form() {
       location: loc,
       skills,
       tags,
-      domain : '' ,
+      domain: '',
       negotiable,
-      renumerated
+      renumerated,
+      applicants: [],
+      company: "",
+      createdAt: new Date(new Date(8, 9, 2002)),
+      createdBy: "",
+      likes: [],
+      updatedAt: new Date(8, 9, 2002)
     });
 
     activeSection === 'Summary' && resetInternshipForm();
@@ -155,7 +161,7 @@ function Form() {
           title="🚨 Missing Required Fields"
           titleClassName="mb-1"
           content={"Oops! It looks like you missed some required fields. Please review the form and complete all necessary details before proceeding."}
-          contentClassName="text-base" // whitespace-pre-line if inserting \n within the content attribute.         
+          contentClassName="text-base"
           confirmButton={false}
           cancelButtonClassName="bg-primary hover:bg-primary-hover text-white hover:text-white"
           onCancel={() => setShowAlert(false)}
@@ -165,4 +171,4 @@ function Form() {
   );
 }
 
-export default Form;
+export default PostInternshipForm;

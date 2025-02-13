@@ -21,7 +21,7 @@ function Header() {
           <Profile />
         ) : (
           <div className="flex items-center gap-6">
-            <Button onClick={() => { router.push("/login") }}>
+            <Button onClick={() => { router.push("/signin") }}>
               <LogIn /> {" "} Sign In
             </Button>
             <SignUpDropDown />

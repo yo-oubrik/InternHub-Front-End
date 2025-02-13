@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Header from "@/components/Header";
 import "./globals.css";
 import ContextProvider from "@/providers/ContextProvider";
@@ -32,13 +32,19 @@ export default function RootLayout({
         />
       </head>
       <body className={`${roboto.className} antialiased`}>
-        <Toaster position="top-center" />
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            style: { maxWidth: "650px" },
+          }}
+        />
+
         <ContextProvider>
-                  <Header />
-                  <div className="min-h-[calc(100vh-var(--header-height))]">
-                    {children}
-                  </div>
-                  <Footer />
+          <Header />
+          <div className="min-h-[calc(100vh-var(--header-height))]">
+            {children}
+          </div>
+          <Footer />
         </ContextProvider>
       </body>
     </html>

@@ -1,3 +1,5 @@
+import { ListEnd } from "lucide-react";
+
 export type CompanySocialLinks = {
   linkedin?: string;
   twitter?: string;
@@ -130,8 +132,8 @@ export class Internship {
   skills: string[];
   negotiable: boolean;
   renumerated: boolean;
-  likes : string[];
-  applicants : string[];
+  likes: string[];
+  applicants: string[];
 
   constructor(
     id: string,
@@ -150,7 +152,9 @@ export class Internship {
     tags: InternshipType[],
     skills: string[],
     negotiable: boolean,
-    renumerated: boolean
+    renumerated: boolean,
+    likes: string[],
+    applicants: string[]
   ) {
     this.id = id;
     this.createdBy = createdBy;
@@ -169,5 +173,7 @@ export class Internship {
     this.skills = skills;
     this.negotiable = negotiable;
     this.renumerated = renumerated;
+    this.likes = likes;
+    this.applicants = applicants;
   }
 }
