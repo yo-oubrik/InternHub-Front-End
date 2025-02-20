@@ -14,7 +14,7 @@ import { Internship, SalaryType } from "@/types/types";
 
 function page() {
   const { internships, likeInternship, applyToInternship } = useInternship();
-  const { userProfile } = useUser();
+  const { userProfile , company , getCompany } = useUser();
   const { isAuthenticated } = useAuth();
   const params = useParams();
   const router = useRouter();
@@ -26,20 +26,10 @@ function page() {
   const internship = internships.find((internship: Internship) => internship.id === id);
   const otherJobs = internships.filter((internship: Internship) => internship.id !== id);
 
-  useEffect(() => {
-    if (internship && userProfile?.id) {
-      setIsApplied(internship.applicants.includes(userProfile?.id)); // TODO
-    }
-  }, [internship, userProfile?.id]);
-
-  useEffect(() => {
-    if (internship) {
-      setIsLiked(internship.likes.includes(userProfile?.id));
-    }
-  }, [internship, userProfile?.id]);
-
+  
+  
   if (!internship) return null;
-
+  
   const {
     title,
     location,
@@ -51,9 +41,25 @@ function page() {
     createdAt,
     salaryType,
     negotiable,
+    likes
   } = internship;
 
-  const { name, profilePicture } = createdBy;
+  console.log("user Profile : " ,userProfile);
+  console.log("company : ",company);
+  console.log("Internships : ",internship);
+  console.log("other jobs : ",otherJobs);
+  
+  useEffect(() => {
+    userProfile && setIsLiked(likes.includes(userProfile.id));
+  }, [likes, userProfile?.id]);
+
+  useEffect(() => {
+    userProfile && setIsApplied(applicants.includes(userProfile.id));
+  }, [applicants, userProfile?.id]);
+
+  useEffect(()=> {
+    getCompany(createdBy);
+  },[createdBy]);
 
   const handleLike = (id: string) => {
     setIsLiked((prev) => !prev);
@@ -64,7 +70,7 @@ function page() {
     <main>
       <div className="p-8 mb-8 mx-auto w-[90%] rounded-md flex gap-8">
         <div className="w-[26%] flex flex-col gap-8">
-          <InternshipCard activeinternship internship={{ ...internship, _id: internship.id, likes: [""], applicants: [""] }} />
+          <InternshipCard activeinternship internship={{ ...internship}} />
 
           {otherJobs.map((internship) => (
             <InternshipCard internship={internship} key={internship.id} />
@@ -77,8 +83,8 @@ function page() {
               <div className="flex items-center gap-2">
                 <div className="w-14 h-14 relative overflow-hidden rounded-md flex items-center justify-center bg-gray-200">
                   <Image
-                    src={profilePicture || "/user.png"}
-                    alt={name || "User"}
+                    src={company?.logo || "/user.png"}
+                    alt={company?.name || "User"}
                     width={45}
                     height={45}
                     className="rounded-md"
@@ -86,7 +92,7 @@ function page() {
                 </div>
 
                 <div>
-                  <p className="font-bold">{name}</p>
+                  <p className="font-bold">{company?.name}</p>
                   <p className="text-sm">Recruiter</p>
                 </div>
               </div>
@@ -94,9 +100,9 @@ function page() {
                 className={`text-2xl  ${isLiked ? "text-[#7263f3]" : "text-gray-400"
                   }`}
                 onClick={() => {
-                  isAuthenticated
-                    ? handleLike(internship.id)
-                    : router.push("http://localhost:3000/api/login"); // to check
+                  // isAuthenticated ? 
+                    handleLike(internship.id)
+                    // : router.push("http://localhost:3000/api/login"); // to check
                 }}
               >
                 {isLiked ? bookmark : bookmarkEmpty}
@@ -160,17 +166,18 @@ function page() {
             className={`text-white py-4 rounded-full hover:bg-[#7263f3]/90 hover:text-white ${isApplied ? "bg-green-500" : "bg-[#7263f3]"
               }`}
             onClick={() => {
-              if (isAuthenticated) {
+              // if (isAuthenticated) {
                 if (!isApplied) {
                   applyToInternship(internship.id);
                   setIsApplied(true);
                 } else {
                   toast.error("You have already applied to this job");
                 }
-              } else {
-                router.push("http://localhost:3000/api/login"); {/* to check */ }
-              }
-            }}
+              // } else {
+              //   router.push("http://localhost:3000/api/login"); {/* to check */ }
+              // }
+            }
+          }
           >
             {isApplied ? "Applied" : "Apply Now"}
           </button>

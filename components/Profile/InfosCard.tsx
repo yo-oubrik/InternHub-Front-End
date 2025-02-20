@@ -1,18 +1,16 @@
 "use client";
 import { Pencil } from 'lucide-react';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import EditModal from './EditModal';
-import TextEditor from '../TextEditor';
 import { Textarea } from '../ui/textarea';
 
 const InfosCard = () => {
 
-    const [isOpenModal, setIsOpenModal] = useState<boolean>(true);
+    const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
     const [description , setDescription] = useState<string>('');
-    console.log(description);
-
+    const [infos , setInfos] = useState<string>("");
   return (
-    <div className="bg-gray-50 border-primary-hover border-2 rounded-lg py-6 px-5 w-[90%] mx-auto">
+    <div className="bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[90%] mx-auto">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl text-gray-800 font-medium">Infos</h2>
         <div>
@@ -22,8 +20,12 @@ const InfosCard = () => {
           />
         </div>
       </div>
-      <p className={`text-gray-600 px-3 mt-5 mb-3 whitespace-pre-line ${description || "text-center"}`}>
-        {description || "---"}
+      <p
+        className={`text-gray-600 px-3 mt-5 mb-3 whitespace-pre-line ${
+          description || "text-center"
+        }`}
+      >
+        {infos || "---"}
       </p>
       {isOpenModal && (
         <EditModal
@@ -41,16 +43,20 @@ const InfosCard = () => {
           }
           cancelButton="Cancel"
           onCancel={() => {
-            setDescription("");
+            infos !== description && setDescription(infos);
             setIsOpenModal(false);
           }}
+
           cancelButtonClassName="border-primary border-[1px] text-primary bg-transparent"
           confirmButton="Save"
-          onConfirm={() => setIsOpenModal(false)}
+          onConfirm={() => {
+            setInfos(description);
+            setIsOpenModal(false);
+          }}
         />
       )}
     </div>
   );
 }
 
-export default InfosCard
+export default InfosCard ; 

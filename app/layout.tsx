@@ -2,17 +2,13 @@
 import Header from "@/components/Header";
 import "./globals.css";
 import ContextProvider from "@/providers/ContextProvider";
-import { Roboto } from "next/font/google";
+import { Poppins } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import Footer from "@/components/Footer";
-import { AuthProvider } from "@/context/authContext";
-import { UserContextProvider } from "@/context/userContext";
-import { InternshipContextProvider } from "@/context/internshipContext";
-import { FiltersContextProvider } from "@/context/FiltersContext";
 
-const roboto = Roboto({
+const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["400", "500", "700", "900"],
+  weight: ["100","200","300","400","500","600","700","900"],
 });
 
 export default function RootLayout({
@@ -31,7 +27,7 @@ export default function RootLayout({
           referrerPolicy="no-referrer"
         />
       </head>
-      <body className={`${roboto.className} antialiased`}>
+      <body className={`${poppins.className} antialiased`}>
         <Toaster position="top-center" />
         <ContextProvider>
                   <Header />

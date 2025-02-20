@@ -38,15 +38,16 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
     getCompany(createdBy);
   },[createdBy]);
 
+  
+  useEffect(() => {
+    userProfile && setIsLiked(likes.includes(userProfile.id));
+  }, [likes, userProfile?.id]);
+  
   const handleLike = (id: string) => {
     setIsLiked((prev) => !prev);
     likeInternship(id);
   };
-
-  useEffect(() => {
-    userProfile && setIsLiked(likes.includes(userProfile.id));
-  }, [likes, userProfile?.id]);
-
+  
   const companyDescription =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget nunc.";
 

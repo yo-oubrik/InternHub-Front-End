@@ -114,7 +114,7 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
     } finally {
       setLoading(false);
     }
-  }; // i think it will work
+  };
 
 
   const getInternships = async () => {
@@ -127,7 +127,7 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
     } finally {
       setLoading(false);
     }
-  }; // i think it will work 
+  };
 
   const getUserInternships = async (userId: string) => {
     setLoading(true);
@@ -243,7 +243,7 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
   //   }
   // }, [userProfile?.id]);
 
-
+  console.log("internships : ",internships);
   return (
     <InternshipContext.Provider
       value={{

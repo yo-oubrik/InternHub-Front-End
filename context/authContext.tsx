@@ -19,25 +19,26 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(true);
     const [auth0User, setAuth0User] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                const res = await axios.get(`/api/auth/check-auth`);
-                setIsAuthenticated(res.data.isAuthenticated);
-                setAuth0User(res.data.user);
-                console.log(isAuthenticated, auth0User);
-            } catch (error) {
-                console.error("Auth check failed:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
 
-        checkAuth();
-    }, []);
+    // useEffect(() => {
+    //     const checkAuth = async () => {
+    //         try {
+    //             const res = await axios.get(`/api/auth/check-auth`);
+    //             setIsAuthenticated(res.data.isAuthenticated);
+    //             setAuth0User(res.data.user);
+    //             console.log(isAuthenticated, auth0User);
+    //         } catch (error) {
+    //             console.error("Auth check failed:", error);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     checkAuth();
+    // }, []);
 
     const logout = async () => {
         axios.post(`/api/auth/logout`);
