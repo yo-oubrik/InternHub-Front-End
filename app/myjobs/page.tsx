@@ -16,20 +16,20 @@ function page() {
   const [activeTab, setActiveTab] = React.useState("posts");
 
   let userId : string = "" // TODO
-  useEffect(() => {
-    if (!userProfile) {
-      axios.get("/");
-    }else{
-      userId = userProfile.id;
-    }
-  }, [userProfile]);
+  // useEffect(() => {
+  //   if (!userProfile) {
+  //     axios.get("/");
+  //   }else{
+  //     userId = userProfile.id;
+  //   }
+  // }, [userProfile]);
 
   // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      axios.get("http://localhost:3000/api/login"); {/* to check */}
-    }
-  }, [isAuthenticated]);
+  // useEffect(() => {
+  //   if (!loading && !isAuthenticated) {
+  //     axios.get("http://localhost:3000/api/login"); {/* to check */}
+  //   }
+  // }, [isAuthenticated]);
 
   const likedJobs = internships.filter((internship: Internship) => {
     return internship.likes.includes(userId);

@@ -54,39 +54,39 @@ function PostInternshipForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const loc = `${location.address ? location.address + ", " : ""}${location.city ? location.city + ", " : ""
-      }${location.country}`;
+    const loc = `${location.address ? location.address + ", " : ""}${
+      location.city ? location.city + ", " : ""
+    }${location.country}`;
 
-    if (activeSection === 'Summary') {
-      if (InternshipTitle === "" || tags.length === 0 || internshipDescription === "" || loc === "") {
+    if (activeSection === "Summary") {
+      if (
+        InternshipTitle === "" ||
+        tags.length === 0 ||
+        internshipDescription === "" ||
+        loc === ""
+      ) {
         setShowAlert(true);
         return;
       }
     }
 
-    createInternship({
-      id: '',
-      title: InternshipTitle,
-      description: internshipDescription,
-      salaryType,
-      workMode: activeInternshipType,
-      salary,
-      duration,
-      location: loc,
-      skills,
-      tags,
-      domain: '',
-      negotiable,
-      renumerated,
-      applicants: [],
-      company: "",
-      createdAt: new Date(new Date(8, 9, 2002)),
-      createdBy: "",
-      likes: [],
-      updatedAt: new Date(8, 9, 2002)
-    });
+    // createInternship({
+    //   id : '' ,
+    //   title: InternshipTitle,
+    //   description: internshipDescription,
+    //   salaryType,
+    //   workMode: activeInternshipType,
+    //   salary,
+    //   duration,
+    //   location: loc,
+    //   skills,
+    //   tags,
+    //   domain : '' ,
+    //   negotiable,
+    //   renumerated
+    // });
 
-    activeSection === 'Summary' && resetInternshipForm();
+    activeSection === "Summary" && resetInternshipForm();
   };
   return (
     <div className="w-full flex flex-col gap-6">
@@ -94,15 +94,17 @@ function PostInternshipForm() {
         {sections.map((section, index) => (
           <div
             key={index}
-            className={`w-full flex items-center justify-center ${visitedSections.size > index + 1 ? "bg-primary" : "bg-transparent"
-              }`}
+            className={`w-full flex items-center justify-center ${
+              visitedSections.size > index + 1 ? "bg-primary" : "bg-transparent"
+            }`}
           >
             <div
               className={`py-3 relative gap-2 w-full text-center font-medium rounded-r-full border-r-2
-                  ${visitedSections.has(section)
-                  ? "text-white bg-primary"
-                  : "text-black"
-                }
+                  ${
+                    visitedSections.has(section)
+                      ? "text-white bg-primary"
+                      : "text-black"
+                  }
                   `}
             >
               {section}
@@ -160,7 +162,9 @@ function PostInternshipForm() {
           setIsOpenModal={setShowAlert}
           title="🚨 Missing Required Fields"
           titleClassName="mb-1"
-          content={"Oops! It looks like you missed some required fields. Please review the form and complete all necessary details before proceeding."}
+          content={
+            "Oops! It looks like you missed some required fields. Please review the form and complete all necessary details before proceeding."
+          }
           contentClassName="text-base"
           confirmButton={false}
           cancelButtonClassName="bg-primary hover:bg-primary-hover text-white hover:text-white"

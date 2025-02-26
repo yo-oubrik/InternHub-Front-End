@@ -6,7 +6,7 @@
   :root {
     --header-height: 105px;
     --footer-height: 120px;
-    --background: 210, 50%, 96%;
+    --background: 212, 74%, 95%;
     --background-dark: 220, 7%, 92%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -67,10 +67,6 @@
   body {
     @apply bg-background text-foreground;
   }
-}
-
-body {
-  background: #f0f5fa;
 }
 
 .custom-quill-editor .ql-toolbar {

@@ -7,6 +7,7 @@ import { X } from "lucide-react";
 import CheckboxButton from "../CheckboxButton";
 import Button from "../Button";
 import { useInternship } from "@/context/internshipContext";
+import { InternshipType } from "@/types/types";
 
 function JobSkills() {
   const { skills, setSkills, tags, setTags } = useInternship();

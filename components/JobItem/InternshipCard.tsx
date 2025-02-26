@@ -19,7 +19,7 @@ interface InternshipProps {
 
 function InternshipCard({ internship, activeinternship }: InternshipProps) {
   const { likeInternship } = useInternship();
-  const { userProfile , company , getCompany } = useUser() ; 
+  const { userProfile } = useUser() ; 
   const { isAuthenticated } = useAuth(); {/* to check */} 
   const [isLiked, setIsLiked] = React.useState(false);
 
@@ -27,26 +27,23 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
     title,
     salaryType,
     salary,
-    createdBy,
     applicants,
     workMode,
     createdAt,
     likes,
+    company,
   } = internship;
 
-  useEffect(()=> {
-    getCompany(createdBy);
-  },[createdBy]);
-
-  const handleLike = (id: string) => {
-    setIsLiked((prev) => !prev);
-    likeInternship(id);
-  };
-
+  
   useEffect(() => {
     userProfile && setIsLiked(likes.includes(userProfile.id));
   }, [likes, userProfile?.id]);
-
+  
+  const handleLike = (id: string) => {
+    setIsLiked((prev) => !prev);
+    // likeInternship(id);
+  };
+  
   const companyDescription =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget nunc.";
 
@@ -65,11 +62,8 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
 
   return (
     <div
-      className={`p-8 rounded-xl flex flex-col gap-5
-    ${activeinternship
-          ? "bg-gray-50 shadow-md border-b-2 border-[#7263f3]"
-          : "bg-white"
-        }`}
+      className={`p-6 rounded-xl bg-white flex flex-col gap-5
+    ${activeinternship && "shadow-md border-b-2 border-primary"}`}
     >
       <div className="flex justify-between">
         <div
@@ -78,18 +72,18 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
         > { /* to check */}
           <div className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center mr-2">
             <Image
-              src={ company?.logo || "/user.png"}
-              alt={ company?.name || "User"}
+              src={ company.logo || "/user.png"}
+              alt={ company.name || "User"}
               width={40}
               height={40}
               className="rounded-md"
             />
           </div>
 
-          <div className="flex flex-col gap-1">
-            <h4 className="group-hover:underline font-bold">{title}</h4>
-            <p className="text-xs">
-              {company?.name}: {applicants.length}{" "}
+          <div className="flex flex-col">
+            <h4 className="text-base font-bold hover:underline">{title}</h4>
+            <p className="text-sm">
+              {company?.name} : {applicants.length}{" "}
               {applicants.length > 1 ? "Applicants" : "Applicant"}
             </p>
           </div>
@@ -99,9 +93,9 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
           className={`text-2xl ${isLiked ? "text-primary" : "text-gray-400"
             } `}
           onClick={() => {
-            isAuthenticated
-              ? handleLike(internship.id)
-              : axios.get("http://localhost:3000/api/login"); {/* to check */ }
+            // isAuthenticated ?
+              handleLike(internship.id)
+              // : axios.get("http://localhost:3000/api/login"); {/* to check */ }
           }}
         >
           {isLiked ? bookmark : bookmarkEmpty}
@@ -124,8 +118,8 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
 
       <div className="flex justify-between items-center gap-6">
         <p>
-          <span className="font-bold">{formatMoney(salary, "GBP")}</span>
-          <span className="font-medium text-gray-400 text-lg">
+          <span className="font-bold text-nowrap">{formatMoney(salary)} MAD</span>
+          <span className="font-medium text-gray-400 text-base">
             /
             {salaryType === SalaryType.YEAR
               ? "per year"
