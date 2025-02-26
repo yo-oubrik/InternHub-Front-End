@@ -64,21 +64,21 @@ function Form() {
       }
     }
 
-    createInternship({
-      id : '' ,
-      title: InternshipTitle,
-      description: internshipDescription,
-      salaryType,
-      workMode: activeInternshipType,
-      salary,
-      duration,
-      location: loc,
-      skills,
-      tags,
-      domain : '' ,
-      negotiable,
-      renumerated
-    });
+    // createInternship({
+    //   id : '' ,
+    //   title: InternshipTitle,
+    //   description: internshipDescription,
+    //   salaryType,
+    //   workMode: activeInternshipType,
+    //   salary,
+    //   duration,
+    //   location: loc,
+    //   skills,
+    //   tags,
+    //   domain : '' ,
+    //   negotiable,
+    //   renumerated
+    // });
 
     activeSection === 'Summary' && resetInternshipForm();
   };

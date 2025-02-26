@@ -11,7 +11,7 @@ function Header() {
   const { isAuthenticated } = useAuth();
   const router = useRouter();
   return (
-    <header className="px-14 bg-[#f0f5fa] flex justify-between items-center">
+    <header className="px-14 bg-background flex justify-between items-center">
       <Link href={"/"} className="outline-none">
         <img src="/logo.svg" alt="logo" width={105} height={105} />
       </Link>

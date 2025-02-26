@@ -37,13 +37,13 @@ export class Student extends User {
   firstName: string;
   lastName: string;
   profilePicture: string;
-  ecole : string ; 
-  constructor(id: string, email: string, role = Role.STUDENT, firstName: string, lastName: string, profilePicture: string , ecole : string ) {
+  school : string ; 
+  constructor(id: string, email: string, role = Role.STUDENT, firstName: string, lastName: string, profilePicture: string , school : string ) {
     super(id, email, role);
     this.firstName = firstName;
     this.lastName = lastName;
     this.profilePicture = profilePicture;
-    this.ecole = ecole ; 
+    this.school = school ; 
   }
 }
 
@@ -61,7 +61,7 @@ export class Company extends User {
   socialLinks?: CompanySocialLinks;
   updatedAt: Date;
   website: string;
-  internships: Internship[] = [];
+  internships?: Internship[] = [];
 
   constructor(
     id: string,
@@ -116,8 +116,7 @@ export enum SalaryType {
 
 export class Internship {
   id: string;
-  createdBy: string;
-  company: Company | string;
+  company: Company;
   createdAt: Date;
   description: string;
   duration: number;
@@ -137,8 +136,7 @@ export class Internship {
 
   constructor(
     id: string,
-    createdBy: string,
-    company: Company | string,
+    company: Company ,
     createdAt: Date,
     description: string,
     duration: number,
@@ -157,7 +155,6 @@ export class Internship {
     applicants : string[] = []
   ) {
     this.id = id;
-    this.createdBy = createdBy;
     this.company = company;
     this.createdAt = createdAt;
     this.description = description;
