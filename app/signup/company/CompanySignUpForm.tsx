@@ -12,7 +12,6 @@ import { administrationInfosSchema } from "./AdminInfoForm";
 import { companyInfosSchema } from "./CompanyInfoForm";
 import { useCompanyRegister } from "./CompanyRegisterContext";
 import { contactInfosSchema } from "./ContactInfoForm";
-
 interface CompanySignUpFormProps {
   className?: string;
 }

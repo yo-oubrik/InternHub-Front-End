@@ -12,9 +12,14 @@ export default {
   theme: {
     extend: {
       colors: {
+        'primary-lightest': '#ffffff',
+        'primary-light': '#ffac97',
+        'primary-dark': '#ff5a31',
+        'primary-muted': '#e6e6e6',
+        'primary-soft': '#ffd5ca',
         background: {
-          DEFAULT:"hsl(var(--background))",
-          dark:"hsl(var(--background-dark))",
+          DEFAULT: "hsl(var(--background))",
+          dark: "hsl(var(--background-dark))",
         },
         foreground: "hsl(var(--foreground))",
         card: {
@@ -27,7 +32,7 @@ export default {
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",
-          hover:"hsl(var(--primary-hover))",
+          hover: "hsl(var(--primary-hover))",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {

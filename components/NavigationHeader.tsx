@@ -13,7 +13,7 @@ export const NavigationHeader: React.FC<NavaigationHeaderProps> = ({
         const isCurrentSection = index == currentSection;
         return (
           <div
-            className={`py-3 flex-1 text-center
+            className={`py-3 text-center flex-1
                                  ${isCurrentSection && "text-white bg-primary"}
                             }
                   `}

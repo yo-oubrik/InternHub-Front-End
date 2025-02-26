@@ -1,14 +1,12 @@
 "use client";
-import Header from "@/components/Header";
-import "./globals.css";
+import AdminNav from "@/components/AdminNav";
+import ClientHeader from "@/components/ClientHeader";
+import Footer from "@/components/Footer";
 import ContextProvider from "@/providers/ContextProvider";
 import { Roboto } from "next/font/google";
 import { Toaster } from "react-hot-toast";
-import Footer from "@/components/Footer";
-import { AuthProvider } from "@/context/authContext";
-import { UserContextProvider } from "@/context/userContext";
-import { InternshipContextProvider } from "@/context/internshipContext";
-import { FiltersContextProvider } from "@/context/FiltersContext";
+import "./globals.css";
+import { Admin, Role, User } from "@/types/types";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -40,7 +38,7 @@ export default function RootLayout({
         />
 
         <ContextProvider>
-          <Header />
+          <ClientHeader />
           <div className="min-h-[calc(100vh-var(--header-height))]">
             {children}
           </div>
