@@ -6,6 +6,8 @@ import JobDetails from "./JobDetails";
 import JobSkills from "./JobSkills ";
 import JobTitle from "./JobTitle";
 import { useInternship } from "@/context/internshipContext";
+import JobLocation from "./JobLocation";
+import Summary from "./Summary";
 
 function PostInternshipForm() {
   const {
@@ -24,7 +26,7 @@ function PostInternshipForm() {
     resetInternshipForm,
   } = useInternship();
 
-  const sections = ["About", "Post Details", "Skills", "Summary"];
+  const sections = ["About","Internship Location","Post Details", "Skills", "Summary"];
   const [visitedSections, setVisitedSections] = React.useState<Set<string>>(
     new Set([sections[0]])
   );
@@ -42,10 +44,16 @@ function PostInternshipForm() {
     switch (activeSection) {
       case "About":
         return <JobTitle />;
+      case "Internship Location":
+        return <JobLocation />;
       case "Post Details":
         return <JobDetails />;
       case "Skills":
         return <JobSkills />;
+      case "Summary":
+        return <Summary />;
+      default:
+        return null;
     }
   };
 
@@ -132,6 +140,7 @@ function PostInternshipForm() {
               handleSectionChange(sections[currentIndex], "del");
             }}
             outline={true}
+            disabled={activeSection === "About"}
             className="px-6 py-2 text-black rounded-md"
           />
           {activeSection !== "Summary" && (

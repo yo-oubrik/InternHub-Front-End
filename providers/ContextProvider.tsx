@@ -3,6 +3,7 @@ import React from "react";
 import { InternshipContextProvider } from "@/context/internshipContext";
 import { UserContextProvider } from "@/context/userContext";
 import { AuthProvider } from "@/context/authContext";
+import { FiltersContextProvider } from "@/context/FiltersContext";
 
 interface Props {
   children: React.ReactNode;
@@ -11,11 +12,11 @@ interface Props {
 function ContextProvider({ children }: Props) {
   return (
     <AuthProvider>
-      <UserContextProvider>
-        <InternshipContextProvider>
-          {children}
-        </InternshipContextProvider>
-      </UserContextProvider>
+      <FiltersContextProvider>
+        <UserContextProvider>
+          <InternshipContextProvider>{children}</InternshipContextProvider>
+        </UserContextProvider>
+      </FiltersContextProvider>
     </AuthProvider>
   );
 }

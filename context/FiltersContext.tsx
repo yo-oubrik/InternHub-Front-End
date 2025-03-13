@@ -34,7 +34,7 @@ export const FiltersContextProvider : React.FC<{ children: React.ReactNode }> = 
     renumerated: false,
   });
 
-  const handleFilterChange = (filterName: keyof FiltersProps) => {
+  const handleFilterChange = (filterName: keyof FiltersProps ) => {
     setFilters((prev) => ({
       ...prev,
       [filterName]: !prev[filterName], // Now TypeScript recognizes the key

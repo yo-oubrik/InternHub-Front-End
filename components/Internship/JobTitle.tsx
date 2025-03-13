@@ -4,7 +4,6 @@ import React from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import RadioButton from "../RadioButton";
-import JobLocation from "./JobLocation";
 import { useInternship } from "@/context/internshipContext";
 import { WorkMode } from "@/types/types";
 
@@ -57,7 +56,6 @@ function JobTitle() {
             classNameItem="py-1 pl-1 border-border border rounded-md"
           />
         </div>
-        <JobLocation />
       </div>
     </div>
   );

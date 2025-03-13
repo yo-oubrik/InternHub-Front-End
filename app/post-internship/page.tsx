@@ -1,5 +1,5 @@
 "use client";
-import PostInternshipForm from "@/components/Internship/Form";
+import PostInternshipForm from "@/components/Internship/PostInternshipForm";
 
 function page() {
   return (

@@ -52,7 +52,7 @@ function page(){
     company: company,
     createdAt: new Date("2024-12-25T14:30:00"),
     updatedAt: new Date(Date.now()),
-    description: "Hiring new developers , \nNews : New Offer \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n JobType : Remote \n ",
+    description: "Hiring new developers , \nNews : New Offer",
     domain: "IT",
     duration: 3,
     location: "US , Los Angeles , Google Company",
@@ -189,12 +189,12 @@ function page(){
               </p>
 
               <p className="flex-1 p-4 flex flex-col items-center justify-center gap-1 bg-yellow-500/20 rounded-xl">
-                <span className="text-lg">Job Type</span>
+                <span className="text-lg">Work Mode</span>
                 <span className="font-bold">{workMode}</span>
               </p>
             </div>
             {/* <Separator/> */}
-            <h2 className="font-bold text-2xl mt-2">Job Description</h2>
+            <h2 className="font-bold text-2xl mt-2">Description</h2>
           </div>
 
           <div
@@ -214,7 +214,7 @@ function page(){
                 // applyToInternship(internship.id);
                 setIsApplied(true);
               } else {
-                toast.error("You have already applied to this job");
+                toast.error("You have already applied to this internship");
               }
               // } else {
               //   router.push("http://localhost:3000/api/login"); {/* to check */ }
@@ -234,7 +234,7 @@ function page(){
 
           <div className="p-6 flex flex-col gap-2 bg-white shadow-md border-b-2 border-primary rounded-xl">
             <h3 className="text-lg font-semibold">Tags</h3>
-            <p>Other relevant tags for the job position.</p>
+            <p>Other relevant tags for the internship position.</p>
 
             <div className="flex flex-wrap gap-4">
               {internship.tags.map((tag: string, index: number) => (

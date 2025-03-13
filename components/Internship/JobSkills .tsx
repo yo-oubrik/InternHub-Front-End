@@ -8,9 +8,11 @@ import CheckboxButton from "../CheckboxButton";
 import Button from "../Button";
 import { useInternship } from "@/context/internshipContext";
 import { InternshipType } from "@/types/types";
+import {  useFilters } from "@/context/FiltersContext";
 
 function JobSkills() {
   const { skills, setSkills, tags, setTags } = useInternship();
+  const {filters , handleFilterChange} = useFilters();
 
   const skillInputRef = useRef<HTMLInputElement>(null);
 
@@ -33,6 +35,13 @@ function JobSkills() {
       setTags((prev: InternshipType[]) => [...prev, value]);
     }
   };
+
+  const handleCheckedFunction = ( value : InternshipType) => {
+      handleAddTag(value);
+      handleFilterChange(value.toLowerCase() as keyof typeof filters);
+    };
+
+  console.log("tags : ", tags);
 
   return (
     <div className="p-6 flex flex-col gap-4 bg-background border border-border rounded-lg">
@@ -90,9 +99,9 @@ function JobSkills() {
           </Label>
         </div>
         <CheckboxButton
-          items={['PFA', 'PFE', 'Initiation']}
-          itemsValue={[InternshipType.PFA, InternshipType.PFE, InternshipType.INITIATION]}
-          onCheckedFunction={handleAddTag}
+          items={[InternshipType.PFA, InternshipType.PFE, InternshipType.INITIATION]}
+          itemsValue={[filters.pfa , filters.pfe , filters.initiation]}
+          onCheckedFunction={handleCheckedFunction}
         />
       </div>
     </div>
