@@ -1,0 +1,123 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import { Button } from "@/components/ui/button";
+import { LogOut, User, Settings } from "lucide-react";
+
+function AdminNav() {
+  const pathname = usePathname();
+
+  const isActive = (path: string) => {
+    return pathname === path;
+  };
+
+  return (
+    <div className="border-b">
+      <div className="flex h-16 items-center px-14">
+        <NavigationMenu>
+          <NavigationMenuList>
+            <NavigationMenuItem>
+              <Link href="/admin" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={cn(
+                    navigationMenuTriggerStyle(),
+                    isActive("/admin") && "bg-accent text-accent-foreground"
+                  )}
+                >
+                  Dashboard
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavigationMenuTrigger>Manage</NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2">
+                  <li className="row-span-3">
+                    <Link href="/admin/manage-students" legacyBehavior passHref>
+                      <NavigationMenuLink
+                        className={cn(
+                          "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                          isActive("/admin/manage-students") &&
+                            "bg-accent text-accent-foreground"
+                        )}
+                      >
+                        <div className="text-sm font-medium leading-none">
+                          Students
+                        </div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          Manage student accounts and activities
+                        </p>
+                      </NavigationMenuLink>
+                    </Link>
+                  </li>
+                  <li className="row-span-3">
+                    <Link
+                      href="/admin/manage-companies"
+                      legacyBehavior
+                      passHref
+                    >
+                      <NavigationMenuLink
+                        className={cn(
+                          "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                          isActive("/admin/manage-companies") &&
+                            "bg-accent text-accent-foreground"
+                        )}
+                      >
+                        <div className="text-sm font-medium leading-none">
+                          Companies
+                        </div>
+                        <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                          Manage company accounts and internships
+                        </p>
+                      </NavigationMenuLink>
+                    </Link>
+                  </li>
+                </ul>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <Link href="/admin/companies/pending" legacyBehavior passHref>
+                <NavigationMenuLink
+                  className={cn(
+                    navigationMenuTriggerStyle(),
+                    isActive("/admin/companies/pending") &&
+                      "bg-accent text-accent-foreground"
+                  )}
+                >
+                  Pending Companies
+                </NavigationMenuLink>
+              </Link>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+
+        <div className="ml-auto flex items-center space-x-4">
+          <Button variant="ghost" size="icon">
+            <Settings className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon">
+            <User className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon">
+            <LogOut className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default AdminNav;

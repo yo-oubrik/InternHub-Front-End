@@ -1,19 +1,19 @@
-"use client"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+"use client";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { z } from "zod"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { GoogleIcon } from "./icons/Google"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { GoogleIcon } from "./icons/Google";
 
 const signInSchema = z.object({
   email: z
@@ -23,12 +23,15 @@ const signInSchema = z.object({
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters" })
-    .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter" })
-    .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter" })
-    .regex(/[0-9]/, { message: "Password must contain at least one number" })
-
-})
-type SignInFormData = z.infer<typeof signInSchema>
+    .regex(/[A-Z]/, {
+      message: "Password must contain at least one uppercase letter",
+    })
+    .regex(/[a-z]/, {
+      message: "Password must contain at least one lowercase letter",
+    })
+    .regex(/[0-9]/, { message: "Password must contain at least one number" }),
+});
+type SignInFormData = z.infer<typeof signInSchema>;
 
 interface SignInFormProps {
   className?: string;
@@ -40,13 +43,13 @@ export const SignInForm: React.FC<SignInFormProps> = ({ className }) => {
     formState: { errors },
   } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
-  })
+  });
 
   const onSubmit = (data: SignInFormData) => {
-    console.log("Form Data", data)
-  }
+    console.log("Form Data", data);
+  };
   return (
-    < div className={cn("flex flex-col gap-6", className)}>
+    <div className={cn("flex flex-col gap-6", className)}>
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
@@ -71,7 +74,11 @@ export const SignInForm: React.FC<SignInFormProps> = ({ className }) => {
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" {...register("password")} />
+                <Input
+                  id="password"
+                  type="password"
+                  {...register("password")}
+                />
                 {errors.password && (
                   <p className="text-red-500">{errors.password.message}</p>
                 )}
@@ -93,7 +100,6 @@ export const SignInForm: React.FC<SignInFormProps> = ({ className }) => {
           </form>
         </CardContent>
       </Card>
-    </div >
-  )
-
-}
+    </div>
+  );
+};

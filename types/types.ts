@@ -1,4 +1,3 @@
-import { ListEnd } from "lucide-react";
 
 export type CompanySocialLinks = {
   linkedin?: string;
@@ -15,11 +14,13 @@ export abstract class User {
   id: string;
   email: string;
   role: Role;
+  joinedAt: Date;
 
-  constructor(id: string, email: string, role: Role) {
+  constructor(id: string, email: string, role: Role, registredAt: Date) {
     this.id = id;
     this.email = email;
     this.role = role;
+    this.joinedAt = registredAt;
   }
 }
 
@@ -27,8 +28,8 @@ export class Admin extends User {
   firstName: string;
   lastName: string;
   profilePicture: string;
-  constructor(id: string, email: string, role = Role.ADMIN, firstName: string, lastName: string, profilePicture: string) {
-    super(id, email, role);
+  constructor(id: string, email: string, firstName: string, lastName: string, profilePicture: string, joinedAt: Date) {
+    super(id, email, Role.ADMIN, joinedAt);
     this.firstName = firstName;
     this.lastName = lastName;
     this.profilePicture = profilePicture;
@@ -49,10 +50,16 @@ export class Student extends User {
   }
 }
 
+export interface StudentToRemove {
+  id: string;
+  firstName: string;
+  lastName: string;
+}
 export class Company extends User {
   name: string;
   address: string;
   createdAt: Date;
+  applicationDate: Date;
   description: string;
   ice: string;
   rc: string;
@@ -61,7 +68,7 @@ export class Company extends User {
   phone: string;
   size: string;
   socialLinks?: CompanySocialLinks;
-  updatedAt: Date;
+  updatedAt?: Date;
   website: string;
   internships?: Internship[] = [];
 
@@ -79,9 +86,11 @@ export class Company extends User {
     phone: string,
     size: string,
     updatedAt: Date,
-    website: string
+    website: string,
+    joinedAt: Date,
+    applicationDate: Date
   ) {
-    super(id, email, Role.COMPANY);
+    super(id, email, Role.COMPANY, joinedAt);
     this.name = name;
     this.logo = logo;
     this.address = address;
@@ -95,6 +104,7 @@ export class Company extends User {
     this.size = size;
     this.updatedAt = updatedAt;
     this.website = website;
+    this.applicationDate = applicationDate;
   }
 }
 
@@ -175,4 +185,34 @@ export class Internship {
     this.likes = likes;
     this.applicants = applicants;
   }
+}
+
+
+
+export enum flagSeverity {
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+}
+export const severityMap = {
+  high: "destructive",
+  medium: "secondary",
+  low: "outline",
+};
+export interface FlaggedStudent {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  reason: string;
+  description: string;
+  company: string;
+  companyId: string;
+  flaggedAt: Date;
+  offerId: string;
+  severity: flagSeverity;
+  studentId: string;
+  internshipTitle: string;
+  internshipId: string;
+  screenshots: string[];
 }
