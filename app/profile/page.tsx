@@ -3,6 +3,7 @@ import ExperienceCard from '@/components/Profile/ExperienceCard'
 import FormationCard from '@/components/Profile/FormationCard'
 import InfosCard from '@/components/Profile/InfosCard'
 import PortfolioCard from '@/components/Profile/PortfolioCard'
+import ProjectCard from '@/components/Profile/ProjectCard'
 import React from 'react'
 
 const page = () => {
@@ -12,6 +13,7 @@ const page = () => {
         <InfosCard />
         <ExperienceCard />
         <FormationCard />
+        <ProjectCard />
         <CertificateCard />
     </div>
   )

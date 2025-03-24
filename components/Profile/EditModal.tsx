@@ -8,17 +8,19 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import clsx from "clsx";
-import TextEditor from "../TextEditor";
 import { useState } from "react";
 
 interface EditModalProps {
   isOpenModal: boolean;
   setIsOpenModal: (open: boolean) => void;
+  className? : string ;
+  headerClassName? : string;
   title?: React.ReactNode;
   titleClassName?: string;
   description?: React.ReactNode;
   descriptionClassName?: string;
   body?: React.ReactNode;
+  footerClassName? : string ; 
   cancelButton?: string;
   cancelButtonClassName?: string;
   confirmButton?: string;
@@ -30,11 +32,14 @@ interface EditModalProps {
 const EditModal = ({
   isOpenModal,
   setIsOpenModal,
+  className ,
+  headerClassName,
   title ,
   titleClassName , 
   description,
   descriptionClassName,
   body,
+  footerClassName,
   cancelButton,
   cancelButtonClassName,
   confirmButton,
@@ -44,15 +49,15 @@ const EditModal = ({
 }: EditModalProps) => {
   return (
     <Dialog open={isOpenModal} onOpenChange={setIsOpenModal}>
-      <DialogContent className="bg-white">
-        <DialogHeader>
+      <DialogContent className={clsx(className)}>
+        <DialogHeader className={clsx(headerClassName)}>
           <DialogTitle className={clsx(titleClassName)}>{title}</DialogTitle>
           <DialogDescription className={clsx(descriptionClassName)}>
             {description}
           </DialogDescription>
         </DialogHeader>
-        {body}
-        <DialogFooter>
+        <div className="flex-grow flex flex-col">{body}</div>
+        <DialogFooter className={clsx(footerClassName)}>
           {cancelButton && (
             <Button className={clsx(cancelButtonClassName)} onClick={onCancel}>
               {cancelButton}

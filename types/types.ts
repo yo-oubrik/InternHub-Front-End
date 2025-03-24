@@ -176,3 +176,45 @@ export class Internship {
     this.applicants = applicants;
   }
 }
+
+export type Experience = {
+    poste : string ,  
+    startDate : string , 
+    endDate : string , 
+    company : CompanyDTO, 
+    description : string ,
+}
+
+export type Formation = {
+    domain : string , 
+    diploma : string,
+    startDate : string , 
+    endDate : string , 
+    company : CompanyDTO, 
+}
+
+export type CompanyDTO = {
+  logo : string , 
+  name : string ,
+  address : string
+}
+
+export interface Project {
+  id: string;
+  title: string;
+  image: string;
+  link: string;
+}
+
+export interface Certificat {
+  id: string;
+  title: string;
+  thumbnail: string;
+  date: string;
+}
+
+export interface Location {
+  address: string;
+  city: string;
+  country: string;
+}

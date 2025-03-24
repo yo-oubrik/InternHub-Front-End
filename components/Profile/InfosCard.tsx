@@ -31,6 +31,7 @@ const InfosCard = () => {
         <EditModal
           isOpenModal={isOpenModal}
           setIsOpenModal={setIsOpenModal}
+          className='bg-white max-w-xl min-h-[60vh] flex flex-col justify-between'
           title="Edit Infos"
           titleClassName="text-2xl"
           body={
@@ -38,7 +39,7 @@ const InfosCard = () => {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Your Infos Here..."
-              className="caret-primary text-base"
+              className="caret-primary text-base flex-grow h-full"
             />
           }
           cancelButton="Cancel"
@@ -46,7 +47,6 @@ const InfosCard = () => {
             infos !== description && setDescription(infos);
             setIsOpenModal(false);
           }}
-
           cancelButtonClassName="border-primary border-[1px] text-primary bg-transparent"
           confirmButton="Save"
           onConfirm={() => {
@@ -59,4 +59,4 @@ const InfosCard = () => {
   );
 }
 
-export default InfosCard ; 
+export default InfosCard;

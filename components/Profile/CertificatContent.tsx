@@ -1,56 +1,114 @@
 "use client";
 
 import React, { useState } from "react";
-import { jsPDF } from "jspdf"; // Import jsPDF
-import { FileDown } from "lucide-react";
+import { Calendar, FileDown } from "lucide-react";
 import Overlay from "../Overlay";
+import EditModal from "./EditModal";
+import { Certificat } from "@/types/types";
+import toast from "react-hot-toast";
+import CertificatInfos from "./CertificatInfos";
 
 interface CertificatContentProps {
-  title: string;
-  img: string;
-  date: string;
+  certificat: Certificat;
+  certificats: Certificat[];
+  setCertificats: (certificats: Certificat[]) => void;
 }
 
-const CertificatContent: React.FC<CertificatContentProps> = ({ title, img, date }) => {
+const CertificatContent: React.FC<CertificatContentProps> = ({
+  certificat,
+  certificats,
+  setCertificats,
+}) => {
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [editedCertificat, setEditedCertificat] = useState<Certificat>(certificat);
 
-  const imgToPDF = async () => {
-    try {
-
-      const doc = new jsPDF();
-      const image = new Image();
-      image.src = img;
-      image.onload = () => {
-        doc.addImage(image, "JPEG", 10, 10, 180, 0); 
-        doc.save(`${title}.pdf`);
-      };
-      image.onerror = (err) => {
-      };
-    } catch (err) {
-      console.error("Error creating PDF:", err);
-    }
+  const handleCancel = () => {
+    setEditedCertificat(certificat);
+    setIsOpenModal(false);
   };
 
-  return (
-    <div className="rounded-lg flex flex-col justify-between border shadow-md">
-      <div className="relative overflow-hidden w-full rounded-t-lg border-b-gray-300 border-[1px] group">
-        <img
-          src={img}
-          alt="Thumbnail"
-          className="w-full rounded-t-lg h-40 object-cover group-hover:rotate-6 group-hover:scale-110 duration-100 ease-in cursor-pointer"
-          onClick={imgToPDF}
-        />
-        <Overlay children={<FileDown className="w-14 h-14 text-primary-hover" />}/>
-      </div>
+  const handleConfirm = () => {
+    if (!editedCertificat.title.trim()) {
+      toast.error("Please enter a certificate title");
+      return;
+    }
 
-      <div className="px-2 space-y-4 pt-2 my-2">
-        <p className="text-base font-medium text-start">{title}</p>
-        <p className="text-base text-end text-gray-500">{date}</p>
+    if (!editedCertificat.thumbnail) {
+      toast.error("Please upload a certificate image");
+      return;
+    }
+
+    if (!editedCertificat.date.trim()) {
+      toast.error("Please enter the certificate date");
+      return;
+    }
+
+    setCertificats(
+      certificats.map((c: Certificat) =>
+        c.id === certificat.id ? editedCertificat : c
+      )
+    );
+    setIsOpenModal(false);
+  };
+
+  const updateEditedCertificat = (updatedCertificat: Certificat) => {
+    setEditedCertificat(updatedCertificat);
+  };
+
+  
+  return (
+    <div className="rounded-lg flex flex-col justify-between border shadow-md hover:shadow-primary-hover hover:scale-105 transition-all duration-300">
+      <div className="relative overflow-hidden w-full rounded-t-lg border-b-gray-300 border-[1px] group">
+        <div className="cursor-pointer">
+          <img
+            src={certificat.thumbnail}
+            alt="Certificate thumbnail"
+            className="w-full h-40 object-cover group-hover:rotate-2 group-hover:scale-110 duration-100 ease-in"
+          />
+          <Overlay children={<FileDown className="w-14 h-14 text-primary-hover" />} />
+        </div>
+      </div>
+      <div className="px-2 mt-4 mb-3 space-y-3">
+        <div className="text-base font-medium text-start">
+          {certificat.title}
+        </div>
+        <div className="flex items-center justify-end gap-2 text-gray-500 text-sm">
+          <Calendar className="w-4 h-4" />
+          <span>{certificat.date}</span>
+        </div>
       </div>
 
       <div className="flex w-full font-medium text-primary divide-x-2 divide-primary-hover text-center border-t-primary-hover border-t-[2px]">
-        <div className="w-full rounded-bl-lg py-2 cursor-pointer hover:bg-primary hover:text-white">Edit</div>
-        <div className="w-full rounded-br-lg py-2 cursor-pointer hover:bg-primary hover:text-white" onClick={imgToPDF}>Download</div>
+        <div
+          className="w-full rounded-bl-lg py-2 cursor-pointer hover:bg-primary hover:text-white"
+          onClick={() => setIsOpenModal(true)}
+        >
+          Edit
+        </div>
+        <div className="w-full rounded-br-lg py-2 cursor-pointer hover:bg-primary hover:text-white">
+          Delete
+        </div>
       </div>
+
+      <EditModal
+        isOpenModal={isOpenModal}
+        setIsOpenModal={setIsOpenModal}
+        className="bg-white max-w-xl min-h-[60vh] flex flex-col"
+        title="Edit Certificate"
+        titleClassName="text-2xl font-medium"
+        cancelButton="Cancel"
+        cancelButtonClassName="bg-gray-200 text-black hover:bg-gray-300"
+        onCancel={handleCancel}
+        confirmButton="Edit"
+        confirmButtonClassName="bg-primary w-20 text-white hover:bg-primary-hover"
+        onConfirm={handleConfirm}
+        body={
+          <CertificatInfos
+            editedCertificat={editedCertificat}
+            updateEditedCertificat={updateEditedCertificat}
+          />
+        }
+      />
     </div>
   );
 };

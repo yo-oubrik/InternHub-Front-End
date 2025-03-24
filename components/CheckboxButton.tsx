@@ -6,13 +6,15 @@ import { Label } from './ui/label';
 interface CheckboxButtonProps {
     onCheckedFunction : (value: any) => void;
     items: string[];
-    itemsValue : any[] ;
+    itemsValue : any[];
     classNameGroup? : string 
     classNameItem? : string
     disabled? : boolean
   }
 
 const CheckboxButton = ({ items , itemsValue , onCheckedFunction , classNameGroup , classNameItem , disabled} : CheckboxButtonProps) => {
+  console.log("itemValue : ", itemsValue);
+  console.log("items : ", items);
   return (
     <div className={clsx("space-y-4",classNameGroup)}>
         {
