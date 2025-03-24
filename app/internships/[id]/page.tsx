@@ -29,7 +29,7 @@ function page(){
 
   // if (!internship) return null;
   
-  const userProfile : User = {id : "1" , email : "achrafbnr2406@gmail.com" , role : Role.STUDENT };
+  const userProfile : User = {id : "1" , email : "achrafbnr2406@gmail.com" , role : Role.STUDENT , joinedAt : new Date("2024-06-24T22:30:00")};
   const company: Company = {
     id: "1",
     role: Role.COMPANY,
@@ -46,6 +46,8 @@ function page(){
     phone : "+313 39 21 21 34 54",
     website : "www.google.com",
     size : "500 000",
+    applicationDate: new Date("2024-06-24T22:30:00"),
+    joinedAt: new Date("2024-06-24T22:30:00")
   };
   const internship: Internship = {
     id: "1",

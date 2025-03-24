@@ -109,6 +109,43 @@
   @apply list-disc;
 }
 
+@layer utilities {
+
+  /* ===== TYPOGRAPHY */
+  .text-36-bold {
+    @apply text-[36px] leading-[40px] font-bold;
+  }
+
+  .text-32-bold {
+    @apply text-[32px] leading-[36px] font-bold;
+  }
+
+  .text-25-semibold {
+    @apply text-[25px] leading-[16px] font-semibold;
+  }
+
+  .header {
+    @apply text-32-bold md:text-36-bold;
+  }
+
+  .sub-header {
+    @apply text-25-semibold;
+  }
+
+  /* ===== VIEW */
+  .min-h-full-except-header {
+    min-height: calc(100vh - var(--header-height));
+  }
+
+  .full-page {
+    @apply mx-auto max-w-7xl space-y-14 min-h-[calc(100vh-var(--header-height))]
+  }
+
+  .stats {
+    @apply flex w-full flex-col justify-between gap-3 sm:flex-row xl:gap-10;
+  }
+}
+
 .clip-path {
   clip-path: polygon(20% 0%,
       0% 20%,
@@ -137,4 +174,32 @@
       100% 100%,
       100% 0%);
   filter: grayscale(1);
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 2s ease-in-out infinite;
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
 }

@@ -72,8 +72,8 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
         > { /* to check */}
           <div className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center mr-2">
             <Image
-              src={ company.logo || "/user.png"}
-              alt={ company.name || "User"}
+              src={ company?.logo || "/user.png"}
+              alt={ company?.name || "User"}
               width={40}
               height={40}
               className="rounded-md"

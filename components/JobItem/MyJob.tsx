@@ -32,10 +32,10 @@ function Myinternship({ internship }: InternshipProps) {
   };
 
   useEffect(() => {
-    if (isAuthenticated && internship.company.id) {
+    if (isAuthenticated && internship.company?.id) {
       getUserProfile(internship.company.id);
     }
-  }, [isAuthenticated, internship.company.id]);
+  }, [isAuthenticated, internship.company?.id]);
 
   useEffect(() => {
     if (userProfile?.id) {
@@ -52,7 +52,7 @@ function Myinternship({ internship }: InternshipProps) {
         >
           <Image
             alt={`logo`}
-            src={internship.company.logo || "/user.png"}
+            src={internship.company?.logo || "/user.png"}
             width={48}
             height={48}
             className="rounded-full shadow-sm"
@@ -63,7 +63,7 @@ function Myinternship({ internship }: InternshipProps) {
               {internship.title}
             </CardTitle>
             <p className="text-sm text-muted-foreground">
-              {internship.company.name}
+              {internship.company?.name}
             </p>
           </div>
         </div>
@@ -102,7 +102,7 @@ function Myinternship({ internship }: InternshipProps) {
               ))}
             </div>
           </div>
-          {internship.company.id === userProfile?.id && (
+          {internship.company?.id === userProfile?.id && (
             <div className="self-end">
               <Button variant="ghost" size="icon" className="text-gray-500">
                 <Pencil size={14} />

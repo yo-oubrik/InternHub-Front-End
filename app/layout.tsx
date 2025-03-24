@@ -1,14 +1,14 @@
 "use client";
-import Header from "@/components/Header";
-import "./globals.css";
+import "@/app/globals.css";
+import ClientHeader from "@/components/ClientHeader";
+import Footer from "@/components/Footer";
 import ContextProvider from "@/providers/ContextProvider";
 import { Poppins } from "next/font/google";
 import { Toaster } from "react-hot-toast";
-import Footer from "@/components/Footer";
 
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["200","300","400","500","600","700","900"],
+  weight: ["200", "300", "400", "500", "600", "700", "900"],
 });
 
 export default function RootLayout({
@@ -36,7 +36,7 @@ export default function RootLayout({
         />
 
         <ContextProvider>
-          <Header />
+          <ClientHeader />
           <div className="min-h-[calc(100vh-var(--header-height))]">
             {children}
           </div>

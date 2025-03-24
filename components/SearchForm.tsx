@@ -5,13 +5,13 @@ import { Search } from "lucide-react";
 import React from "react";
 
 function SearchForm() {
-  const { searchJobs, handleSearchChange, searchQuery } = useInternship();
+  // const { searchJobs, handleSearchChange, searchQuery } = useInternship();
   return (
     <form
       className="relative flex items-center justify-end mr-4"
       onSubmit={(e) => {
         e.preventDefault();
-        searchJobs(searchQuery.tags, searchQuery.location, searchQuery.title);
+        // searchJobs(searchQuery.tags, searchQuery.location, searchQuery.title);
       }}
     >
       <div className="flex bg-white rounded-full px-2 items-stretch h-[3.3rem] w-[50rem]">
@@ -26,8 +26,8 @@ function SearchForm() {
             type="text"
             id="job-title"
             name="title"
-            value={searchQuery.title}
-            onChange={(e) => handleSearchChange("title", e.target.value)}
+            // value={searchQuery.title}
+            // onChange={(e) => handleSearchChange("title", e.target.value)}
             placeholder="Job Title or Keywords"
             className="w-full py-4 text-xl text-black pl-[0.7rem] pr-3 rounded-tl-full rounded-bl-full focus:outline-none"
           />
@@ -41,8 +41,8 @@ function SearchForm() {
             type="text"
             id="location"
             name="location"
-            value={searchQuery.location}
-            onChange={(e) => handleSearchChange("location", e.target.value)}
+            // value={searchQuery.location}
+            // onChange={(e) => handleSearchChange("location", e.target.value)}
             placeholder="Enter Location"
             className="w-full py-4 text-xl text-black pl-[1rem] pr-3 rounded-tr-full rounded-br-full focus:outline-none"
           />

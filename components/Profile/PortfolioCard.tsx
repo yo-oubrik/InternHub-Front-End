@@ -59,7 +59,6 @@ const PortfolioCard = () => {
     e.stopPropagation();
     setAvatarImage(defaultAvatarImage);
   };
-
   const links = {
     github: "profile/github.png",
     linkedin:
