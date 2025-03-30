@@ -1,5 +1,4 @@
 "use client";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,40 +9,41 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { cn } from "@/lib/utils";
+import { ApiErrorResponse } from "@/types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { GoogleIcon } from "./icons/Google";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { z } from "zod";
 
 const signUpSchema = z
   .object({
     firstName: z
       .string()
       .min(1, { message: "First name is required" })
+      .max(50, { message: "First name must be less than 50 characters" })
       .regex(/^[A-Za-z]+$/, {
-        message: "First name must only contain letters",
+        message:
+          "First name must contain only letters and be between 2 and 50 characters",
       }),
     lastName: z
       .string()
       .min(1, { message: "Last name is required" })
-      .regex(/^[A-Za-z]+$/, { message: "Last name must only contain letters" }),
+      .max(50, { message: "Last name must be less than 50 characters" })
+      .regex(/^[A-Za-z]+$/, {
+        message:
+          "Last name must contain only letters and be between 2 and 50 characters",
+      }),
     email: z
       .string()
       .email({ message: "Please enter a valid email address" })
       .min(1, { message: "Email is required" }),
     password: z
       .string()
-      .min(8, { message: "Password must be at least 8 characters" })
-      .regex(/[A-Z]/, {
-        message: "Password must contain at least one uppercase letter",
-      })
-      .regex(/[a-z]/, {
-        message: "Password must contain at least one lowercase letter",
-      })
-      .regex(/[0-9]/, { message: "Password must contain at least one number" })
-      .regex(/[\W_]/, {
-        message: "Password must contain at least one special character",
-      }),
+      .min(8, { message: "Password must be at least 8 characters" }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -56,7 +56,18 @@ type SignUpFormData = z.infer<typeof signUpSchema>;
 interface SignInFormProps {
   className?: string;
 }
+interface StudentRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  profilePicture?: string;
+}
+
 export const SignUpForm: React.FC<SignInFormProps> = ({ className }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -65,8 +76,33 @@ export const SignUpForm: React.FC<SignInFormProps> = ({ className }) => {
     resolver: zodResolver(signUpSchema),
   });
 
-  const onSubmit = (data: SignUpFormData) => {
-    console.log("Form Data", data);
+  const onSubmit = async (data: SignUpFormData) => {
+    try {
+      setIsLoading(true);
+      setServerErrors({});
+      const student: StudentRequest = { ...data, profilePicture: "" };
+      await axios.post(
+        "http://localhost:8080/api/v1/auth/register/students",
+        student
+      );
+      toast.success("Account created successfully");
+      router.push("/signin");
+    } catch (e) {
+      if (axios.isAxiosError(e)) {
+        const errorResponse = e.response?.data as ApiErrorResponse;
+        // Display the backend error message directly
+        toast.error(errorResponse?.message || "An unexpected error occurred");
+        // Still store validation errors for field-level display
+        if (errorResponse?.validationErrors) {
+          setServerErrors(errorResponse.validationErrors);
+        }
+      } else {
+        console.error("Registration error:", e);
+        toast.error("An unexpected error occurred");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -84,15 +120,19 @@ export const SignUpForm: React.FC<SignInFormProps> = ({ className }) => {
               <div className="grid gap-2">
                 <Label htmlFor="first-name">First Name</Label>
                 <Input id="first-name" type="text" {...register("firstName")} />
-                {errors.firstName && (
-                  <p className="text-red-500">{errors.firstName.message}</p>
+                {(errors.firstName || serverErrors.firstName) && (
+                  <p className="text-red-500">
+                    {errors.firstName?.message || serverErrors.firstName}
+                  </p>
                 )}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="last-name">Last Name</Label>
                 <Input id="last-name" type="text" {...register("lastName")} />
-                {errors.lastName && (
-                  <p className="text-red-500">{errors.lastName.message}</p>
+                {(errors.lastName || serverErrors.lastName) && (
+                  <p className="text-red-500">
+                    {errors.lastName?.message || serverErrors.lastName}
+                  </p>
                 )}
               </div>
               <div className="grid gap-2">
@@ -103,8 +143,10 @@ export const SignUpForm: React.FC<SignInFormProps> = ({ className }) => {
                   placeholder="m@example.com"
                   {...register("email")}
                 />
-                {errors.email && (
-                  <p className="text-red-500">{errors.email.message}</p>
+                {(errors.email || serverErrors.email) && (
+                  <p className="text-red-500">
+                    {errors.email?.message || serverErrors.email}
+                  </p>
                 )}
               </div>
               <div className="grid gap-2">
@@ -114,8 +156,10 @@ export const SignUpForm: React.FC<SignInFormProps> = ({ className }) => {
                   type="password"
                   {...register("password")}
                 />
-                {errors.password && (
-                  <p className="text-red-500">{errors.password.message}</p>
+                {(errors.password || serverErrors.password) && (
+                  <p className="text-red-500">
+                    {errors.password?.message || serverErrors.password}
+                  </p>
                 )}
               </div>
               <div className="grid gap-2">
@@ -125,18 +169,19 @@ export const SignUpForm: React.FC<SignInFormProps> = ({ className }) => {
                   type="password"
                   {...register("confirmPassword")}
                 />
-                {errors.confirmPassword && (
+                {(errors.confirmPassword || serverErrors.confirmPassword) && (
                   <p className="text-red-500">
-                    {errors.confirmPassword.message}
+                    {errors.confirmPassword?.message ||
+                      serverErrors.confirmPassword}
                   </p>
                 )}
               </div>
-              <Button type="submit" className="w-full mb-[-12px]">
-                Sign Up
-              </Button>
-              <Button variant="outline" className="w-full">
-                <GoogleIcon />
-                Sign Up with Google
+              <Button
+                type="submit"
+                className="w-full mb-[-12px]"
+                disabled={isLoading}
+              >
+                {isLoading ? "Signing up..." : "Sign Up"}
               </Button>
             </div>
           </form>

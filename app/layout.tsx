@@ -1,7 +1,7 @@
 "use client";
 import "@/app/globals.css";
-import ClientHeader from "@/components/ClientHeader";
 import Footer from "@/components/Footer";
+import Header from "@/components/Header";
 import ContextProvider from "@/providers/ContextProvider";
 import { Poppins } from "next/font/google";
 import { Toaster } from "react-hot-toast";
@@ -36,7 +36,7 @@ export default function RootLayout({
         />
 
         <ContextProvider>
-          <ClientHeader />
+          <Header />
           <div className="min-h-[calc(100vh-var(--header-height))]">
             {children}
           </div>

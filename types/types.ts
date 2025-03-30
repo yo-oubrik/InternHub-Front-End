@@ -40,8 +40,8 @@ export class Student extends User {
   lastName: string;
   profilePicture: string;
   school?: string;
-  constructor(id: string, email: string, role = Role.STUDENT, firstName: string, lastName: string, profilePicture: string, school: string , joinedAt: Date) {
-    super(id, email, role , joinedAt);
+  constructor(id: string, email: string, role = Role.STUDENT, firstName: string, lastName: string, profilePicture: string, school: string, joinedAt: Date) {
+    super(id, email, role, joinedAt);
     this.firstName = firstName;
     this.lastName = lastName;
     this.profilePicture = profilePicture;
@@ -128,7 +128,7 @@ export enum SalaryType {
 export class Internship {
   id: string;
   company?: Company;
-  companyId? : string ;
+  companyId?: string;
   createdAt: Date;
   description: string;
   duration: number;
@@ -149,7 +149,7 @@ export class Internship {
   constructor(
     id: string,
     company: Company,
-    companyId : string ,
+    companyId: string,
     createdAt: Date,
     description: string,
     duration: number,
@@ -220,27 +220,36 @@ export interface FlaggedStudent {
   internshipId: string;
   screenshots: string[];
 }
+export interface ApiErrorResponse {
+  timestamp: string;
+  status: number;
+  error: string;
+  message: string;
+  path: string;
+  validationErrors?: Record<string, string>;
+}
+
 
 export type Experience = {
-    poste : string ,  
-    startDate : string , 
-    endDate : string , 
-    company : CompanyDTO, 
-    description : string ,
+  poste: string,
+  startDate: string,
+  endDate: string,
+  company: CompanyDTO,
+  description: string,
 }
 
 export type Formation = {
-    domain : string , 
-    diploma : string,
-    startDate : string , 
-    endDate : string , 
-    company : CompanyDTO, 
+  domain: string,
+  diploma: string,
+  startDate: string,
+  endDate: string,
+  company: CompanyDTO,
 }
 
 export type CompanyDTO = {
-  logo : string , 
-  name : string ,
-  address : string
+  logo: string,
+  name: string,
+  address: string
 }
 
 export interface Project {

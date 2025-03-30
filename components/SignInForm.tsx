@@ -1,5 +1,4 @@
 "use client";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,10 +9,17 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+import api from "@/lib/axios";
+import { cn } from "@/lib/utils";
+import { ApiErrorResponse } from "@/types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { GoogleIcon } from "./icons/Google";
+import { isAxiosError } from "axios";
+import { revalidatePath } from "next/cache";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { z } from "zod";
 
 const signInSchema = z.object({
   email: z
@@ -22,20 +28,22 @@ const signInSchema = z.object({
     .min(1, { message: "Email is required" }),
   password: z
     .string()
-    .min(8, { message: "Password must be at least 8 characters" })
-    .regex(/[A-Z]/, {
-      message: "Password must contain at least one uppercase letter",
-    })
-    .regex(/[a-z]/, {
-      message: "Password must contain at least one lowercase letter",
-    })
-    .regex(/[0-9]/, { message: "Password must contain at least one number" }),
+    .min(8, { message: "Password must be at least 8 characters" }),
 });
 type SignInFormData = z.infer<typeof signInSchema>;
 
 interface SignInFormProps {
   className?: string;
 }
+interface LoginRequest {
+  email: string;
+  password: string;
+}
+interface AuthResponse {
+  token: string;
+  expiresIn: number;
+}
+
 export const SignInForm: React.FC<SignInFormProps> = ({ className }) => {
   const {
     register,
@@ -44,9 +52,31 @@ export const SignInForm: React.FC<SignInFormProps> = ({ className }) => {
   } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
   });
-
-  const onSubmit = (data: SignInFormData) => {
-    console.log("Form Data", data);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const onSubmit = async (data: SignInFormData) => {
+    try {
+      setIsLoading(true);
+      const loginRequest: LoginRequest = data;
+      const response = await api.post("/auth/login", loginRequest);
+      const authResponse: AuthResponse = response.data;
+      localStorage.setItem("token", authResponse.token);
+      localStorage.setItem("expiresIn", authResponse.expiresIn.toString());
+      toast.success("Logged in successfully");
+      window.location.href = "/";
+    } catch (e) {
+      if (isAxiosError(e)) {
+        const errorResponse = e.response?.data as ApiErrorResponse;
+        // Display the backend error message directly
+        toast.error(errorResponse?.message || "An unexpected error occurred");
+        // Still store validation errors for field-level display
+      } else {
+        console.error("Registration error:", e);
+        toast.error("An unexpected error occurred");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <div className={cn("flex flex-col gap-6", className)}>
@@ -89,12 +119,12 @@ export const SignInForm: React.FC<SignInFormProps> = ({ className }) => {
                   Forgot your password?
                 </a>
               </div>
-              <Button type="submit" className="w-full my-[-12px]">
-                Login
-              </Button>
-              <Button variant="outline" className="w-full">
-                <GoogleIcon />
-                Login with Google
+              <Button
+                type="submit"
+                className="w-full my-[-12px]"
+                disabled={isLoading}
+              >
+                {isLoading ? "Signing in..." : "Sign In"}
               </Button>
             </div>
           </form>

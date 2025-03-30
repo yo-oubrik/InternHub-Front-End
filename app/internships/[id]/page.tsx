@@ -10,10 +10,18 @@ import { useAuth } from "@/context/authContext";
 import InternshipCard from "@/components/JobItem/InternshipCard";
 import { useInternship } from "@/context/internshipContext";
 import { useUser } from "@/context/userContext";
-import { Company, Internship, InternshipType, Role, SalaryType, User, WorkMode } from "@/types/types";
+import {
+  Company,
+  Internship,
+  InternshipType,
+  Role,
+  SalaryType,
+  User,
+  WorkMode,
+} from "@/types/types";
 import { Separator } from "@/components/ui/separator";
 
-function page(){
+function page() {
   const { internships, likeInternship, applyToInternship } = useInternship();
   // const { userProfile , company , getCompany } = useUser();
   // const { isAuthenticated } = useAuth();
@@ -28,8 +36,13 @@ function page(){
   // const otherJobs = internships.filter((internship: Internship) => internship.id !== id);
 
   // if (!internship) return null;
-  
-  const userProfile : User = {id : "1" , email : "achrafbnr2406@gmail.com" , role : Role.STUDENT , joinedAt : new Date("2024-06-24T22:30:00")};
+
+  const userProfile: User = {
+    id: "1",
+    email: "achrafbnr2406@gmail.com",
+    role: Role.STUDENT,
+    joinedAt: new Date("2024-06-24T22:30:00"),
+  };
   const company: Company = {
     id: "1",
     role: Role.COMPANY,
@@ -38,16 +51,16 @@ function page(){
     description: "Google Company",
     ice: "12345",
     rc: "e1e1",
-    domain : "IT" , 
-    name : "Google" ,
-    logo : "" , 
-    createdAt : new Date("2024-06-24T22:30:00"),
-    updatedAt : new Date(Date.now()),
-    phone : "+313 39 21 21 34 54",
-    website : "www.google.com",
-    size : "500 000",
+    domain: "IT",
+    name: "Google",
+    logo: "",
+    createdAt: new Date("2024-06-24T22:30:00"),
+    updatedAt: new Date(Date.now()),
+    phone: "+313 39 21 21 34 54",
+    website: "www.google.com",
+    size: "500 000",
     applicationDate: new Date("2024-06-24T22:30:00"),
-    joinedAt: new Date("2024-06-24T22:30:00")
+    joinedAt: new Date("2024-06-24T22:30:00"),
   };
   const internship: Internship = {
     id: "1",
@@ -75,8 +88,8 @@ function page(){
       "Spring Boot",
       "GraphQL",
     ],
-    likes : ["1","2","3"],
-    applicants : ["1","2"]
+    likes: ["1", "2", "3"],
+    applicants: ["1", "2"],
   };
   const {
     title,
@@ -89,14 +102,9 @@ function page(){
     salaryType,
     negotiable,
     likes,
-    skills ,
+    skills,
   } = internship;
 
-  console.log("user Profile : " ,userProfile);
-  console.log("company : ",company);
-  console.log("Internships : ",internship);
-  // console.log("other jobs : ",otherJobs);
-  
   useEffect(() => {
     userProfile && setIsLiked(likes.includes(userProfile.id));
   }, [likes, userProfile?.id]);
@@ -125,7 +133,7 @@ function page(){
                   <Image
                     src={company?.logo || "/user.png"}
                     alt={company?.name || "User"}
-                    width={60}  
+                    width={60}
                     height={60}
                     className="rounded-md"
                   />
@@ -202,13 +210,17 @@ function page(){
           <div
             className="wysiwyg mt-2 whitespace-pre"
             // dangerouslySetInnerHTML={{ __html: description }}
-          >{description}</div>
+          >
+            {description}
+          </div>
         </div>
 
         <div className="w-[26%] flex flex-col gap-8">
           <button
             className={`text-white py-4  hover:bg-primary-hover hover:text-white ${
-              isApplied ? "bg-green-500 rounded-full" : "bg-primary rounded-xl hover:rounded-full"
+              isApplied
+                ? "bg-green-500 rounded-full"
+                : "bg-primary rounded-xl hover:rounded-full"
             }`}
             onClick={() => {
               // if (isAuthenticated) {
@@ -227,9 +239,9 @@ function page(){
           </button>
 
           <div className="flex flex-col gap-2 rounded-md">
-              <InternshipCard activeinternship internship={{ ...internship }} />
+            <InternshipCard activeinternship internship={{ ...internship }} />
 
-              {/* {otherJobs.map((internship) => (
+            {/* {otherJobs.map((internship) => (
             <InternshipCard internship={internship} key={internship.id} />
           ))} */}
           </div>

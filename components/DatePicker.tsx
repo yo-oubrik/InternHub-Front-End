@@ -1,27 +1,29 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { format, parse } from "date-fns"
-import { CalendarIcon } from "lucide-react"
+import * as React from "react";
+import { format, parse } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { useEffect, useState } from "react"
+} from "@/components/ui/popover";
+import { useEffect, useState } from "react";
 
 interface Props {
-  value? : string ; 
-  setDateValue : (value : string) => void ;
+  value?: string;
+  setDateValue: (value: string) => void;
   resetDate?: boolean;
 }
 
-export function DatePicker({value="" , setDateValue, resetDate} : Props) {
-  const [date , setDate] = useState<Date | undefined>(value ? parse(value, "MMM yyyy", new Date()) : undefined);
+export function DatePicker({ value = "", setDateValue, resetDate }: Props) {
+  const [date, setDate] = useState<Date | undefined>(
+    value ? parse(value, "MMM yyyy", new Date()) : undefined
+  );
 
   useEffect(() => {
     if (resetDate) {
@@ -48,12 +50,12 @@ export function DatePicker({value="" , setDateValue, resetDate} : Props) {
           mode="single"
           selected={date}
           onSelect={(value) => {
-            setDate(value)
-            value && setDateValue(format(value , "MMM yyyy"))
+            setDate(value);
+            value && setDateValue(format(value, "MMM yyyy"));
           }}
           initialFocus
         />
       </PopoverContent>
     </Popover>
-  )
+  );
 }

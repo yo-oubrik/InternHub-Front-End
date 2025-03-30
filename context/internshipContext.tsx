@@ -3,13 +3,18 @@ import axios from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useUser } from "./userContext";
-import { Internship, InternshipType, SalaryType, WorkMode } from "@/types/types";
+import {
+  Internship,
+  InternshipType,
+  SalaryType,
+  WorkMode,
+} from "@/types/types";
 
 axios.defaults.baseURL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 axios.defaults.withCredentials = true;
 
 interface InternshipContextType {
-  internships: Internship[],
+  internships: Internship[];
   loading: boolean;
   createInternship: (data: Internship) => void;
   InternshipTitle: string;
@@ -41,8 +46,10 @@ interface InternshipContextType {
   applyToInternship: (id: string) => void;
   deleteInternship: (id: string) => void;
   handleSearchChange: (searchName: string, value: string) => void;
-  searchQuery: { location: string, title: string };
-  setSearchQuery: React.Dispatch<React.SetStateAction<{ location: string, title: string }>>;
+  searchQuery: { location: string; title: string };
+  setSearchQuery: React.Dispatch<
+    React.SetStateAction<{ location: string; title: string }>
+  >;
   resetInternshipForm: () => void;
 }
 
@@ -54,15 +61,20 @@ export interface Location {
 
 const InternshipContext = createContext<InternshipContextType | null>(null);
 
-export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const InternshipContextProvider: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false);
 
   // input state
   const [InternshipTitle, setInternshipTitle] = useState<string>("");
-  const [internshipDescription, setInternshipDescription] = useState<string>("");
+  const [internshipDescription, setInternshipDescription] =
+    useState<string>("");
   const [salary, setSalary] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
-  const [activeInternshipType, setActiveInternshipType] = useState<WorkMode>(WorkMode.ON_SITE);
+  const [activeInternshipType, setActiveInternshipType] = useState<WorkMode>(
+    WorkMode.ON_SITE
+  );
   const [salaryType, setSalaryType] = useState<SalaryType>(SalaryType.MONTH);
   const [negotiable, setNegotiable] = useState<boolean>(false);
   const [renumerated, setRenumerated] = useState<boolean>(false);
@@ -116,7 +128,6 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
     }
   };
 
-
   const getInternships = async () => {
     setLoading(true);
     try {
@@ -153,7 +164,9 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
       if (title) query.append("title", title);
 
       // send the request
-      const res = await axios.get(`/api/internships/search?${query.toString()}`);
+      const res = await axios.get(
+        `/api/internships/search?${query.toString()}`
+      );
 
       // set internships to the response data
       setInternships(res.data);
@@ -218,8 +231,12 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
   const deleteInternship = async (internshipId: string) => {
     try {
       await axios.delete(`/api/internship/${internshipId}`);
-      setInternships((prevInternships) => prevInternships.filter((internship) => internship.id !== internshipId));
-      setUserInternships((prevInternships) => prevInternships.filter((internship) => internship.id !== internshipId));
+      setInternships((prevInternships) =>
+        prevInternships.filter((internship) => internship.id !== internshipId)
+      );
+      setUserInternships((prevInternships) =>
+        prevInternships.filter((internship) => internship.id !== internshipId)
+      );
 
       toast.success("internship deleted successfully");
     } catch (error) {
@@ -243,7 +260,6 @@ export const InternshipContextProvider: React.FC<{ children: React.ReactNode }> 
   //   }
   // }, [userProfile?.id]);
 
-  console.log("internships : ",internships);
   return (
     <InternshipContext.Provider
       value={{

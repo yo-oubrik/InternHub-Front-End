@@ -1,14 +1,14 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/authContext";
 import { LogIn } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Profile from "./Profile";
 import SignUpDropDown from "./SignUpDropDown";
-import { Button } from "@/components/ui/button";
 
 function Header() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, currentUser } = useAuth();
   const router = useRouter();
   return (
     <header className="px-14 bg-background flex justify-between items-center">
@@ -17,8 +17,8 @@ function Header() {
       </Link>
 
       <div className="flex items-center gap-4">
-        {isAuthenticated ? (
-          <Profile />
+        {isAuthenticated && currentUser ? (
+          <Profile user={currentUser} />
         ) : (
           <div className="flex items-center gap-6">
             <Button
