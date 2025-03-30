@@ -9,10 +9,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import axios from "@/lib/axios";
 import { cn } from "@/lib/utils";
 import { ApiErrorResponse } from "@/types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
+import { isAxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -81,14 +82,11 @@ export const SignUpForm: React.FC<SignInFormProps> = ({ className }) => {
       setIsLoading(true);
       setServerErrors({});
       const student: StudentRequest = { ...data, profilePicture: "" };
-      await axios.post(
-        "http://localhost:8080/api/v1/auth/register/students",
-        student
-      );
+      await axios.post("auth/register/students", student);
       toast.success("Account created successfully");
       router.push("/signin");
     } catch (e) {
-      if (axios.isAxiosError(e)) {
+      if (isAxiosError(e)) {
         const errorResponse = e.response?.data as ApiErrorResponse;
         // Display the backend error message directly
         toast.error(errorResponse?.message || "An unexpected error occurred");

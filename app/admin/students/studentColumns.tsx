@@ -77,9 +77,7 @@ export const studentColumns: ColumnDef<Student>[] = [
                 <User /> View Profile
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setIsEditOpen(true)}>
-                <PenBox /> Edit Student Info
-              </DropdownMenuItem>
+
               <DropdownMenuItem
                 onClick={() => setIsRemoveOpen(true)}
                 className="text-red-600"
@@ -89,12 +87,6 @@ export const studentColumns: ColumnDef<Student>[] = [
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <EditStudentDialog
-            student={student}
-            isOpen={isEditOpen}
-            setIsOpen={setIsEditOpen}
-          />
 
           <RemoveStudentDialog
             studentToRemove={student}
