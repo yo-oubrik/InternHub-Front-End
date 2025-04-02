@@ -74,6 +74,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsAuthenticated(false);
     setCurrentUser(null);
     setLoading(false);
+    window.location.href = "/";
   };
 
   return (
