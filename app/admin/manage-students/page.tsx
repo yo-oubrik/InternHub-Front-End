@@ -34,7 +34,7 @@ const Page = () => {
   }, []);
 
   const months = Object.keys(studentsByMonth);
-  const counts = months.map((month) => studentsByMonth[month]);
+  const counts = Object.values(studentsByMonth);
 
   return (
     <div className="min-h-full-except-header max-w-screen-lg mx-auto flex flex-col gap-10 justify-center py-10">
@@ -60,7 +60,7 @@ const Page = () => {
       />
       <div className="flex gap-4 mx-auto">
         <Button size={"lg"} className="hover:opacity-85 transition" asChild>
-          <Link href={"/admin/students"}>Students List</Link>
+          <Link href={"/admin/students"}>Registered students</Link>
         </Button>
         <Button size={"lg"} className="hover:opacity-85 transition" asChild>
           <Link href={"/admin/flagged-students"}>Flagged Students</Link>

@@ -75,11 +75,11 @@ const Page = () => {
       />
       <div className="flex gap-4 mx-auto">
         <Button size={"lg"} className="hover:opacity-85 transition" asChild>
-          <Link href={"/admin/companies"}> Registered Companies</Link>
+          <Link href={"/admin/companies"}>Registered Companies</Link>
         </Button>
-        <Button size={"lg"} className="hover:opacity-85 transition" asChild>
+        {/* <Button size={"lg"} className="hover:opacity-85 transition" asChild>
           <Link href={"/admin/companies/pending"}>Pending Companies</Link>
-        </Button>
+        </Button> */}
         <Button size={"lg"} className="hover:opacity-85 transition" asChild>
           <Link href={"/admin/companies/flagged"}>Flagged Companies</Link>
         </Button>

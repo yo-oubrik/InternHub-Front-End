@@ -39,14 +39,18 @@ export const companyColumns: ColumnDef<Company>[] = [
     header: "Email",
   },
   {
+    accessorKey: "ice",
+    header: "ICE",
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => (
-      <SortableHeader column={column} label="Created At" />
+      <SortableHeader column={column} label="Joined At" />
     ),
     cell: ({ row }) => {
-      const date = row.original.createdAt;
-      const formattedDate = date.toLocaleDateString("en-GB");
-      return <div>{formattedDate}</div>;
+      const rawDate = row.original.createdAt;
+      const date = new Date(rawDate);
+      return <div>{date.toLocaleDateString("en-CA")}</div>;
     },
     sortingFn: sortDateColumn,
   },
@@ -54,10 +58,7 @@ export const companyColumns: ColumnDef<Company>[] = [
     id: "actions",
     cell: ({ row }) => {
       const company = row.original;
-      const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
       const [isRemoveOpen, setIsRemoveOpen] = useState<boolean>(false);
-      const [isInfoOpen, setIsInfoOpen] = useState<boolean>(false);
-
       return (
         <>
           <DropdownMenu>
@@ -77,12 +78,6 @@ export const companyColumns: ColumnDef<Company>[] = [
               >
                 <Building /> View Profile
               </DropdownMenuItem>
-              <DropdownMenuItem
-                className="flex items-center gap-2 cursor-pointer"
-                onClick={() => setIsInfoOpen(true)}
-              >
-                <Info /> Company Informations
-              </DropdownMenuItem>
 
               <DropdownMenuItem
                 className="flex items-center gap-2 cursor-pointer"
@@ -98,12 +93,6 @@ export const companyColumns: ColumnDef<Company>[] = [
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => setIsEditOpen(true)}
-                className="cursor-pointer"
-              >
-                <PenBox /> Edit Company Info
-              </DropdownMenuItem>
-              <DropdownMenuItem
                 onClick={() => setIsRemoveOpen(true)}
                 className="text-red-600 cursor-pointer"
               >
@@ -113,22 +102,10 @@ export const companyColumns: ColumnDef<Company>[] = [
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <EditCompanyDialog
-            company={company}
-            isOpen={isEditOpen}
-            onOpenChange={setIsEditOpen}
-          />
-
           <RemoveCompanyDialog
             companyToRemove={company}
             isOpen={isRemoveOpen}
-            onOpenChange={setIsRemoveOpen}
-          />
-
-          <CompanyInformationDialog
-            company={company}
-            isOpen={isInfoOpen}
-            onOpenChange={setIsInfoOpen}
+            setIsOpen={setIsRemoveOpen}
           />
         </>
       );

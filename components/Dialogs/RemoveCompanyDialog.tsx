@@ -9,26 +9,24 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useCompany } from "@/context/CompaniesContext";
 import { Company } from "@/types/types";
 
 interface RemoveCompanyDialogProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
   companyToRemove: Company;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
 }
 
 export function RemoveCompanyDialog({
   isOpen,
-  onOpenChange,
+  setIsOpen,
   companyToRemove,
 }: RemoveCompanyDialogProps) {
-  const handleRemove = () => {
-    // Implement remove logic here
-    onOpenChange(false);
-  };
+  const { isLoading, removeCompany } = useCompany();
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Remove Company</DialogTitle>
@@ -38,11 +36,21 @@ export function RemoveCompanyDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex gap-2 sm:justify-end">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button
+            variant="outline"
+            onClick={() => setIsOpen(false)}
+            disabled={isLoading}
+          >
             Cancel
           </Button>
-          <Button variant="destructive" onClick={handleRemove}>
-            Remove
+          <Button
+            variant="destructive"
+            onClick={() => {
+              removeCompany(companyToRemove.id);
+              setIsOpen(false);
+            }}
+          >
+            {isLoading ? "Removing..." : "Remove Company"}
           </Button>
         </DialogFooter>
       </DialogContent>

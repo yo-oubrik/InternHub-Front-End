@@ -32,11 +32,6 @@ export interface Student extends User {
   school?: string;
 }
 
-export interface StudentToRemove {
-  id: string;
-  firstName: string;
-  lastName: string;
-}
 export interface Company extends User {
   name: string;
   address: string;
@@ -51,8 +46,6 @@ export interface Company extends User {
   socialLinks?: CompanySocialLinks;
   website: string;
   internships?: Internship[];
-
-
 }
 
 export enum WorkMode {

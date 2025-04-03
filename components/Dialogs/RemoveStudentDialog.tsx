@@ -8,10 +8,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useStudents } from "@/context/StudentsContext";
-import { StudentToRemove } from "@/types/types";
+import { Student } from "@/types/types";
 
 interface RemoveStudentDialogProps {
-  studentToRemove: StudentToRemove;
+  studentToRemove: Student;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 }
@@ -48,6 +48,7 @@ export const RemoveStudentDialog: React.FC<RemoveStudentDialogProps> = ({
             variant="destructive"
             onClick={() => {
               removeStudent(student.id);
+              setIsOpen(false);
             }}
             disabled={isLoading}
           >
