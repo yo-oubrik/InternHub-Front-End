@@ -1,6 +1,5 @@
 "use client";
 
-import { EditStudentDialog } from "@/components/Dialogs/EditStudentDialog";
 import { RemoveStudentDialog } from "@/components/Dialogs/RemoveStudentDialog";
 import { SortableHeader } from "@/components/SortableHeader";
 import { Button } from "@/components/ui/button";
@@ -13,10 +12,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Student } from "@/types/types";
-import { copyToClipboard } from "@/utils/copyToClipboard";
 import { sortDateColumn } from "@/utils/dates/sortDateColumn";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Pen, PenBox, Trash2, User } from "lucide-react";
+import { MoreHorizontal, Trash2, User } from "lucide-react";
 import { useState } from "react";
 
 export const studentColumns: ColumnDef<Student>[] = [
@@ -39,14 +37,14 @@ export const studentColumns: ColumnDef<Student>[] = [
     header: "Email",
   },
   {
-    accessorKey: "joinedAt",
+    accessorKey: "createdAt",
     header: ({ column }) => (
       <SortableHeader column={column} label="Joined At" />
     ),
     cell: ({ row }) => {
-      const date = row.original.joinedAt;
-      const formattedDate = date.toLocaleDateString("en-GB");
-      return <div>{formattedDate}</div>;
+      const rawDate = row.original.createdAt;
+      const date = new Date(rawDate);
+      return <div>{date.toLocaleDateString("en-CA")}</div>;
     },
     sortingFn: sortDateColumn,
   },
@@ -54,7 +52,6 @@ export const studentColumns: ColumnDef<Student>[] = [
     id: "actions",
     cell: ({ row }) => {
       const student = row.original;
-      const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
       const [isRemoveOpen, setIsRemoveOpen] = useState<boolean>(false);
 
       return (

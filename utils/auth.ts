@@ -23,10 +23,28 @@ export const fetchWithAuth = async (url: string) => {
                 Authorization: `Bearer ${token}`,
             },
         });
-        console.log("Response data:", res.data);
         return res.data;
     } catch (error) {
         console.error("Error fetching data:", error);
         return null;
     }
 };
+
+export const deleteWithAuth = async (url: string) => {
+    try {
+        const token = getValidToken();
+        if (!token) {
+            return false;
+        }
+
+        const res = await axios.delete(url, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return true;
+    } catch (error) {
+        console.error("Error deleting data:", error);
+        return false;
+    }
+}
