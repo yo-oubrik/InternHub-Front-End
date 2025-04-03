@@ -24,14 +24,7 @@ import { z } from "zod";
 interface CompanySignUpFormProps {
   className?: string;
 }
-interface CompanyRequest {
-  name: string;
-  description: string;
-  address: string;
-  email: string;
-  ice: string;
-  password: string;
-}
+
 export const CompanySignUpForm: React.FC<CompanySignUpFormProps> = ({}) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -73,7 +66,7 @@ export const CompanySignUpForm: React.FC<CompanySignUpFormProps> = ({}) => {
     try {
       setIsLoading(true);
       setServerErrors({});
-      const request: CompanyRequest = { ...data };
+      const request = { ...data };
       await axios.post("auth/register/companies", request);
       toast.success("Account created successfully");
       router.push("/signin");

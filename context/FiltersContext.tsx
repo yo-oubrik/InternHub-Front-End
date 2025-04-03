@@ -1,29 +1,33 @@
-import React, { createContext, Dispatch, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  Dispatch,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import axios from "axios";
 
 interface FiltersProps {
-    remote : boolean,
-    onSite : boolean,
-    hybrid : boolean,
-    pfa: boolean,
-    pfe: boolean,
-    initiation: boolean,
-    renumerated : boolean
+  remote: boolean;
+  onSite: boolean;
+  hybrid: boolean;
+  pfa: boolean;
+  pfe: boolean;
+  initiation: boolean;
+  renumerated: boolean;
 }
 
 interface FiltersContextProps {
-  filters: FiltersProps,
-  setFilters: React.Dispatch<React.SetStateAction<FiltersProps>>,
+  filters: FiltersProps;
+  setFilters: React.Dispatch<React.SetStateAction<FiltersProps>>;
   handleFilterChange: (filterName: keyof FiltersProps) => void;
 }
 
+const FiltersContext = createContext<FiltersContextProps | null>(null);
 
-const FiltersContext = createContext<FiltersContextProps | null >(null);
-
-axios.defaults.baseURL = "http://localhost:8000";
-axios.defaults.withCredentials = true;
-
-export const FiltersContextProvider : React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const FiltersContextProvider: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
   const [filters, setFilters] = useState<FiltersProps>({
     remote: false,
     onSite: false,
@@ -34,7 +38,7 @@ export const FiltersContextProvider : React.FC<{ children: React.ReactNode }> = 
     renumerated: false,
   });
 
-  const handleFilterChange = (filterName: keyof FiltersProps ) => {
+  const handleFilterChange = (filterName: keyof FiltersProps) => {
     setFilters((prev) => ({
       ...prev,
       [filterName]: !prev[filterName], // Now TypeScript recognizes the key

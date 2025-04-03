@@ -2,27 +2,27 @@
 import FeatureCard from "@/components/Cards/FeatureCard";
 import { Briefcase, Building, Users } from "lucide-react";
 
-export interface Statistics {
-  internshipListings: number; //nombre de stages
-  remoteInternships: number; //a distance
-  onSiteInternships: number; //presentiel
-  verifiedCompanies: number; //nombre des entreprises
-  studentApplicants: number; //nombre des etudiants
+export interface HomeStatistics {
+  totalInternshipsCount: number;
+  remoteInternshipsCount: number;
+  onSiteInternshipsCount: number;
+  totalCompaniesCount: number;
+  totalStudentsCount: number;
 }
 interface WhyChooseClientProps {
-  statistics: Statistics;
+  statistics: HomeStatistics;
 }
 const WhyChooseClient: React.FC<WhyChooseClientProps> = ({ statistics }) => {
-  const generateFeatures = (statistics: Statistics) => [
+  const generateFeatures = (statistics: HomeStatistics) => [
     {
       icon: <Briefcase className="w-6 h-6 text-primary" />,
       title: "Diverse Internship Opportunities",
       description:
         "Explore a wide range of internship listings across various domains.",
       benefits: [
-        `${statistics.internshipListings}+ Active internship listings`,
-        `${statistics.remoteInternships}+ Remote internships`,
-        `${statistics.onSiteInternships}+ On-Site internships`,
+        `${statistics.totalInternshipsCount}+ Active internship listings`,
+        `${statistics.remoteInternshipsCount}+ Remote internships`,
+        `${statistics.onSiteInternshipsCount}+ On-Site internships`,
       ],
       actionLabel: "Browse Internships",
       actionLink: "/internships",
@@ -33,7 +33,7 @@ const WhyChooseClient: React.FC<WhyChooseClientProps> = ({ statistics }) => {
       description:
         "Connect with top Moroccan companies offering internships to bright students",
       benefits: [
-        `${statistics.verifiedCompanies}+ Trusted Moroccan companies`,
+        `${statistics.totalCompaniesCount}+ Trusted Moroccan companies`,
         "Exclusive internship opportunities",
         "Direct application process for internships",
       ],
@@ -46,7 +46,7 @@ const WhyChooseClient: React.FC<WhyChooseClientProps> = ({ statistics }) => {
       description:
         "Access a diverse pool of Moroccan students eager to start their professional",
       benefits: [
-        `${statistics.studentApplicants.toLocaleString()}+ Registered students`,
+        `${statistics.totalStudentsCount}+ Registered students`,
         "Diverse profiles from various fields of study",
         "Students from different schools and universities",
       ],
