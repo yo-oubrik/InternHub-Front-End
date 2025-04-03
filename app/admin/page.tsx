@@ -17,11 +17,6 @@ const AdminPageClient = () => {
         <div className="stats">
           <StatCard
             count={0}
-            label="Pending Companies"
-            icon={"/icons/companies.png"}
-          />
-          <StatCard
-            count={0}
             label="Flagged Companies"
             icon={"/icons/internship_offer.png"}
           />
