@@ -1,5 +1,5 @@
 "use client";
-import axios from "@/lib/axios";
+import { fetchWithAuth } from "@/utils/auth";
 import {
   ReactNode,
   createContext,
@@ -33,16 +33,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      const response = await axios.get("/users/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setCurrentUser(response.data);
-      console.log(response.data);
+      console.log("fetching...")
+      const data = await fetchWithAuth("/users/me");
+      setCurrentUser(data);
       setIsAuthenticated(true);
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -52,19 +45,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  console.log("current User : ",currentUser);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     const expiresIn = localStorage.getItem("expiresIn");
+    console.log('1');
+    console.log("token : ",token);
+    console.log("expiresIn : ",expiresIn);
     if (token && expiresIn) {
       const expirationTime = parseInt(expiresIn);
       if (Date.now() < expirationTime) {
-        setIsAuthenticated(true);
         fetchUser();
       } else {
         logout();
       }
     } else {
-      setLoading(false);
+      setLoading(false); // No token found or it expired . 
     }
   }, []);
 

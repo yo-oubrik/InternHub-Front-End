@@ -1,5 +1,5 @@
 "use client";
-import axios from "axios";
+import axios from "@/lib/axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useUser } from "./userContext";
@@ -10,8 +10,8 @@ import {
   WorkMode,
 } from "@/types/types";
 
-axios.defaults.baseURL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
-axios.defaults.withCredentials = true;
+
+
 
 interface InternshipContextType {
   internships: Internship[];

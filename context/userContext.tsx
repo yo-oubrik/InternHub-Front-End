@@ -1,21 +1,31 @@
 "use client";
-import axios from "axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./authContext";
-import { Company, Student, User } from "@/types/types";
-
-axios.defaults.baseURL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
-axios.defaults.withCredentials = true;
+import { Certificat, CertificatRequest, Company, Experience, ExperienceRequest, Formation, FormationRequest, Project, ProjectRequest, Role, Student, StudentRequest } from "@/types/types";
+import { fetchWithAuth } from "@/utils/auth";
 
 interface UserContextType {
-  userProfile: User | null;
-  getUserProfile: (id: string) => void;
-  user: User | null;
-  company: Company | null;
-  student: Student | null;
-  getUser: (id: string) => void;
-  getCompany: (id: string) => void;
-  getStudent: (id: string) => void;
+  company: Company ;
+  companies: Company[];
+  student: Student ;
+  setCompany: (company: Company) => void;
+  setStudent: (student: Student) => void;
+  getCompany: (id: string) => Promise<void>;
+  getStudent: (id: string) => Promise<void>;
+  getCompanies: () => Promise<void>;
+  updateStudent: (student: Student) => Promise<void>;
+  createExperience: (experience: Experience) => Promise<Experience>;
+  updateExperience: (experience: Experience) => Promise<Experience>;  
+  deleteExperience: (experience: Experience) => Promise<void>;
+  createFormation: (formation: Formation) => Promise<Formation>;
+  updateFormation: (formation: Formation) => Promise<Formation>;
+  deleteFormation: (formation: Formation) => Promise<void>;
+  createProject: (project: Project) => Promise<Project>;
+  updateProject: (project: Project) => Promise<Project>;
+  deleteProject: (project: Project) => Promise<void>;
+  createCertificat: (certificat: Certificat) => Promise<Certificat>;
+  updateCertificat: (certificat: Certificat) => Promise<Certificat>;
+  deleteCertificat: (certificat: Certificat) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -23,65 +33,203 @@ const UserContext = createContext<UserContextType | null>(null);
 export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const { isAuthenticated, auth0User } = useAuth();
-  const [userProfile, setUserProfile] = useState<User | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [company, setCompany] = useState<Company | null>(null);
-  const [student, setStudent] = useState<Student | null>(null);
+  const { isAuthenticated, currentUser } = useAuth();
+  const [company, setCompany] = useState<Company>({} as Company);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [student, setStudent] = useState<Student>({firstName : "" , lastName : ""} as Student);
 
-  const getUserProfile = async (id: string) => {
-    try {
-      const res = await axios.get(`/api/user/${id}`);
-
-      setUserProfile(res.data);
-    } catch (error) {
-      console.log("Error getting user profile", error);
-    }
-  };
-
-  const getUser = async (id: string) => {
-    try {
-      const res = await axios.get<User>(`/api/user/${id}`);
-      setUser(res.data);
-    } catch (error) {
-      console.error("Failed to fetch user", error);
-    }
-  };
+  console.log("current User : ",currentUser);
 
   const getCompany = async (id: string) => {
     try {
-      const res = await axios.get<Company>(`/api/company/${id}`);
-      setCompany(res.data);
+      const data = await fetchWithAuth(`company/${id}`)
+      setCompany(data as Company);
     } catch (error) {
       console.error("Failed to fetch company", error);
     }
   };
+  const getCompanies = async () => {
+    try {
+      const data = await fetchWithAuth('/companies');
+      console.log("companies : ", data);
+      setCompanies(data as Company[]);
+    } catch (error) {
+      console.error("Failed to fetch companies", error);
+    }
+  };
   const getStudent = async (id: string) => {
     try {
-      const res = await axios.get<Student>(`/api/student/${id}`);
-      setStudent(res.data);
+      const data = await fetchWithAuth(`students/${id}`);
+      setStudent(data as Student);
     } catch (error) {
       console.error("Failed to fetch student", error);
     }
   };
+  const updateStudent = async ( student: Student) => {
+    try {
+      const studentRequest : StudentRequest = student as StudentRequest ;
+      const data = await fetchWithAuth(`students/${student.id}`, {
+        method: "PUT",
+        body: JSON.stringify(studentRequest),
+      });
+      setStudent(data as Student);
+    } catch (error) {
+      console.error("Failed to update student", error);
+    }
+  };
+  const createExperience = async (experience: Experience) => {
+    try {
+      console.log("created ... "+ JSON.stringify({...experience , companyId : experience.company.id , studentId : student.id} as ExperienceRequest));
+      return await fetchWithAuth(`/experiences`, {
+        method: "POST",
+        body: JSON.stringify({...experience , companyId : experience.company.id , studentId : student.id} as ExperienceRequest),
+      });
+    } catch (error) {
+      console.error("Failed to create experience", error);
+    }
+  };
+  const updateExperience = async (experience: Experience) => {
+    try {
+      return await fetchWithAuth(`/experiences/${experience.id}`, {
+        method: "PUT",
+        body: JSON.stringify({...experience , companyId : experience.company.id , studentId : student.id} as ExperienceRequest),
+      });
+    } catch (error) {
+      console.error("Failed to update experience", error);
+    }
+  };
+  const deleteExperience = async (experience: Experience) => {
+    try {
+      await fetchWithAuth(`/experiences/${experience.id}`, {
+        method: "DELETE",
+      });
+    } catch (error) {
+      console.error("Failed to delete experience", error);
+    }
+  };
+  const createFormation = async (formation: Formation) => {
+    try {
+      return await fetchWithAuth(`/formations`, {
+        method: "POST",
+        body: JSON.stringify({...formation , companyId : formation.company.id , studentId : student.id} as FormationRequest),
+      });
+    } catch (error) {
+      console.error("Failed to create formation", error);
+    }
+  };
+  const updateFormation = async (formation: Formation) => {
+    try {
+      return await fetchWithAuth(`/formations/${formation.id}`, {
+        method: "PUT",
+        body: JSON.stringify({...formation , companyId : formation.company.id , studentId : student.id} as FormationRequest),
+      });
+    } catch (error) {
+      console.error("Failed to update formation", error);
+    }
+  };
+  const deleteFormation = async (formation: Formation) => {
+    try {
+      await fetchWithAuth(`/formations/${formation.id}`, {
+        method: "DELETE",
+      });
+    } catch (error) {
+      console.error("Failed to delete project", error);
+    }
+  };
+  const createProject = async (project: Project) => {
+    try {
+      return await fetchWithAuth(`/projects`, {
+        method: "POST",
+        body: JSON.stringify({...project , studentId : student.id} as ProjectRequest),
+      });
+    } catch (error) {
+      console.error("Failed to create project", error);
+    }
+  };
+  const updateProject = async (project: Project) => {
+    try {
+      return await fetchWithAuth(`/projects/${project.id}`, {
+        method: "PUT",
+        body: JSON.stringify({...project , studentId : student.id} as ProjectRequest),
+      });
+    } catch (error) {
+      console.error("Failed to update project", error);
+    }
+  };
+  const deleteProject = async (project: Project) => {
+    try {
+      await fetchWithAuth(`/projects/${project.id}`, {
+        method: "DELETE",
+      });
+    } catch (error) {
+      console.error("Failed to delete project", error);
+    }
+  };
+  const createCertificat = async (certificat: Certificat) => {
+    try {
+      return await fetchWithAuth(`/certificats`, {
+        method: "POST",
+        body: JSON.stringify({...certificat , studentId : student.id} as CertificatRequest),
+      });
+    } catch (error) {
+      console.error("Failed to create certificat", error);
+    }
+  };
+  const updateCertificat = async (certificat: Certificat) => {
+    try {
+        return await fetchWithAuth(`/certificats/${certificat.id}`, {
+        method: "PUT",
+        body: JSON.stringify({...certificat , studentId : student.id} as CertificatRequest),
+      });
+    } catch (error) {
+      console.error("Failed to update certificat", error);
+    }
+  };
+  const deleteCertificat = async (certificat: Certificat) => {
+    try {
+      await fetchWithAuth(`/certificats/${certificat.id}`, {
+        method: "DELETE",
+      });
+    } catch (error) {
+      console.error("Failed to delete certificat", error);
+    }
+  };
 
   useEffect(() => {
-    if (isAuthenticated && auth0User) {
-      getUserProfile(auth0User.id);
+    console.log("current user : ",currentUser);
+    if (isAuthenticated && currentUser) {
+      if(currentUser.role === Role.COMPANY){
+        getCompany(currentUser.id);
+      } else if(currentUser.role === Role.STUDENT) {
+        getStudent(currentUser.id);
+      }
     }
-  }, [isAuthenticated, auth0User]);
+  }, [isAuthenticated, currentUser]);
 
   return (
     <UserContext.Provider
       value={{
-        userProfile,
-        getUserProfile,
-        user,
-        getUser,
         company,
+        setCompany,
         getCompany,
+        companies,
+        getCompanies,
         student,
+        setStudent,
         getStudent,
+        updateStudent,
+        createExperience,
+        updateExperience,
+        deleteExperience,
+        createFormation,
+        updateFormation,
+        deleteFormation,
+        createProject,
+        updateProject,
+        deleteProject,
+        createCertificat,
+        updateCertificat,
+        deleteCertificat,
       }}
     >
       {children}
