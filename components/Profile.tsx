@@ -8,6 +8,7 @@ import {
 import { useAuth, User } from "@/context/authContext";
 import { LogOut, Settings } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 interface ProfileProps {
@@ -15,6 +16,7 @@ interface ProfileProps {
 }
 export const Profile: React.FC<ProfileProps> = ({ user }) => {
   const { logout } = useAuth();
+  const router = useRouter();
   const { profilePicture } = user;
   return (
     <DropdownMenu>
@@ -30,7 +32,7 @@ export const Profile: React.FC<ProfileProps> = ({ user }) => {
         </DropdownMenuTrigger>
       </div>
       <DropdownMenuContent className="w-56" align="end">
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push('/profile')}>
           <Settings className="mr-2 h-4 w-4" />
           <span>Settings</span>
         </DropdownMenuItem>

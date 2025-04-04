@@ -58,7 +58,9 @@ export const SignInForm: React.FC<SignInFormProps> = ({ className }) => {
     try {
       setIsLoading(true);
       const loginRequest: LoginRequest = data;
+      console.log("Login request:", loginRequest);
       const response = await api.post("/auth/login", loginRequest);
+      console.log("Login response:", response.data);
       const authResponse: AuthResponse = response.data;
       localStorage.setItem("token", authResponse.token);
       localStorage.setItem("expiresIn", authResponse.expiresIn.toString());
@@ -67,6 +69,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({ className }) => {
     } catch (e) {
       if (isAxiosError(e)) {
         const errorResponse = e.response?.data as ApiErrorResponse;
+        console.error("Login error:", errorResponse);
         // Display the backend error message directly
         toast.error(errorResponse?.message || "An unexpected error occurred");
         // Still store validation errors for field-level display

@@ -34,7 +34,7 @@ const signUpSchema = z
       .string()
       .min(1, { message: "Last name is required" })
       .max(50, { message: "Last name must be less than 50 characters" })
-      .regex(/^[A-Za-z]+$/, {
+      .regex(/^[A-Za-z\s]+$/, {
         message:
           "Last name must contain only letters and be between 2 and 50 characters",
       }),

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Profile from "./Profile";
 import SignUpDropDown from "./SignUpDropDown";
+import { Badge } from "./ui/badge";
 
 function Header() {
   const { isAuthenticated, currentUser } = useAuth();
@@ -18,7 +19,10 @@ function Header() {
 
       <div className="flex items-center gap-4">
         {isAuthenticated && currentUser ? (
-          <Profile user={currentUser} />
+          <>
+            <Badge variant="default">{currentUser.role}</Badge>
+            <Profile user={currentUser} />
+          </>
         ) : (
           <div className="flex items-center gap-6">
             <Button
