@@ -11,19 +11,41 @@ const getValidToken = () => {
     return token;
 };
 
-export const fetchWithAuth = async (url: string) => {
+export const fetchWithAuth = async (url: string, options?: { 
+    method?: 'GET' | 'PUT' | 'POST' | 'DELETE'; 
+    body?: any;
+    params?: any;
+}) => {
     try {
         const token = getValidToken();
         if (!token) {
             return null;
         }
-
-        const res = await axios.get(url, {
+        const config = {
             headers: {
                 Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
             },
-        });
-        return res.data;
+            ...(options?.params ? { params: options.params } : {}),
+            ...(options || {})
+        };
+        let response;
+        switch (options?.method) {
+            case 'PUT':
+                response = await axios.put(url, options.body, config);
+                break;
+            case 'POST':
+                response = await axios.post(url, options.body, config);
+                break;
+            case 'DELETE':
+                response = await axios.delete(url, config);
+                break;
+            default:
+                response = await axios.get(url, config);
+                break;
+        }
+        console.log("Response data:", response.data);
+        return response.data;
     } catch (error) {
         console.error("Error fetching data:", error);
         return null;

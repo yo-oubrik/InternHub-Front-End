@@ -1,5 +1,8 @@
-export type CompanySocialLinks = {
+export type Links = {
   linkedin?: string;
+  github? : string ; 
+  cv? : string ; 
+  website? : string ; 
   twitter?: string;
 };
 
@@ -17,33 +20,52 @@ export interface User extends BaseEntity {
   id: string;
   email: string;
   role: Role;
+  profilePicture?: string;
 }
 
 export interface Admin extends User {
   firstName: string;
   lastName: string;
-  profilePicture: string;
 }
 
 export interface Student extends User {
+  profileTitle?: string;
   firstName: string;
   lastName: string;
-  profilePicture: string;
   school?: string;
+  tel?: string;
+  location : Location | null;
+  links? : Links ;
+  profileDescription : string | null ;
+  experiences?: Experience[];
+  formations?: Formation[];
+  projects?: Project[];
+  certificates?: Certificat[];
+}
+
+
+export interface StudentRequest {
+  profileTitle?: string;
+  firstName: string;
+  lastName: string;
+  school?: string;
+  tel?: string;
+  location : Location | null;
+  links? : Links ;
+  profileDescription : string | null ;
 }
 
 export interface Company extends User {
   name: string;
-  address: string;
+  location: Location;
   applicationDate: Date;
   description: string;
   ice: string;
   rc: string;
   domain: string;
-  logo: string;
   phone: string;
   size: string;
-  socialLinks?: CompanySocialLinks;
+  links?: Links;
   website: string;
   internships?: Internship[];
 }
@@ -129,27 +151,42 @@ export interface ApiErrorResponse {
 }
 
 
-export type Experience = {
+export interface Experience {
+  id : string ,
   poste: string,
   startDate: string,
   endDate: string,
-  company: CompanyDTO,
+  company: Company,
   description: string,
 }
 
-export type Formation = {
+export type ExperienceRequest = {
+  poste: string,
+  startDate: string,
+  endDate: string,
+  description: string,
+  companyId : string,
+  studentId : string,
+}
+
+export interface Formation {
+  id : string,
   domain: string,
   diploma: string,
   startDate: string,
   endDate: string,
-  company: CompanyDTO,
+  company: Company,
 }
 
-export type CompanyDTO = {
-  logo: string,
-  name: string,
-  address: string
+export type FormationRequest = {
+  domain: string,
+  diploma: string,
+  startDate: string,
+  endDate: string,
+  companyId : string,
+  studentId : string,
 }
+
 
 export interface Project {
   id: string;
@@ -158,11 +195,25 @@ export interface Project {
   link: string;
 }
 
+export type ProjectRequest = {
+  title: string;
+  image: string;
+  link: string;
+  studentId: string;
+}
+
 export interface Certificat {
   id: string;
   title: string;
   thumbnail: string;
   date: string;
+}
+
+export type CertificatRequest = {
+  title: string;
+  thumbnail: string;
+  date: string;
+  studentId: string;
 }
 
 export interface Location {
