@@ -1,44 +1,50 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PlusButton from "../PlusButton";
 import CertificatContent from "./CertificatContent";
 import { Certificat } from "@/types/types";
 import EditModal from "./EditModal";
 import CertificatInfos from "./CertificatInfos";
 import toast from "react-hot-toast";
+import { useUser } from "@/context/userContext";
 
 const CertificateCard = () => {
-  const initialCertificats: Certificat[] = [
-    {
-      id: "1",
-      title: "Machine Learning Specialization",
-      thumbnail: "Certificates/Cisco_Networks.jpg",
-      date: "2023"
-    },
-    {
-      id: "2",
-      title: "CISCO",
-      thumbnail: "Certificates/Cisco_Security.jpg",
-      date: "2024"
-    }
-  ];
+  // const initialCertificats: Certificat[] = [
+  //   {
+  //     id: "1",
+  //     title: "Machine Learning Specialization",
+  //     thumbnail: "Certificates/Cisco_Networks.jpg",
+  //     date: "2023"
+  //   },
+  //   {
+  //     id: "2",
+  //     title: "CISCO",
+  //     thumbnail: "Certificates/Cisco_Security.jpg",
+  //     date: "2024"
+  //   }
+  // ];
 
-  const [certificats, setCertificats] = useState<Certificat[]>(initialCertificats);
+  const { student , createCertificat , updateCertificat , deleteCertificat } = useUser();
+  const [certificats, setCertificats] = useState<Certificat[]>([]);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [newCertificat, setNewCertificat] = useState<Certificat>({
-    id: Date.now().toString(),
+    id: "",
     title: "",
     thumbnail: "",
     date: ""
   });
 
-  const handleCertificatUpdate = (updatedCertificats: Certificat[]) => {
-    setCertificats(updatedCertificats);
+  const handleCertificatUpdate = (updatedCertificat: Certificat) => {
+    updateCertificat(updatedCertificat);
+    setCertificats(
+      (prevCertificats) => 
+        prevCertificats.map((certificat) => (certificat.id === updatedCertificat.id ? updatedCertificat : certificat))
+    );
   };
 
   const handleCancel = () => {
     setNewCertificat({
-      id: Date.now().toString(),
+      id: "",
       title: "",
       thumbnail: "",
       date: ""
@@ -46,26 +52,34 @@ const CertificateCard = () => {
     setIsOpenModal(false);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!newCertificat.title.trim()) {
       toast.error("Please enter a certificate title");
       return;
     }
 
-    if (!newCertificat.thumbnail) {
-      toast.error("Please upload a certificate image");
-      return;
-    }
+    // if (!newCertificat.thumbnail) {
+    //   toast.error("Please upload a certificate image");
+    //   return;
+    // }
 
-    setCertificats([...certificats, newCertificat]);
+
+    const result = await createCertificat(newCertificat);
+    setCertificats((prev: Certificat[]) => [...prev, result]);
     setIsOpenModal(false);
     setNewCertificat({
-      id: Date.now().toString(),
+      id: "",
       title: "",
       thumbnail: "",
       date: ""
     });
   };
+  
+  useEffect(() => {
+    if (student.certificates) {
+      setCertificats(student.certificates);
+    }
+  }, [student.certificates]);
 
   return (
     <div className="bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[90%] mx-auto space-y-7">
@@ -78,7 +92,7 @@ const CertificateCard = () => {
             key={certificat.id}
             certificat={certificat}
             certificats={certificats}
-            setCertificats={handleCertificatUpdate}
+            setCertificats={setCertificats}
           />
         ))}
         <div className="w-1/2 h-full" onClick={() => setIsOpenModal(true)}>

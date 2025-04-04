@@ -3,12 +3,12 @@ import { Pencil } from 'lucide-react';
 import React, { useState } from 'react'
 import EditModal from './EditModal';
 import { Textarea } from '../ui/textarea';
+import { useUser } from '@/context/userContext';
 
 const InfosCard = () => {
-
+    const { student , updateStudent } = useUser();
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-    const [description , setDescription] = useState<string>('');
-    const [infos , setInfos] = useState<string>("");
+    const [description , setDescription] = useState<string | null>(student.profileDescription);
   return (
     <div className="bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[90%] mx-auto">
       <div className="flex justify-between items-center">
@@ -22,10 +22,10 @@ const InfosCard = () => {
       </div>
       <p
         className={`text-gray-600 px-3 mt-5 mb-3 whitespace-pre-line ${
-          description || "text-center"
+          student.profileDescription || "text-center"
         }`}
       >
-        {infos || "---"}
+        {student.profileDescription || "---"}
       </p>
       {isOpenModal && (
         <EditModal
@@ -36,21 +36,24 @@ const InfosCard = () => {
           titleClassName="text-2xl"
           body={
             <Textarea
-              value={description}
+              value={description || ""}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Your Infos Here..."
-              className="caret-primary text-base flex-grow h-full"
+              className="caret-primary bg-background text-base flex-grow h-full"
             />
           }
           cancelButton="Cancel"
           onCancel={() => {
-            infos !== description && setDescription(infos);
+            setDescription(student.profileDescription);
             setIsOpenModal(false);
           }}
           cancelButtonClassName="border-primary border-[1px] text-primary bg-transparent"
           confirmButton="Save"
           onConfirm={() => {
-            setInfos(description);
+            updateStudent({
+              ...student,
+              profileDescription: description
+            });
             setIsOpenModal(false);
           }}
         />

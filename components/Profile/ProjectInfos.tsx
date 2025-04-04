@@ -14,7 +14,6 @@ interface ProjectInfosProps {
 const ProjectInfos: React.FC<ProjectInfosProps> = ({
   editedProject,
   updateEditedProject,
-  isNewProject = false,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 

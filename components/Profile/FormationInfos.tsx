@@ -1,77 +1,100 @@
-import { Dot, Pencil, Trash2 } from "lucide-react";
+import { Building2, Dot, Pencil, Trash2 } from "lucide-react";
 import React, { Dispatch, SetStateAction, useState, useEffect } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import InputField from "../InputField";
 import SearchableCombobox from "../SearchableCombobox";
 import { DatePicker } from "../DatePicker";
-import { CompanyDTO, Formation } from "@/types/types";
+import { Company, Formation } from "@/types/types";
+import { useUser } from "@/context/userContext";
+import toast from "react-hot-toast";
 
 interface FormationInfosProps {
-    object?: Formation;
-    setter?: Dispatch<SetStateAction<Formation[]>>;
+    object: Formation | null;
+    setFormations: Dispatch<SetStateAction<Formation[]>>;
     setWantToAdd: Dispatch<SetStateAction<boolean>>;
-    FLAG?: "VIEW" | "EDIT" | "NEW";
+    FLAG: "VIEW" | "EDIT" | "NEW";
 }
 
-const FormationInfos = ({ object, setter, setWantToAdd, FLAG = "VIEW" }: FormationInfosProps) => {
+const FormationInfos = ({ object, setFormations, setWantToAdd, FLAG = "VIEW" }: FormationInfosProps) => {
+  // const [ showEditor , setShowEditor ] = useState<boolean>(false);
     const [flag, setFlag] = useState<"VIEW" | "EDIT" | "NEW">(FLAG);
-    const [isOpen, setIsOpen] = useState<boolean>(FLAG !== "VIEW");
-    const initialCompanyState = { name: "", logo: "", address: "" };
-    const initialFormationState = { domain: "", company: initialCompanyState, startDate: "", endDate: "", diploma: "" };
-    const [selectedCompany, setSelectedCompany] = useState<CompanyDTO>(initialCompanyState);
-    const [formation, setFormation] = useState<Formation>(object || initialFormationState);
+    // const [isOpen, setIsOpen] = useState<boolean>(FLAG !== "VIEW");
+    // const initialCompanyState = { name: "", logo: "", address: "" };
+    // const initialFormationState = { domain: "", company: initialCompanyState, startDate: "", endDate: "", diploma: "" };
+    const [selectedCompany, setSelectedCompany] = useState<Company>(object?.company || {} as Company);
+    const [formation, setFormation] = useState<Formation>(object || {} as Formation);
+    const { companies , getCompanies , createFormation , updateFormation , deleteFormation } = useUser();
     
-    const options = [
-        {
-            name: "Oracle",
-            logo: "https://imgs.search.brave.com/SaJEFkC6CkHpv_F2fJqFC5PB1NSDKGGr8LWLC8FZb88/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9vcmFjbGUt/b3JpZ2luYWwtaWNv/bi0yMDQ4eDI2Ni02/eDJwOWZjby5wbmc",
-            address: "Casablanca",
-        },
-        {
-            name: "Google",
-            logo: "https://imgs.search.brave.com/AtwSiN4R1HWHuQ8ufel7QsF-fatKfuSV000El5av_O0/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9nb29nbGUt/aWNvbi01MTJ4NTEy/LXRxYzllbDNyLnBu/Zw",
-            address: "USA",
-        },
-        {
-            name: "Vala",
-            logo: "",
-            address: "Agadir",
-        },
-    ];
+    console.log("flag : ", flag);
+    // const options = [
+    //     {
+    //         name: "Oracle",
+    //         logo: "https://imgs.search.brave.com/SaJEFkC6CkHpv_F2fJqFC5PB1NSDKGGr8LWLC8FZb88/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9vcmFjbGUt/b3JpZ2luYWwtaWNv/bi0yMDQ4eDI2Ni02/eDJwOWZjby5wbmc",
+    //         address: "Casablanca",
+    //     },
+    //     {
+    //         name: "Google",
+    //         logo: "https://imgs.search.brave.com/AtwSiN4R1HWHuQ8ufel7QsF-fatKfuSV000El5av_O0/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9nb29nbGUt/aWNvbi01MTJ4NTEy/LXRxYzllbDNyLnBu/Zw",
+    //         address: "USA",
+    //     },
+    //     {
+    //         name: "Vala",
+    //         logo: "",
+    //         address: "Agadir",
+    //     },
+    // ];
 
     useEffect(() => {
+        getCompanies();
+    }, []);
+    useEffect(() => {
         if (flag === "EDIT"){
-            setSelectedCompany(formation?.company || initialCompanyState);
-            setIsOpen(true);
+            setSelectedCompany(formation?.company);
         }
     }, [flag, formation.company]);
 
     const handleSelectCombobox = (value: string) => {
-        const selectedCompany = options.find((option) => option.name === value) || initialCompanyState;
+        const selectedCompany = companies.find((company) => company.name === value) as Company;
         setSelectedCompany(selectedCompany);
-        setFormation({ ...formation, company: selectedCompany });
+        setFormation({
+           ...formation,
+           company: selectedCompany 
+        });
     }
 
-    const handleSave = () => {
-        if (setter) {
-            setter((prev: Formation[]) => [...prev, formation]);
+    const handleSave = async () => {
+        try {
+            if (flag === "NEW") {
+                const newFormation = await createFormation(formation);
+                console.log("newFormation : ", newFormation);
+                setFormations((prev: Formation[]) => [...prev, newFormation]);
+            } else {
+                const updatedFormation = await updateFormation(formation);
+                console.log("updatedFormation : ", updatedFormation);
+                setFormations(
+                    (prev: Formation[]) => 
+                        prev.map((form) => form.id === formation.id ? updatedFormation : form)
+                );
+            }
+            setFlag("VIEW");
+            if (setWantToAdd) setWantToAdd(false);
+        } catch (error) {
+            console.error("Error saving formation:", error);
+            toast.error(error instanceof Error ? error.message : "Failed to save formation");
         }
-        if (setWantToAdd) setWantToAdd(false);
     }
 
     const handleCancel = () => {
-        setFormation(object || initialFormationState);
+        setFormation(object || {} as Formation);
         setFlag("VIEW");
-        setIsOpen(false);
         if (setWantToAdd) setWantToAdd(false);
     }
+
+    console.log("formation : ", formation);
 
     return (
       <Accordion
         type="single"
-        collapsible={flag === "VIEW"}
-        value={isOpen ? "item-1" : undefined}
-        onValueChange={(value) => setIsOpen(value === "item-1")}
       >
         <AccordionItem
           value="item-1"
@@ -88,29 +111,33 @@ const FormationInfos = ({ object, setter, setWantToAdd, FLAG = "VIEW" }: Formati
             <div className="w-full flex justify-between">
               <div className="flex gap-4 justify-center items-center">
                 <div className="w-14 h-14">
-                  <img
-                    src={
-                      flag !== "VIEW"
-                        ? selectedCompany?.logo || ""
-                        : formation?.company.logo
-                    }
-                    className="object-contain w-full h-full"
-                  />
+                  {selectedCompany?.profilePicture || formation?.company?.profilePicture ? (
+                    <img
+                      src={
+                        flag !== "VIEW"
+                          ? selectedCompany?.profilePicture || ""
+                          : formation?.company?.profilePicture || ""
+                      }
+                      className="object-contain w-full h-full"
+                    />
+                  ) : (
+                    <Building2 className="w-full h-full" />
+                  )}
                 </div>
                 <div className="h-full space-y-1 text-start">
                   {flag === "VIEW" ? (
                     <>
-                      <p>{formation?.domain}</p>
+                      <p>{formation?.company.name}</p>
                       <p className="flex font-normal text-gray-700">
-                        {formation?.company.name} <Dot width={17} /> {formation?.diploma}
+                        {formation?.domain} <Dot width={17} /> {formation?.diploma}
                       </p>
                     </>
                   ) : (
                     <>
                         <p className="flex font-normal text-gray-700">
                             <SearchableCombobox
-                            defaultValue={formation?.company.name}
-                            options={options}
+                            defaultValue={formation?.company?.name ?? ""}
+                            options={companies}
                             onSelect={handleSelectCombobox}
                             />
                         </p>
@@ -152,7 +179,13 @@ const FormationInfos = ({ object, setter, setWantToAdd, FLAG = "VIEW" }: Formati
                         className="text-primary h-6 w-6 hover:text-primary-hover cursor-pointer"
                         onClick={() => setFlag("EDIT")}
                       />
-                      <Trash2 className="text-primary h-6 w-6 hover:text-primary-hover cursor-pointer" />
+                      <Trash2 
+                        className="text-primary h-6 w-6 hover:text-primary-hover cursor-pointer"
+                        onClick={() => {
+                            console.log('formation to delete : ', formation);
+                            deleteFormation(formation)
+                            setFormations((prev) => prev.filter((exp) => exp.id !== formation.id))
+                          }} />
                     </div>
                   </>
                 ) : (
@@ -197,7 +230,7 @@ const FormationInfos = ({ object, setter, setWantToAdd, FLAG = "VIEW" }: Formati
                 
             </div>
             {
-                FLAG !== "VIEW" &&
+                flag !== "VIEW" &&
                 <div className="flex justify-center gap-4">
                     <button
                         className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 hover:bg-opacity-90"
@@ -214,7 +247,6 @@ const FormationInfos = ({ object, setter, setWantToAdd, FLAG = "VIEW" }: Formati
                 </div>
             }
           </AccordionTrigger>
-          
         </AccordionItem>
       </Accordion>
     );

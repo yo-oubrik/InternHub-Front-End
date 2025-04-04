@@ -1,72 +1,98 @@
-import { Dot, Pencil, Trash2 } from "lucide-react";
+import { Building, Building2, Building2Icon, Dot, Pencil, Trash2 } from "lucide-react";
 import React, { Dispatch, SetStateAction, useState, useEffect } from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import InputField from "../InputField";
 import SearchableCombobox from "../SearchableCombobox";
 import { DatePicker } from "../DatePicker";
 import TextEditor from "../TextEditor";
-import { CompanyDTO, Experience } from "@/types/types";
+import { Company, Experience } from "@/types/types";
+import { useUser } from "@/context/userContext";
+import toast from "react-hot-toast";
 
 interface ExperienceInfosProps {
-    object?: Experience;
-    setter?: Dispatch<SetStateAction<Experience[]>>;
+    object : Experience | null ;
+    setExperiences: Dispatch<SetStateAction<Experience[]>>;
     setWantToAdd: Dispatch<SetStateAction<boolean>>;
     FLAG?: "VIEW" | "EDIT" | "NEW";
 }
 
-const ExperienceInfos = ({ object, setter, setWantToAdd, FLAG = "VIEW" }: ExperienceInfosProps) => {
+const ExperienceInfos = ({ object, setExperiences, setWantToAdd, FLAG = "VIEW" }: ExperienceInfosProps) => {
     const [showEditor, setShowEditor] = useState<boolean>(false);
     const [flag, setFlag] = useState<"VIEW" | "EDIT" | "NEW">(FLAG);
-    const initialCompanyState = { name: "", logo: "", address: "" };
-    const initialExperienceState = { poste: "", company: initialCompanyState, startDate: "", endDate: "", description: "" };
-    const [selectedCompany, setSelectedCompany] = useState<CompanyDTO>(initialCompanyState);
-    const [experience, setExperience] = useState<Experience>(object || initialExperienceState);
-    
-    const options = [
-        {
-            name: "Oracle",
-            logo: "https://imgs.search.brave.com/SaJEFkC6CkHpv_F2fJqFC5PB1NSDKGGr8LWLC8FZb88/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9vcmFjbGUt/b3JpZ2luYWwtaWNv/bi0yMDQ4eDI2Ni02/eDJwOWZjby5wbmc",
-            address: "Casablanca",
-        },
-        {
-            name: "Google",
-            logo: "https://imgs.search.brave.com/AtwSiN4R1HWHuQ8ufel7QsF-fatKfuSV000El5av_O0/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9nb29nbGUt/aWNvbi01MTJ4NTEy/LXRxYzllbDNyLnBu/Zw",
-            address: "USA",
-        },
-        {
-            name: "Vala",
-            logo: "",
-            address: "Agadir",
-        },
-    ];
+    // const initialCompanyState = { name: "", logo: "", address: "" };
+    // const initialExperienceState = { poste: "", company: initialCompanyState, startDate: "", endDate: "", description: "" };
+    const [selectedCompany, setSelectedCompany] = useState<Company>(object?.company || {} as Company);
+    const [experience, setExperience] = useState<Experience>(object || {} as Experience);
+    const { companies , getCompanies , createExperience , updateExperience , deleteExperience } = useUser();
+
+    // const options = [
+    //     {
+    //         name: "Oracle",
+    //         logo: "https://imgs.search.brave.com/SaJEFkC6CkHpv_F2fJqFC5PB1NSDKGGr8LWLC8FZb88/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9vcmFjbGUt/b3JpZ2luYWwtaWNv/bi0yMDQ4eDI2Ni02/eDJwOWZjby5wbmc",
+    //         address: "Casablanca",
+    //     },
+    //     {
+    //         name: "Google",
+    //         logo: "https://imgs.search.brave.com/AtwSiN4R1HWHuQ8ufel7QsF-fatKfuSV000El5av_O0/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9nb29nbGUt/aWNvbi01MTJ4NTEy/LXRxYzllbDNyLnBu/Zw",
+    //         address: "USA",
+    //     },
+    //     {
+    //         name: "Vala",
+    //         logo: "",
+    //         address: "Agadir",
+    //     },
+    // ];
 
     useEffect(() => {
+        getCompanies();
+    }, []);
+    useEffect(() => {
         if (flag === "EDIT"){
-            setSelectedCompany(experience?.company || initialCompanyState);
+            setSelectedCompany(experience?.company);
             if (experience?.description) {
                 setShowEditor(true);
             }
         }
-    }, [flag, experience.description, experience.company]);
+    }, [flag, experience?.description, experience?.company]);
 
     const handleSelectCombobox = (value: string) => {
-        const selectedCompany = options.find((option) => option.name === value) || initialCompanyState;
+        const selectedCompany = companies.find((company) => company.name === value) as Company ;
         setSelectedCompany(selectedCompany);
-        setExperience({ ...experience, company: selectedCompany });
+        setExperience({
+            ...experience, 
+            company: selectedCompany
+          });
     }
 
-    const handleSave = () => {
-        if (setter) {
-            setter((prev: Experience[]) => [...prev, experience]);
+    const handleSave = async () => {
+      try {
+        if (flag === "NEW") {
+          const newExperience = await createExperience(experience) ; 
+          setExperiences((prev: Experience[]) => [...prev, newExperience]);
+        } else {
+          const updatedExperience = await updateExperience(experience) ;
+          setExperiences(
+              (prev: Experience[]) =>
+                  prev.map((exp) => (exp.id === experience.id ? updatedExperience : exp))
+          );
         }
+        console.log("flagged : ", flag);
+        setFlag("VIEW");
+      } catch (error) {
+        toast.error("Failed to save experience : " + error);
+      }finally {
         if (setWantToAdd) setWantToAdd(false);
+      }
     }
 
     const handleCancel = () => {
-        setExperience(object || initialExperienceState);
+        setExperience(object || {} as Experience);
         setFlag("VIEW");
         if (setWantToAdd) setWantToAdd(false);
     }
+
+    console.log("companies : ", companies);
+    console.log("experience : ", experience);
 
     return (
       <Accordion
@@ -89,21 +115,25 @@ const ExperienceInfos = ({ object, setter, setWantToAdd, FLAG = "VIEW" }: Experi
             <div className="w-full flex justify-between">
               <div className="flex gap-4 justify-center items-center">
                 <div className="w-14 h-14">
-                  <img
-                    src={
-                      flag !== "VIEW"
-                        ? selectedCompany?.logo || ""
-                        : experience?.company.logo
-                    }
-                    className="object-contain w-full h-full"
-                  />
+                  {selectedCompany?.profilePicture || experience?.company?.profilePicture ? (
+                    <img
+                      src={
+                        flag !== "VIEW"
+                          ? selectedCompany?.profilePicture || ""
+                          : experience?.company?.profilePicture || ""
+                      }
+                      className="object-contain w-full h-full"
+                    />
+                  ) : (
+                    <Building2 className="w-full h-full" />
+                  )}
                 </div>
                 <div className="h-full space-y-1 text-start">
                   {flag === "VIEW" ? (
                     <>
                       <p>{experience?.poste}</p>
                       <p className="flex font-normal text-gray-700">
-                        {experience?.company.name} <Dot width={17} /> {experience?.company.address}
+                        {experience?.company.name} <Dot width={17} /> {experience?.company.location?.city + " , " + experience?.company.location?.country}
                       </p>
                     </>
                   ) : (
@@ -121,8 +151,8 @@ const ExperienceInfos = ({ object, setter, setWantToAdd, FLAG = "VIEW" }: Experi
                       />
                       <p className="flex font-normal text-gray-700">
                         <SearchableCombobox
-                          defaultValue={experience?.company.name}
-                          options={options}
+                          defaultValue={experience?.company?.name ?? ""}
+                          options={companies}
                           onSelect={handleSelectCombobox}
                         />
                       </p>
@@ -139,7 +169,13 @@ const ExperienceInfos = ({ object, setter, setWantToAdd, FLAG = "VIEW" }: Experi
                         className="text-primary h-6 w-6 hover:text-primary-hover cursor-pointer"
                         onClick={() => setFlag("EDIT")}
                       />
-                      <Trash2 className="text-primary h-6 w-6 hover:text-primary-hover cursor-pointer" />
+                      <Trash2 
+                        className="text-primary h-6 w-6 hover:text-primary-hover cursor-pointer" 
+                        onClick={() => {
+                          deleteExperience(experience)
+                          setExperiences((prev) => prev.filter((exp) => exp.id !== experience.id))
+                        }} 
+                      />
                     </div>
                   </>
                 ) : (
@@ -183,9 +219,13 @@ const ExperienceInfos = ({ object, setter, setWantToAdd, FLAG = "VIEW" }: Experi
               </div>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="p-4 text-base whitespace-pre-line flex flex-col">
+          <AccordionContent className="p-4 text-base flex flex-col">
             {flag === "VIEW" ? (
-              experience?.description
+              <div 
+                dangerouslySetInnerHTML={{ 
+                  __html: experience?.description || "No description provided" 
+                }} 
+              />
             ) : (
               <>
                 {showEditor ? (

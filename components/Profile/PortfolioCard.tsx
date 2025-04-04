@@ -16,28 +16,28 @@ import TooltipSocialLinks from "./TooltipSocialLinks";
 import { Separator } from "../ui/separator";
 import Overlay from "../Overlay";
 import AnimatedSocialButton from "./AnimatedSocialButton";
+import { useUser } from "@/context/userContext";
 
 const PortfolioCard = () => {
-  const student = {
-    firstName: "EL BANOURI",
-    lastName: "Achraf",
-    profileTitle: "Full Stack Developer",
-    email: "elbanouri.achraf10@gmail.com",
-    tel: "0634807687",
-    address: "hay al mandar al jamil , rue andaleb , berrechid",
-    githubLink: "https://github.com/AchrafELBANOURI",
-    linkedinLink: "https://github.com/AchrafELBANOURI",
-    portfolioLink: "https://github.com/AchrafELBANOURI",
-    cvLink: "https://github.com/AchrafELBANOURI",
-    school: {
-      name: "Ecole Nationale des Sciences Appliquees d'Agadir",
-      image:
-        "https://imgs.search.brave.com/cllfSwAH-XW4sx3vO2M3D9J5x1jWN6IZf_F7g_ycA7A/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9zZWVr/bG9nby5jb20vaW1h/Z2VzL1UvdWl6LWli/bi16b2hyLWxvZ28t/OUM5NzFDMTkyQy1z/ZWVrbG9nby5jb20u/cG5n",
-    },
-  };
+  // const student = {
+  //   firstName: "EL BANOURI",
+  //   lastName: "Achraf",
+  //   profileTitle: "Full Stack Developer",
+  //   email: "elbanouri.achraf10@gmail.com",
+  //   tel: "0634807687",
+  //   address: "hay al mandar al jamil , rue andaleb , berrechid",
+  //   githubLink: "https://github.com/AchrafELBANOURI",
+  //   linkedinLink: "https://github.com/AchrafELBANOURI",
+  //   portfolioLink: "https://github.com/AchrafELBANOURI",
+  //   cvLink: "https://github.com/AchrafELBANOURI",
+  //   school: {
+  //     name: "Ecole Nationale des Sciences Appliquees d'Agadir",
+  //     image:
+  //       "https://imgs.search.brave.com/cllfSwAH-XW4sx3vO2M3D9J5x1jWN6IZf_F7g_ycA7A/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9zZWVr/bG9nby5jb20vaW1h/Z2VzL1UvdWl6LWli/bi16b2hyLWxvZ28t/OUM5NzFDMTkyQy1z/ZWVrbG9nby5jb20u/cG5n",
+  //   },
+  // };
+  const {student , setStudent} = useUser();
 
-  const defaultAvatarImage = "https://github.com/shadcn.png";
-  const [avatarImage, setAvatarImage] = useState<string>(defaultAvatarImage);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +45,10 @@ const PortfolioCard = () => {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setAvatarImage(reader.result as string);
+        setStudent({
+          ...student,
+          profilePicture: reader.result as string,
+        });
       };
       reader.readAsDataURL(file);
     }
@@ -57,8 +60,12 @@ const PortfolioCard = () => {
 
   const handleResetImage = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setAvatarImage(defaultAvatarImage);
+    setStudent({
+      ...student,
+      profilePicture: "",
+    });
   };
+
   const links = {
     github: "profile/github.png",
     linkedin:
@@ -67,9 +74,8 @@ const PortfolioCard = () => {
     cv: "profile/cv_link.png",
   };
 
-  const [onEdit, setOnEdit] = useState<boolean>(false);
-  const [profileTitle, setProfileTitle] = useState<string>(student.profileTitle);
-  const inputRef = useRef<HTMLInputElement>(null);
+  console.log("first name : ", student.firstName);
+  console.log("last name : ", student.lastName);
 
   return (
     <div className="flex flex-row-reverse gap-2 w-[90%] mx-auto">
@@ -87,13 +93,15 @@ const PortfolioCard = () => {
               <div onClick={handleAvatarClick} className="cursor-pointer">
                 <ProfileAvatar
                   className="w-56 h-56 relative overflow-hidden group"
-                  avatarImage={avatarImage}
-                  avatarFallback={"CN"}
+                  avatarImage={student.profilePicture ?? ""}
+                  avatarFallback={
+                    student.firstName.charAt(0).toUpperCase() + student.lastName.charAt(0).toUpperCase()
+                  }
                   overlay={<Overlay children={<UserPen className="w-20 h-20" />} />}
                 />
               </div>
-              {avatarImage !== defaultAvatarImage && (
-                <div 
+              {student.profilePicture === "" && (
+                <div
                   onClick={handleResetImage}
                   className="absolute -bottom-2 right-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                 >
@@ -103,7 +111,7 @@ const PortfolioCard = () => {
             </div>
             <div className="text-center">
               <h1 className="text-2xl font-bold">
-                {student.lastName + " " + student.firstName}
+                {student.firstName + " " + student.lastName}
               </h1>
               <h3 className="font-mono">{student.profileTitle}</h3>
             </div>
@@ -116,7 +124,7 @@ const PortfolioCard = () => {
           <div className="flex flex-col gap-3">
             <div className="flex justify-start items-center gap-3">
               <University className="mb-2" />
-              <p>{student.school.name}</p>
+              <p>{student.school}</p>
             </div>
             <div className="flex justify-start items-center gap-3">
               <Mail />
@@ -128,39 +136,41 @@ const PortfolioCard = () => {
             </div>
             <div className="flex justify-start items-center gap-3">
               <MapPinHouse />
-              <p>{student.address}</p>
+              <p>
+                {
+                  student.location && 
+                  student.location?.address + student.location?.city + student.location?.country
+                }
+              </p>
             </div>
           </div>
           <Separator className="h-[1px] bg-primary-hover mt-4" />
           <div className="flex w-full justify-between items-center">
-            {student.githubLink && (
-              <AnimatedSocialButton
-                href={student.githubLink}
-                platform="github"
-              />
-            )}
-            {student.linkedinLink && (
-              <AnimatedSocialButton
-                href={student.linkedinLink}
-                platform="linkedin"
-              />
-            )}
-            {student.cvLink && (
-              <AnimatedSocialButton
-                href={student.cvLink}
-                platform="cv"
-              />
-            )}
-            {student.portfolioLink && (
-              <AnimatedSocialButton
-                href={student.portfolioLink}
-                platform="portfolio"
-              />
-            )}
+            <AnimatedSocialButton
+              href={student.links?.github ?? ""}
+              platform="github"
+              disabled={!student.links?.github && true}
+            />
+            <AnimatedSocialButton
+              href={student.links?.linkedin ?? ""}
+              platform="linkedin"
+              disabled={!student.links?.linkedin && true}
+            />
+            <AnimatedSocialButton
+              href={student.links?.cv ?? ""}
+              platform="cv"
+              disabled={!student.links?.cv && true}
+            />
+            <AnimatedSocialButton
+              href={student.links?.website ?? ""}
+              platform="portfolio"
+              disabled={!student.links?.website && true}
+            />
           </div>
         </div>
       </div>
     </div>
   );
 };
+
 export default PortfolioCard;

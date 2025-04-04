@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Check, ChevronsUpDown, Dot } from "lucide-react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,16 +17,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CompanyDTO } from "@/types/types";
+import { Company } from "@/types/types";
 import { cx } from "class-variance-authority";
 
 interface Props {
     defaultValue? : string ; 
-    options: {
-        name: string;
-        logo: string;
-        address: string;
-    }[];
+    options: Company[];
     onSelect: (value: string) => void;
 }
 
@@ -34,8 +30,11 @@ export function SearchableCombobox( {defaultValue="" , options , onSelect} : Pro
   const [open, setOpen] = React.useState<boolean>(false);
   const [value, setValue] = React.useState<string>(defaultValue); 
   const [search, setSearch] = React.useState<string>("");
-  const initialCompanyState = {name : "" , logo : "" , address : ""};
-  const [selectedOption , setSelectedOption] = React.useState<CompanyDTO | undefined>();
+  const [selectedOption , setSelectedOption] = React.useState<Company | undefined>();
+
+  console.log("defaultValue : ", defaultValue);
+  console.log("value : ", value);
+  console.log("options : ", options);
 
   // Filter options based on search input (search companyName)
   const filteredOptions = options.filter((option) =>
@@ -56,7 +55,7 @@ export function SearchableCombobox( {defaultValue="" , options , onSelect} : Pro
           className={cx(selectedOption ? "text-black" : "text-muted-foreground", "w-full justify-between font-medium text-sm focus:ring-1 focus:ring-primary rounded-md")}
         >
           {selectedOption
-            ? `${selectedOption.name} - ${selectedOption.address}`
+            ? `${selectedOption.name} - ${selectedOption.location.city + " , " + selectedOption.location.country}`
             : "Select company..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -73,10 +72,10 @@ export function SearchableCombobox( {defaultValue="" , options , onSelect} : Pro
             <CommandGroup>
               {filteredOptions.map((option) => (
                 <CommandItem
-                  key={option.name}
+                  key={option.id}
                   value={option.name}
                   onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
+                    setValue(currentValue);
                     setOpen(false);
                     setSearch("");
                     onSelect(currentValue);
@@ -93,7 +92,7 @@ export function SearchableCombobox( {defaultValue="" , options , onSelect} : Pro
                   <div className="flex flex-col gap-2 flex-1">
                       <div className="font-medium">{option.name}</div>
                       <div className="text-sm text-muted-foreground truncate">
-                        {option.address}
+                        {option.location?.address}
                       </div>
                   </div>
                 </CommandItem>

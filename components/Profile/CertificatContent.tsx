@@ -7,6 +7,7 @@ import EditModal from "./EditModal";
 import { Certificat } from "@/types/types";
 import toast from "react-hot-toast";
 import CertificatInfos from "./CertificatInfos";
+import { useUser } from "@/context/userContext";
 
 interface CertificatContentProps {
   certificat: Certificat;
@@ -19,6 +20,7 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
   certificats,
   setCertificats,
 }) => {
+  const { updateCertificat , deleteCertificat } = useUser();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [editedCertificat, setEditedCertificat] = useState<Certificat>(certificat);
 
@@ -27,32 +29,45 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
     setIsOpenModal(false);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!editedCertificat.title.trim()) {
       toast.error("Please enter a certificate title");
       return;
     }
 
-    if (!editedCertificat.thumbnail) {
-      toast.error("Please upload a certificate image");
-      return;
-    }
+    // if (!editedCertificat.thumbnail) {
+    //   toast.error("Please upload a certificate image");
+    //   return;
+    // }
 
     if (!editedCertificat.date.trim()) {
       toast.error("Please enter the certificate date");
       return;
     }
 
-    setCertificats(
-      certificats.map((c: Certificat) =>
-        c.id === certificat.id ? editedCertificat : c
-      )
-    );
+    try {
+      const updatedCertificat = await updateCertificat(editedCertificat);
+      setCertificats(
+        certificats.map((c: Certificat) =>
+          c.id === certificat.id ? updatedCertificat : c
+        )
+      );
+    } catch (error) {
+      toast.error("Failed to update certificate : " + error);
+      return;
+    }
+    setEditedCertificat({
+      id: "",
+      title: "",
+      thumbnail: "",
+      date: ""
+    });
     setIsOpenModal(false);
   };
 
-  const updateEditedCertificat = (updatedCertificat: Certificat) => {
-    setEditedCertificat(updatedCertificat);
+  const handleDelete = () => {
+    deleteCertificat(certificat);
+    setCertificats(certificats.filter((c: Certificat) => c.id !== certificat.id));
   };
 
   
@@ -62,7 +77,7 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
         <div className="cursor-pointer">
           <img
             src={certificat.thumbnail}
-            alt="Certificate thumbnail"
+            alt="certificat image"
             className="w-full h-40 object-cover group-hover:rotate-2 group-hover:scale-110 duration-100 ease-in"
           />
           <Overlay children={<FileDown className="w-14 h-14 text-primary-hover" />} />
@@ -85,7 +100,7 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
         >
           Edit
         </div>
-        <div className="w-full rounded-br-lg py-2 cursor-pointer hover:bg-primary hover:text-white">
+        <div className="w-full rounded-br-lg py-2 cursor-pointer hover:bg-primary hover:text-white" onClick={() => {handleDelete()}}>
           Delete
         </div>
       </div>
@@ -105,7 +120,7 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
         body={
           <CertificatInfos
             editedCertificat={editedCertificat}
-            updateEditedCertificat={updateEditedCertificat}
+            updateEditedCertificat={setEditedCertificat}
           />
         }
       />

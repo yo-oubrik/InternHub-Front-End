@@ -5,9 +5,10 @@ interface AnimatedSocialButtonProps {
   href: string;
   platform: 'github' | 'linkedin' | 'cv' | 'portfolio';
   className?: string;
+  disabled : boolean ;
 }
 
-const AnimatedSocialButton = ({ href, platform, className = '' }: AnimatedSocialButtonProps) => {
+const AnimatedSocialButton = ({ href, platform, className = '' , disabled }: AnimatedSocialButtonProps) => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const buttonRef = useRef<HTMLAnchorElement>(null);
 
@@ -63,7 +64,7 @@ const AnimatedSocialButton = ({ href, platform, className = '' }: AnimatedSocial
       target="_blank"
       rel="noopener noreferrer"
       onMouseMove={handleMouseMove}
-      className={`relative overflow-hidden rounded-lg px-4 py-2 ${config.bgColor} ${config.textColor} ${config.hoverBgColor} transition-all duration-300 group hover:scale-105 ${className}`}
+      className={`relative overflow-hidden rounded-lg px-4 py-2 ${config.bgColor} ${config.textColor} ${config.hoverBgColor} transition-all duration-300 group hover:scale-105 ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
       <div className="flex items-center gap-2">
         <span className="relative z-10">{config.icon}</span>

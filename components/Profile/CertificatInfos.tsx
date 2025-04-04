@@ -16,7 +16,6 @@ interface CertificatInfosProps {
 const CertificatInfos: React.FC<CertificatInfosProps> = ({
   editedCertificat,
   updateEditedCertificat,
-  isNewCertificat = false,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 

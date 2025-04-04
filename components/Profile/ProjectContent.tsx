@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Eye, FolderOpenDot, ImageIcon, Link, Info } from "lucide-react";
 import Overlay from "../Overlay";
 import EditModal from "./EditModal";
@@ -8,6 +8,7 @@ import { Project } from "@/types/types";
 import toast from "react-hot-toast"
 import CustomTooltip from "./CustomTooltip";
 import ProjectInfos from "./ProjectInfos";
+import { useUser } from "@/context/userContext";
 
 interface ProjectContentProps {
   project: Project;
@@ -20,20 +21,16 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
   projects,
   setProjects,
 }) => {
+  const { updateProject , deleteProject } = useUser();
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [editedProject, setEditedProject] = useState<Project>(project);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [editedProject, setEditedProject] = useState<Project>({} as Project);
 
   const handleCancel = () => {
     setEditedProject(project);
     setIsOpenModal(false);
   };
 
-  const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedProject({ ...editedProject, link: e.target.value });
-  };
-
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!editedProject.title.trim()) {
       toast.error("Please enter a project title");
       return;
@@ -51,17 +48,25 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
       return;
     }
 
-    if (!editedProject.image) {
-      toast.error("Please add a project image");
+    // if (!editedProject.image) {
+    //   toast.error("Please add a project image");
+    //   return;
+    // }
+
+    try {
+      const updatedProject = await updateProject(editedProject);
+      setProjects(projects.map((p: Project) => (p.id === project.id ? updatedProject : p)));
+    } catch (error) {
+      toast.error("Failed to update project : " + error);
       return;
     }
-
-    setProjects(projects.map((p: Project) => (p.id === project.id ? editedProject : p)));
+    setEditedProject({
+        id: "",
+        title: "",
+      image: "",
+      link: "",
+    });
     setIsOpenModal(false);
-  };
-
-  const updateEditedProject = (updatedProject: Project) => {
-    setEditedProject(updatedProject);
   };
 
   const getFullUrl = (url: string) => {
@@ -69,6 +74,15 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
     return `https://${url}`;
   };
+
+  const handleDelete = () => {
+    deleteProject(project);
+    setProjects(projects.filter((p: Project) => p.id !== project.id));
+  };
+
+  useEffect(() => {
+    setEditedProject(project);
+  }, [project]);
 
   return (
     <div className="rounded-lg flex flex-col justify-between border shadow-md hover:scale-105 transition-all duration-300">
@@ -98,6 +112,7 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
         </div>
         <div
           className="w-full rounded-br-lg py-2 cursor-pointer hover:bg-primary hover:text-white"
+          onClick={handleDelete}
         >
           Delete
         </div>
@@ -117,7 +132,7 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
         body={
           <ProjectInfos
             editedProject={editedProject}
-            updateEditedProject={updateEditedProject}
+            updateEditedProject={setEditedProject}
           />
         }
       />

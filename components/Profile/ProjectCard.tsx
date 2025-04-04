@@ -1,43 +1,37 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PlusButton from "../PlusButton";
 import ProjectContent from "./ProjectContent";
 import { Project } from "@/types/types";
 import EditModal from "./EditModal";
 import ProjectInfos from "./ProjectInfos";
 import toast from "react-hot-toast";
+import { useUser } from "@/context/userContext";
 
 const ProjectCard = () => {
-  const initialProjects: Project[] = [
-    {
-      id: "1",
-      title: "E-Commerce Website Using React js , Django , Bootstrap",
-      image: "project/amazon.png",
-      link: "https://www.amazon.com/",
-    },
-    {
-      id: "2",
-      title: "Spotify Clone Website",
-      image: "project/spotify.png",
-      link: "https://open.spotify.com/",
-    },
-  ];
-  const [projects, setProjects] = useState<Project[]>(initialProjects);
+  // const initialProjects: Project[] = [
+  //   {
+  //     id: "1",
+  //     title: "E-Commerce Website Using React js , Django , Bootstrap",
+  //     image: "project/amazon.png",
+  //     link: "https://www.amazon.com/",
+  //   },
+  //   {
+  //     id: "2",
+  //     title: "Spotify Clone Website",
+  //     image: "project/spotify.png",
+  //     link: "https://open.spotify.com/",
+  //   },
+  // ];
+  
+  const { student , createProject } = useUser();
+  const [projects, setProjects] = useState<Project[]>([]);
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [newProject, setNewProject] = useState<Project>({
-    id: Date.now().toString(),
-    title: "",
-    image: "",
-    link: "",
-  });
-
-  const handleProjectUpdate = (updatedProjects: Project[]) => {
-    setProjects(updatedProjects);
-  };
+  const [newProject, setNewProject] = useState<Project>({} as Project);
 
   const handleCancel = () => {
     setNewProject({
-      id: Date.now().toString(),
+      id: "",
       title: "",
       image: "",
       link: "",
@@ -45,7 +39,7 @@ const ProjectCard = () => {
     setIsOpenModal(false);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!newProject.title.trim()) {
       toast.error("Please enter a project title");
       return;
@@ -63,25 +57,37 @@ const ProjectCard = () => {
       return;
     }
 
-    if (!newProject.image) {
-      toast.error("Please add a project image");
-      return;
-    }
+    // if (!newProject.image) {
+    //   toast.error("Please add a project image");
+    //   return;
+    // }
 
-    setProjects([...projects, newProject]);
+    console.log('new project : ', newProject);
+    try {
+      const result = await createProject(newProject);
+      setProjects((prev: Project[]) => [...prev, result]);
+    } catch (error) {
+      toast.error("Failed to create project : " + error);
+    }
     setIsOpenModal(false);
     setNewProject({
-      id: Date.now().toString(),
+      id: "" ,
       title: "",
       image: "",
       link: "",
     });
   };
 
+  useEffect(() => {
+    if (student?.projects) {
+      setProjects(student.projects);
+    }
+  }, [student.projects]);
+
   return (
     <div className="bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[90%] mx-auto space-y-7">
       <div className="flex justify-between items-center">
-        <h2 className="text-3xl text-gray-800 font-medium">Certificat</h2>
+        <h2 className="text-3xl text-gray-800 font-medium">Projects</h2>
       </div>
       <div className="px-4 gap-6 grid grid-cols-4">
         {projects.map((project) => (
@@ -89,7 +95,7 @@ const ProjectCard = () => {
             key={project.id}
             project={project}
             projects={projects}
-            setProjects={handleProjectUpdate}
+            setProjects={setProjects}
           />
         ))}
         <div className="w-1/2 h-full" onClick={() => setIsOpenModal(true)}>
