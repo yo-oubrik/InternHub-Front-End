@@ -29,20 +29,26 @@ export const CompanySignUpForm: React.FC<CompanySignUpFormProps> = ({}) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
-  const formSchema = z.object({
-    name: z.string().min(1, "Company name is required"),
-    description: z
-      .string()
-      .min(10, "Description must be at least 10 characters")
-      .max(500, "Description must be less than 500 characters"),
-    address: z.string().min(1, "Address is required"),
-    email: z.string().email("Invalid email format"),
-    ice: z
-      .string()
-      .min(1, "ICE number is required")
-      .regex(/^\d{15}$/, "ICE must be exactly 15 digits"),
-    password: z.string().min(8, "Password should be at least 8 characters"),
-  });
+  const formSchema = z
+    .object({
+      name: z.string().min(1, "Company name is required"),
+      description: z
+        .string()
+        .min(10, "Description must be at least 10 characters")
+        .max(500, "Description must be less than 500 characters"),
+      address: z.string().min(1, "Address is required"),
+      email: z.string().email("Invalid email format"),
+      ice: z
+        .string()
+        .min(1, "ICE number is required")
+        .regex(/^\d{15}$/, "ICE must be exactly 15 digits"),
+      password: z.string().min(8, "Password should be at least 8 characters"),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    });
 
   type FormData = z.infer<typeof formSchema>;
 
@@ -162,8 +168,22 @@ export const CompanySignUpForm: React.FC<CompanySignUpFormProps> = ({}) => {
                 </p>
               )}
             </div>
+            <div className="grid gap-2">
+              <Label htmlFor="confirmPassword">Password Confirmation</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                {...register("confirmPassword")}
+              />
+              {(errors.confirmPassword || serverErrors.confirmPassword) && (
+                <p className="text-red-500">
+                  {errors.confirmPassword?.message ||
+                    serverErrors.confirmPassword}
+                </p>
+              )}
+            </div>
 
-            <div className="flex justify-between mt-4">
+            <div className="flex justify-between">
               <Button type="submit" size={"lg"}>
                 {isLoading ? "Signing up..." : "Sign Up"}
               </Button>
