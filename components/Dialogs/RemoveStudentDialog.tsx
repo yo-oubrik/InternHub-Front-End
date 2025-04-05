@@ -10,8 +10,13 @@ import {
 import { useStudents } from "@/context/StudentsContext";
 import { Student } from "@/types/types";
 
+interface StudentToRemove {
+  id: string;
+  firstName: string;
+  lastName: string;
+}
 interface RemoveStudentDialogProps {
-  studentToRemove: Student;
+  studentToRemove: StudentToRemove;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 }

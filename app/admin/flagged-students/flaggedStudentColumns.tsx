@@ -7,14 +7,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { FlaggedStudentOverview } from "@/types/types";
 import { sortDateColumn } from "@/utils/dates/sortDateColumn";
 import { ColumnDef } from "@tanstack/react-table";
-import { Info, InfoIcon, MoreHorizontal, User } from "lucide-react";
-import { useState } from "react";
+import { InfoIcon, MoreHorizontal, User } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 // const sortSeverityColumn = (rowA: any, rowB: any, columnId: string): number => {
 //   const severityOrder = { low: 1, medium: 2, high: 3 };
@@ -114,6 +113,7 @@ export const flaggedStudentColumns =
         //   setShowIgnoreConfirm(false);
         // };
 
+        const router = useRouter();
         return (
           <>
             <DropdownMenu>
@@ -131,7 +131,11 @@ export const flaggedStudentColumns =
                   Manage Flags
                 </DropdownMenuLabel>
                 <DropdownMenuItem
-                  onClick={() => {}}
+                  onClick={() => {
+                    router.push(
+                      `/admin/flagged-students/${flaggedStudent.studentId}`
+                    );
+                  }}
                   className="flex items-center gap-2 cursor-pointer"
                 >
                   <InfoIcon className="h-4 w-4" />

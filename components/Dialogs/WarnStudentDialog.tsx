@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,33 +9,29 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { AlertCircle } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { StudentFlag } from "@/types/types";
+import { useState } from "react";
 
 interface NotifyStudentDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: (message: string) => void;
-  flaggedStudent: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    reason: string;
-  };
+  studentFlag: StudentFlag;
 }
 
 export function WarnStudentDialog({
   isOpen,
   onOpenChange,
   onConfirm,
-  flaggedStudent,
+  studentFlag,
 }: NotifyStudentDialogProps) {
-  const defaultWarning = `Dear ${flaggedStudent.firstName} ${flaggedStudent.lastName},
+  const defaultWarning = `Dear ${studentFlag.flaggedStudent.firstName} ${studentFlag.flaggedStudent.lastName},
 
 This is a warning regarding inappropriate behavior reported in your internship application process.
 
-Reason for warning: ${flaggedStudent.reason}
+Reason for warning: ${studentFlag.reason}
 
 Please be advised that such behavior is against our platform's policies and may result in account suspension.
 
@@ -52,7 +47,9 @@ Admin Team`;
           <DialogTitle>Send Warning to Student</DialogTitle>
           <DialogDescription>
             Send a warning notification to{" "}
-            <span className="font-medium">{flaggedStudent.email}</span>
+            <span className="font-medium">
+              {studentFlag.flaggedStudent.email}
+            </span>
           </DialogDescription>
         </DialogHeader>
 

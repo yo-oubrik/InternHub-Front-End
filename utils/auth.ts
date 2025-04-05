@@ -47,7 +47,6 @@ export const RequestWithAuth = async (url: string, options?: {
                 response = await axios.get(url, config);
                 break;
         }
-        console.log("Response data:", response.data);
         return response.data;
     } catch (error) {
         console.error("Error fetching data:", error);

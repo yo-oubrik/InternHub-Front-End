@@ -124,23 +124,7 @@ export const severityMap: Record<flagSeverity, BadgeVariant> = {
   [flagSeverity.LOW]: "outline",
 };
 
-export interface FlaggedStudent {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  reason: string;
-  description: string;
-  company: string;
-  companyId: string;
-  flaggedAt: Date;
-  offerId: string;
-  severity: flagSeverity;
-  studentId: string;
-  internshipTitle: string;
-  internshipId: string;
-  screenshots: string[];
-}
+
 export interface ApiErrorResponse {
   timestamp: string;
   status: number;
@@ -229,15 +213,28 @@ export interface FlaggedStudentOverview {
   unresolvedFlagsCount: number;
   lastFlagDate: Date;
 }
-export type ReportStatus = "IGNORED" | "UNRESOLVED" | "WARNED";
+export type ReportStatus = "RESOLVED" | "UNRESOLVED" | "WARNED";
+
+export const reportStatusMap = (reportStatus: ReportStatus) => {
+  switch (reportStatus) {
+    case "RESOLVED": "outline"
+    case "UNRESOLVED": "secondary"
+    case "WARNED": "destructive"
+  }
+};
 
 export interface StudentFlag {
   id: string;
-  flaggedStudentId: string;
-  flaggedByCompanyId: string;
-  date: Date;
   reason: string;
   description: string;
-  screenshoots: string[];
+  date: Date;
   reportStatus: ReportStatus;
+  studentId: string;
+  companyId: string;
+  firstName: string;
+  lastName: string;
+  companyName: string;
+  studentEmail: string;
+  companyEmail: string;
+  screenshots: string[];
 }

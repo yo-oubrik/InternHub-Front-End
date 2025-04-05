@@ -54,7 +54,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     lastName: "",
   } as Student);
 
-  console.log("current User : ", currentUser);
+  // console.log("current User : ", currentUser);
 
   const getCompany = async (id: string) => {
     try {
@@ -247,7 +247,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    console.log("current user : ", currentUser);
+    // console.log("current user : ", currentUser);
     if (isAuthenticated && currentUser) {
       if (currentUser.role === Role.COMPANY) {
         getCompany(currentUser.id);
