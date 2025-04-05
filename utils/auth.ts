@@ -1,18 +1,21 @@
 import axios from "@/lib/axios";
 
-const getValidToken = () => {
+export const getValidToken = () => {
     const token = localStorage.getItem("token");
     const expiresIn = localStorage.getItem("expiresIn");
     const expirationTime = expiresIn ? parseInt(expiresIn, 10) : 0;
-
-    if (!token || !(Date.now() < expirationTime)) {
+    if (!(Date.now() < expirationTime)) {
+        console.error("Auth token expired");
+    }
+    if (!token) {
+        console.error("Auth token is null")
         return null;
     }
     return token;
 };
 
-export const fetchWithAuth = async (url: string, options?: { 
-    method?: 'GET' | 'PUT' | 'POST' | 'DELETE'; 
+export const RequestWithAuth = async (url: string, options?: {
+    method?: 'GET' | 'PUT' | 'POST' | 'DELETE';
     body?: any;
     params?: any;
 }) => {
@@ -52,6 +55,28 @@ export const fetchWithAuth = async (url: string, options?: {
     }
 };
 
+
+
+
+export const fetchWithAuth = async (url: string) => {
+    try {
+        const token = getValidToken();
+        if (!token) {
+            return null;
+        }
+
+        const res = await axios.get(url, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return res.data;
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        return null;
+    }
+};
+
 export const deleteWithAuth = async (url: string) => {
     try {
         const token = getValidToken();
@@ -70,3 +95,5 @@ export const deleteWithAuth = async (url: string) => {
         return false;
     }
 }
+
+
