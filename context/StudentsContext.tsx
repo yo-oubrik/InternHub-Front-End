@@ -1,6 +1,6 @@
 "use client";
 
-import { Student } from "@/types/types";
+import { FlaggedStudentOverview, Student } from "@/types/types";
 import { deleteWithAuth, RequestWithAuth } from "@/utils/auth";
 import {
   createContext,
@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 
 interface StudentsContextType {
   students: Student[];
+  flaggedStudentsOverview: FlaggedStudentOverview[];
   isLoading: boolean;
   removeStudent: (studentId: string) => void;
 }
@@ -23,6 +24,9 @@ const StudentsContext = createContext<StudentsContextType | undefined>(
 
 export function StudentsProvider({ children }: { children: ReactNode }) {
   const [students, setStudents] = useState<Student[]>([]);
+  const [flaggedStudentsOverview, setFlaggedStudentsOverview] = useState<
+    FlaggedStudentOverview[]
+  >([]);
   const [loading, setLoading] = useState(true);
 
   const fetchStudents = async () => {
@@ -34,6 +38,19 @@ export function StudentsProvider({ children }: { children: ReactNode }) {
       return;
     }
     setStudents(data);
+  };
+
+  const fetchFlaggedStudentsOverview = async () => {
+    setLoading(true);
+    const data = await RequestWithAuth("/flagged-students/overview");
+    setLoading(false);
+    if (!data) {
+      toast.error("Failed to fetch flagged students", {
+        id: "fetch-flagged-students",
+      });
+      return;
+    }
+    setFlaggedStudentsOverview(data);
   };
 
   const removeStudent = async (studentId: string) => {
@@ -53,6 +70,7 @@ export function StudentsProvider({ children }: { children: ReactNode }) {
   // Fetch students on mount
   useEffect(() => {
     fetchStudents();
+    fetchFlaggedStudentsOverview();
   }, []);
 
   return (
@@ -61,6 +79,7 @@ export function StudentsProvider({ children }: { children: ReactNode }) {
         students,
         isLoading: loading,
         removeStudent,
+        flaggedStudentsOverview,
       }}
     >
       {children}

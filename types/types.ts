@@ -1,8 +1,8 @@
 export type Links = {
   linkedin?: string;
-  github? : string ; 
-  cv? : string ; 
-  website? : string ; 
+  github?: string;
+  cv?: string;
+  website?: string;
   twitter?: string;
 };
 
@@ -34,9 +34,9 @@ export interface Student extends User {
   lastName: string;
   school?: string;
   tel?: string;
-  location : Location | null;
-  links? : Links ;
-  profileDescription : string | null ;
+  location: Location | null;
+  links?: Links;
+  profileDescription: string | null;
   experiences?: Experience[];
   formations?: Formation[];
   projects?: Project[];
@@ -50,9 +50,9 @@ export interface StudentRequest {
   lastName: string;
   school?: string;
   tel?: string;
-  location : Location | null;
-  links? : Links ;
-  profileDescription : string | null ;
+  location: Location | null;
+  links?: Links;
+  profileDescription: string | null;
 }
 
 export interface Company extends User {
@@ -152,7 +152,7 @@ export interface ApiErrorResponse {
 
 
 export interface Experience {
-  id : string ,
+  id: string,
   poste: string,
   startDate: string,
   endDate: string,
@@ -165,12 +165,12 @@ export type ExperienceRequest = {
   startDate: string,
   endDate: string,
   description: string,
-  companyId : string,
-  studentId : string,
+  companyId: string,
+  studentId: string,
 }
 
 export interface Formation {
-  id : string,
+  id: string,
   domain: string,
   diploma: string,
   startDate: string,
@@ -183,8 +183,8 @@ export type FormationRequest = {
   diploma: string,
   startDate: string,
   endDate: string,
-  companyId : string,
-  studentId : string,
+  companyId: string,
+  studentId: string,
 }
 
 
@@ -220,4 +220,24 @@ export interface Location {
   address: string;
   city: string;
   country: string;
+}
+export interface FlaggedStudentOverview {
+  studentId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  unresolvedFlagsCount: number;
+  lastFlagDate: Date;
+}
+export type ReportStatus = "IGNORED" | "UNRESOLVED" | "WARNED";
+
+export interface StudentFlag {
+  id: string;
+  flaggedStudentId: string;
+  flaggedByCompanyId: string;
+  date: Date;
+  reason: string;
+  description: string;
+  screenshoots: string[];
+  reportStatus: ReportStatus;
 }

@@ -23,16 +23,13 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import React from "react";
+import { FlaggedStudentOverview } from "@/types/types";
 
 interface FlaggedStudentsTableProps {
-  data: FlaggedStudent[];
-  onResolve: (studentId: string) => void;
+  data: FlaggedStudentOverview[];
 }
 
-export function FlaggedStudentsTable({
-  data,
-  onResolve,
-}: FlaggedStudentsTableProps) {
+export function FlaggedStudentsTable({ data }: FlaggedStudentsTableProps) {
   const columns = flaggedStudentColumns();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
