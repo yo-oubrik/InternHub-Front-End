@@ -22,27 +22,23 @@ const AdminPageClient = () => {
         return;
       }
       try {
-        const { data: countOfFlaggedCompanies } = await axios.get(
-          "/flagged-companies/count",
-          {
+        const [
+          { data: countOfFlaggedCompanies },
+          { data: countOfFlaggedStudents },
+        ] = await Promise.all([
+          axios.get("/flagged-companies/count", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
-        );
+          }),
+          axios.get("flagged-students/count", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+        ]);
         setFlaggedCompaniesCount(countOfFlaggedCompanies);
-        // const [companiesResponse, studentsResponse] = await Promise.all([
-        //   axios.get("/flagged-companies/count", {
-        //     headers: {
-        //       Authorization: `Bearer ${token}`,
-        //     },
-        //   }),
-        //   axios.get("flagged-students/count", {
-        //     headers: {
-        //       Authorization: `Bearer ${token}`,
-        //     },
-        //   }),
-        // ]);
+        setFlaggedStudentsCount(countOfFlaggedStudents);
       } catch (error) {
         toast.error("Failed to fetch statistics", {
           id: "fetch-statistics",
@@ -65,12 +61,12 @@ const AdminPageClient = () => {
           <StatCard
             count={flaggedCompaniesCount}
             label="Flagged Companies"
-            icon={"/icons/internship_offer.png"}
+            icon={"/admin/companies/icons/flagged_companies.png"}
           />
           <StatCard
-            count={0}
+            count={flaggedStudentsCount}
             label="Flagged Students"
-            icon={"/icons/applications.png"}
+            icon={"/admin/students/icons/flagged_students.png"}
           />
         </div>
       </div>
