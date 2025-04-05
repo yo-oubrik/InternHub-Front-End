@@ -1,24 +1,47 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { FolderOpenDot, ImageIcon, Link, Info } from "lucide-react";
 import InputField from "../InputField";
 import { Project } from "@/types/types";
 import CustomTooltip from "./CustomTooltip";
+import toast from "react-hot-toast";
 
 interface ProjectInfosProps {
   editedProject: Project;
   updateEditedProject: (project: Project) => void;
   isNewProject?: boolean;
+  setFile: (file: File | null) => void;
 }
 
 const ProjectInfos: React.FC<ProjectInfosProps> = ({
   editedProject,
   updateEditedProject,
+  setFile,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     updateEditedProject({ ...editedProject, link: e.target.value });
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setFile(file || null);
+    
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          setPreviewImage(e.target.result as string);
+          updateEditedProject({
+            ...editedProject,
+            image: file.name,
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -35,16 +58,20 @@ const ProjectInfos: React.FC<ProjectInfosProps> = ({
           e.stopPropagation();
           const file = e.dataTransfer.files[0];
           if (file && file.type.startsWith("image/")) {
+            setFile(file);
             const reader = new FileReader();
             reader.onload = (e) => {
               if (e.target?.result) {
+                setPreviewImage(e.target.result as string);
                 updateEditedProject({
                   ...editedProject,
-                  image: e.target.result as string,
+                  image: file.name,
                 });
               }
             };
             reader.readAsDataURL(file);
+          } else {
+            toast.error("Please upload an image file");
           }
         }}
       >
@@ -53,25 +80,11 @@ const ProjectInfos: React.FC<ProjectInfosProps> = ({
           ref={inputRef}
           className="hidden"
           accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                if (e.target?.result) {
-                  updateEditedProject({
-                    ...editedProject,
-                    image: e.target.result as string,
-                  });
-                }
-              };
-              reader.readAsDataURL(file);
-            }
-          }}
+          onChange={handleImageChange}
         />
-        {editedProject.image ? (
+        {previewImage || editedProject.image ? (
           <img
-            src={editedProject.image}
+            src={previewImage || editedProject.image}
             alt="Project preview"
             className="w-full h-full object-contain rounded-lg"
           />
@@ -79,10 +92,9 @@ const ProjectInfos: React.FC<ProjectInfosProps> = ({
           <div className="flex flex-col items-center justify-center h-40 space-y-2">
             <ImageIcon className="w-12 h-12 text-gray-400" />
             <p className="text-sm text-gray-500">
-              Drag and drop an image here, or click to select
+              Drag and drop an image of your certificat here, or click to select
             </p>
           </div>
-          
         )}
       </div>
       <div className="flex items-center gap-2">

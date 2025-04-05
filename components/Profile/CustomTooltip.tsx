@@ -8,15 +8,17 @@ import { TooltipProvider } from '../ui/tooltip'
 interface CustomTooltipProps {
   trigger: React.ReactNode;
   content: React.ReactNode;
+  side?: 'top' | 'bottom' | 'left' | 'right';
+  contentClassName?: string;
 }
-const CustomTooltip: React.FC<CustomTooltipProps> = ({ trigger, content }) => {
+const CustomTooltip: React.FC<CustomTooltipProps> = ({ trigger, content, side = 'top', contentClassName }) => {
   return (
     <TooltipProvider>
-      <Tooltip>
+      <Tooltip delayDuration={200}>
         <TooltipTrigger asChild>
           {trigger}
         </TooltipTrigger>
-        <TooltipContent className="max-w-[500px] p-4">
+        <TooltipContent className={contentClassName} side={side}>
           {content}
         </TooltipContent>
       </Tooltip>

@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { FolderOpenDot, FileText, Info, Upload } from "lucide-react";
 import InputField from "../InputField";
 import { Certificat } from "@/types/types";
@@ -11,13 +11,35 @@ interface CertificatInfosProps {
   editedCertificat: Certificat;
   updateEditedCertificat: (certificat: Certificat) => void;
   isNewCertificat?: boolean;
+  setFile: (file: File | null) => void;
 }
 
 const CertificatInfos: React.FC<CertificatInfosProps> = ({
   editedCertificat,
   updateEditedCertificat,
+  setFile
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    setFile(file || null);
+    
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          setPreviewImage(e.target.result as string);
+          updateEditedCertificat({
+            ...editedCertificat,
+            thumbnail: file.name,
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -33,12 +55,14 @@ const CertificatInfos: React.FC<CertificatInfosProps> = ({
           e.stopPropagation();
           const file = e.dataTransfer.files[0];
           if (file && file.type.startsWith("image/")) {
+            setFile(file);
             const reader = new FileReader();
             reader.onload = (e) => {
               if (e.target?.result) {
+                setPreviewImage(e.target.result as string);
                 updateEditedCertificat({
                   ...editedCertificat,
-                  thumbnail: e.target.result as string,
+                  thumbnail: file.name,
                 });
               }
             };
@@ -53,27 +77,11 @@ const CertificatInfos: React.FC<CertificatInfosProps> = ({
           ref={inputRef}
           className="hidden"
           accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file && file.type.startsWith("image/")) {
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                if (e.target?.result) {
-                  updateEditedCertificat({
-                    ...editedCertificat,
-                    thumbnail: e.target.result as string,
-                  });
-                }
-              };
-              reader.readAsDataURL(file);
-            } else {
-              toast.error("Please upload an image file");
-            }
-          }}
+          onChange={handleImageChange}
         />
-        {editedCertificat.thumbnail ? (
+        {previewImage || editedCertificat.thumbnail ? (
           <img
-            src={editedCertificat.thumbnail}
+            src={previewImage || editedCertificat.thumbnail}
             alt="Certificate thumbnail"
             className="w-full h-full object-contain rounded-lg"
           />

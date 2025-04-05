@@ -4,9 +4,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "..
 import InputField from "../InputField";
 import SearchableCombobox from "../SearchableCombobox";
 import { DatePicker } from "../DatePicker";
-import { Company, Formation } from "@/types/types";
+import { Company, Formation, Role } from "@/types/types";
 import { useUser } from "@/context/userContext";
 import toast from "react-hot-toast";
+import { isStudentRole } from "@/utils/authUtils";
+import { useAuth } from "@/context/authContext";
 
 interface FormationInfosProps {
     object: Formation | null;
@@ -18,6 +20,9 @@ interface FormationInfosProps {
 const FormationInfos = ({ object, setFormations, setWantToAdd, FLAG = "VIEW" }: FormationInfosProps) => {
   // const [ showEditor , setShowEditor ] = useState<boolean>(false);
     const [flag, setFlag] = useState<"VIEW" | "EDIT" | "NEW">(FLAG);
+
+    const { currentUser } = useAuth();
+    const isStudent = isStudentRole(currentUser?.role as Role);
     // const [isOpen, setIsOpen] = useState<boolean>(FLAG !== "VIEW");
     // const initialCompanyState = { name: "", logo: "", address: "" };
     // const initialFormationState = { domain: "", company: initialCompanyState, startDate: "", endDate: "", diploma: "" };
@@ -175,10 +180,13 @@ const FormationInfos = ({ object, setFormations, setWantToAdd, FLAG = "VIEW" }: 
                   <>
                     {formation?.startDate} - {formation?.endDate}
                     <div className="flex gap-2">
+                      {isStudent && (
                       <Pencil
                         className="text-primary h-6 w-6 hover:text-primary-hover cursor-pointer"
                         onClick={() => setFlag("EDIT")}
                       />
+                      )}
+                      {isStudent && (
                       <Trash2 
                         className="text-primary h-6 w-6 hover:text-primary-hover cursor-pointer"
                         onClick={() => {
@@ -186,6 +194,7 @@ const FormationInfos = ({ object, setFormations, setWantToAdd, FLAG = "VIEW" }: 
                             deleteFormation(formation)
                             setFormations((prev) => prev.filter((exp) => exp.id !== formation.id))
                           }} />
+                      )}
                     </div>
                   </>
                 ) : (

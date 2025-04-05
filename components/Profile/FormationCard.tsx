@@ -2,8 +2,10 @@
 import React, { useEffect, useState } from "react";
 import PlusButton from "../PlusButton";
 import CustomAccordion from "../CustomAccordion";
-import { Formation } from "@/types/types";
+import { Formation, Role } from "@/types/types";
 import { useUser } from "@/context/userContext";
+import { useAuth } from "@/context/authContext";
+import { isStudentRole } from '@/utils/authUtils';
 import FormationInfos from "./FormationInfos";
 
 const FormationCard = () => {
@@ -33,6 +35,8 @@ const FormationCard = () => {
   // ];
 
   const { student } = useUser();
+  const { currentUser } = useAuth();
+  const isStudent = isStudentRole(currentUser?.role as Role);
   const [formations , setFormations] = useState<Formation[]>([]);
   const [wantToAdd, setWantToAdd] = useState<boolean>(false);
 
@@ -49,25 +53,27 @@ const FormationCard = () => {
       </div>
       <div className="px-4 space-y-4">
         {
-            formations.map((formation, index) => (
-              <FormationInfos
-                  key={index}
-                  object={formation}
-                  setWantToAdd={setWantToAdd}
-                  setFormations={setFormations}
-                  FLAG="VIEW"
-              />
-            ))
+          formations.map((formation, index) => (
+            <FormationInfos
+                key={index}
+                object={formation}
+                setWantToAdd={setWantToAdd}
+                setFormations={setFormations}
+                FLAG="VIEW"
+            />
+          ))
         }
-        {wantToAdd ? (
-          <FormationInfos
-            object={null}
-            setWantToAdd={setWantToAdd}
-            setFormations={setFormations}
-            FLAG="NEW"
-          />
-        ) : (
-          <PlusButton onClick={() => setWantToAdd(true)} />
+        {isStudent && (
+          wantToAdd ? (
+            <FormationInfos
+              object={null}
+              setWantToAdd={setWantToAdd}
+              setFormations={setFormations}
+              FLAG="NEW"
+            />
+          ) : (
+            <PlusButton onClick={() => setWantToAdd(true)} />
+          )
         )}
       </div>
     </div>

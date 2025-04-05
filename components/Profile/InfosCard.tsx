@@ -4,21 +4,28 @@ import React, { useState } from 'react'
 import EditModal from './EditModal';
 import { Textarea } from '../ui/textarea';
 import { useUser } from '@/context/userContext';
+import { useAuth } from "@/context/authContext";
+import { isStudentRole } from '@/utils/authUtils';
+import { Role } from '@/types/types';
 
 const InfosCard = () => {
     const { student , updateStudent } = useUser();
+    const { currentUser } = useAuth();
+    const isStudent = isStudentRole(currentUser?.role as Role);
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
     const [description , setDescription] = useState<string | null>(student.profileDescription);
   return (
     <div className="bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[90%] mx-auto">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl text-gray-800 font-medium">Infos</h2>
-        <div>
-          <Pencil
-            className="text-primary h-7 w-7 hover:text-primary-hover cursor-pointer"
+        {isStudent && (
+          <div>
+            <Pencil
+              className="text-primary h-7 w-7 hover:text-primary-hover cursor-pointer"
             onClick={() => setIsOpenModal(true)}
-          />
-        </div>
+            />
+          </div>
+        )}
       </div>
       <p
         className={`text-gray-600 px-3 mt-5 mb-3 whitespace-pre-line ${

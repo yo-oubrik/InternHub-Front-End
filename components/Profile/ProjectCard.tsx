@@ -2,29 +2,20 @@
 import React, { useEffect, useState } from "react";
 import PlusButton from "../PlusButton";
 import ProjectContent from "./ProjectContent";
-import { Project } from "@/types/types";
+import { Project, Role } from "@/types/types";
 import EditModal from "./EditModal";
 import ProjectInfos from "./ProjectInfos";
 import toast from "react-hot-toast";
 import { useUser } from "@/context/userContext";
+import { useAuth } from "@/context/authContext";
+import { isStudentRole } from '@/utils/authUtils';
+import { uploadFileToSupabase } from "@/lib/supabaseStorage";
 
 const ProjectCard = () => {
-  // const initialProjects: Project[] = [
-  //   {
-  //     id: "1",
-  //     title: "E-Commerce Website Using React js , Django , Bootstrap",
-  //     image: "project/amazon.png",
-  //     link: "https://www.amazon.com/",
-  //   },
-  //   {
-  //     id: "2",
-  //     title: "Spotify Clone Website",
-  //     image: "project/spotify.png",
-  //     link: "https://open.spotify.com/",
-  //   },
-  // ];
-  
-  const { student , createProject } = useUser();
+  const [file, setFile] = useState<File | null>(null);
+  const { student, createProject } = useUser();
+  const { currentUser } = useAuth();
+  const isStudent = isStudentRole(currentUser?.role as Role);
   const [projects, setProjects] = useState<Project[]>([]);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [newProject, setNewProject] = useState<Project>({} as Project);
@@ -57,14 +48,25 @@ const ProjectCard = () => {
       return;
     }
 
-    // if (!newProject.image) {
-    //   toast.error("Please add a project image");
-    //   return;
-    // }
+    if (!newProject.image) {
+      toast.error("Please add a project image");
+      return;
+    }
 
     console.log('new project : ', newProject);
     try {
-      const result = await createProject(newProject);
+
+      const publicUrl = await uploadFileToSupabase(
+        file as File,
+        {
+          bucketName: 'images',
+          fileName: `project-${newProject.title}-${student?.id}.${newProject.image.split('.').pop()}`,
+        }
+      );
+      const result = await createProject({
+        ...newProject,
+        image: publicUrl,
+      });
       setProjects((prev: Project[]) => [...prev, result]);
     } catch (error) {
       toast.error("Failed to create project : " + error);
@@ -89,40 +91,52 @@ const ProjectCard = () => {
       <div className="flex justify-between items-center">
         <h2 className="text-3xl text-gray-800 font-medium">Projects</h2>
       </div>
-      <div className="px-4 gap-6 grid grid-cols-4">
-        {projects.map((project) => (
-          <ProjectContent
-            key={project.id}
-            project={project}
-            projects={projects}
-            setProjects={setProjects}
-          />
-        ))}
-        <div className="w-1/2 h-full" onClick={() => setIsOpenModal(true)}>
-          <PlusButton className="w-full h-full" />
-        </div>
+      <div className={`px-4 gap-6 grid grid-cols-4 ${projects.length > 0 ? 'grid-cols-1 text-center' : ''}`}>
+        {
+            projects.map((project) => (
+            <ProjectContent
+              key={project.id}
+              project={project}
+              projects={projects}
+              setProjects={setProjects}
+            />
+            ))
+        }
+        {projects.length === 0 && !isStudent && (
+          <div className="col-span-4 text-center">
+            <p className="text-lg text-gray-600">No projects found.</p>
+          </div>
+        )}
+        {isStudent && (
+          <div className="w-1/2 h-full" onClick={() => setIsOpenModal(true)}>
+            <PlusButton className="w-full h-full" />
+          </div>
+        )}
       </div>
 
-      <EditModal
-        isOpenModal={isOpenModal}
-        setIsOpenModal={setIsOpenModal}
-        className="bg-white max-w-xl min-h-[60vh] flex flex-col"
-        title="Add New Project"
-        titleClassName="text-2xl font-medium"
-        cancelButton="Cancel"
-        cancelButtonClassName="bg-gray-200 text-black hover:bg-gray-300"
-        onCancel={handleCancel}
-        confirmButton="Add"
-        confirmButtonClassName="bg-primary w-20 text-white hover:bg-primary-hover"
-        onConfirm={handleConfirm}
-        body={
-          <ProjectInfos
-            editedProject={newProject}
-            updateEditedProject={setNewProject}
-            isNewProject={true}
-          />
-        }
-      />
+      {isStudent && (
+        <EditModal
+          isOpenModal={isOpenModal}
+          setIsOpenModal={setIsOpenModal}
+          className="bg-white max-w-xl min-h-[60vh] flex flex-col"
+          title="Add New Project"
+          titleClassName="text-2xl font-medium"
+          cancelButton="Cancel"
+          cancelButtonClassName="bg-gray-200 text-black hover:bg-gray-300"
+          onCancel={handleCancel}
+          confirmButton="Add"
+          confirmButtonClassName="bg-primary w-20 text-white hover:bg-primary-hover"
+          onConfirm={handleConfirm}
+          body={
+            <ProjectInfos
+              editedProject={newProject}
+              updateEditedProject={setNewProject}
+              isNewProject={true}
+              setFile={setFile}
+            />
+          }
+        />
+      )}
     </div>
   );
 };

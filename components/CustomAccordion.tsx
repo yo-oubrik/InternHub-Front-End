@@ -21,29 +21,29 @@ const CustomAccordion = ({ object, setter, setWantToAdd, FLAG = "VIEW" , type = 
     const initialCompanyState = { name: "", logo: "", address: "" };
     const initialPropsObjectState = { poste: "", company: initialCompanyState, startDate: "", endDate: "" } as Experience | Formation;
     const [selectedCompany, setSelectedCompany] = useState<CompanyDTO>(initialCompanyState);
-    const [propsObject, setPropsObject] = useState<Experience | Formation | undefined>(object);
-    // const options = [
-    //     {
-    //         name: "Oracle",
-    //         logo: "https://imgs.search.brave.com/SaJEFkC6CkHpv_F2fJqFC5PB1NSDKGGr8LWLC8FZb88/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9vcmFjbGUt/b3JpZ2luYWwtaWNv/bi0yMDQ4eDI2Ni02/eDJwOWZjby5wbmc",
-    //         address: "Casablanca",
-    //     },
-    //     {
-    //         name: "Google",
-    //         logo: "https://imgs.search.brave.com/AtwSiN4R1HWHuQ8ufel7QsF-fatKfuSV000El5av_O0/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9nb29nbGUt/aWNvbi01MTJ4NTEy/LXRxYzllbDNyLnBu/Zw",
-    //         address: "USA",
-    //     },
-    //     {
-    //         name: "Vala",
-    //         logo: "",
-    //         address: "Agadir",
-    //     },
-    // ];
+    const [propsObject, setPropsObject] = useState<Experience | Formation>(object || initialPropsObjectState);
+    const options = [
+        {
+            name: "Oracle",
+            logo: "https://imgs.search.brave.com/SaJEFkC6CkHpv_F2fJqFC5PB1NSDKGGr8LWLC8FZb88/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9vcmFjbGUt/b3JpZ2luYWwtaWNv/bi0yMDQ4eDI2Ni02/eDJwOWZjby5wbmc",
+            address: "Casablanca",
+        },
+        {
+            name: "Google",
+            logo: "https://imgs.search.brave.com/AtwSiN4R1HWHuQ8ufel7QsF-fatKfuSV000El5av_O0/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9nb29nbGUt/aWNvbi01MTJ4NTEy/LXRxYzllbDNyLnBu/Zw",
+            address: "USA",
+        },
+        {
+            name: "Vala",
+            logo: "",
+            address: "Agadir",
+        },
+    ];
 
     useEffect(() => {
         if (flag === "EDIT"){
             setSelectedCompany(propsObject?.company || initialCompanyState);
-            if ((propsObject as Experience).description) {
+            if ('description' in propsObject && (propsObject as Experience).description) {
                 setShowEditor(true);
             }
         }
@@ -120,7 +120,7 @@ const CustomAccordion = ({ object, setter, setWantToAdd, FLAG = "VIEW" , type = 
                   ) : (
                     <>
                       <InputField
-                        value={(propsObject as Experience)?.poste} 
+                        value={(propsObject as Experience)?.poste} // i wanna do this if flag === 'EDIT''
                         type="text"
                         placeholder="Title..."
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>

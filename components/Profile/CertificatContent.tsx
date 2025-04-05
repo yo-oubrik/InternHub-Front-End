@@ -1,13 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Calendar, FileDown } from "lucide-react";
 import Overlay from "../Overlay";
 import EditModal from "./EditModal";
-import { Certificat } from "@/types/types";
+import { Certificat, Role } from "@/types/types";
 import toast from "react-hot-toast";
 import CertificatInfos from "./CertificatInfos";
 import { useUser } from "@/context/userContext";
+import { deleteFileFromSupabase, uploadFileToSupabase } from "@/lib/supabaseStorage";
+import { useAuth } from "@/context/authContext";
+import { isStudentRole } from "@/utils/authUtils";
 
 interface CertificatContentProps {
   certificat: Certificat;
@@ -20,9 +23,12 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
   certificats,
   setCertificats,
 }) => {
-  const { updateCertificat , deleteCertificat } = useUser();
+  const { currentUser } = useAuth();
+  const { student ,updateCertificat , deleteCertificat } = useUser();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [editedCertificat, setEditedCertificat] = useState<Certificat>(certificat);
+  const [file, setFile] = useState<File | null>(null);
+  const isStudent = isStudentRole(currentUser?.role as Role);
 
   const handleCancel = () => {
     setEditedCertificat(certificat);
@@ -35,40 +41,80 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
       return;
     }
 
-    // if (!editedCertificat.thumbnail) {
-    //   toast.error("Please upload a certificate image");
-    //   return;
-    // }
+    if (!editedCertificat.thumbnail) {
+      toast.error("Please upload a certificate image");
+      return;
+    }
 
     if (!editedCertificat.date.trim()) {
       toast.error("Please enter the certificate date");
       return;
     }
 
-    try {
+    if(file){
+      // Extract the filename from the URL
+      const urlParts = editedCertificat.thumbnail.split('/');
+      const filename = urlParts[urlParts.length - 1];
+      
+      console.log('filename : ', filename);
+      // Delete from Supabase
+      await deleteFileFromSupabase('images', decodeURIComponent(filename));
+      console.log('File deleted');
+      try {
+        const publicUrl = await uploadFileToSupabase(
+          file as File,
+          {
+            bucketName: 'images',
+            fileName: `certificate-${editedCertificat.title}-${student?.id}.${file?.name.split('.').pop()}`,
+          }
+        );
+        const updatedCertificat = await updateCertificat({...editedCertificat,thumbnail: publicUrl});
+        setEditedCertificat(updatedCertificat);
+        setCertificats(
+          certificats.map((c: Certificat) =>
+            c.id === certificat.id ? updatedCertificat : c
+          )
+        );
+      } catch (error) {
+        toast.error("Failed to update certificate : " + error);
+        return;
+      }
+    }else{
       const updatedCertificat = await updateCertificat(editedCertificat);
       setCertificats(
         certificats.map((c: Certificat) =>
           c.id === certificat.id ? updatedCertificat : c
         )
       );
-    } catch (error) {
-      toast.error("Failed to update certificate : " + error);
-      return;
     }
-    setEditedCertificat({
-      id: "",
-      title: "",
-      thumbnail: "",
-      date: ""
-    });
     setIsOpenModal(false);
   };
 
-  const handleDelete = () => {
-    deleteCertificat(certificat);
-    setCertificats(certificats.filter((c: Certificat) => c.id !== certificat.id));
+  const handleDelete = async () => {
+    try{
+      // Extract the filename from the URL
+      const urlParts = certificat.thumbnail.split('/');
+      const filename = urlParts[urlParts.length - 1];
+      
+      console.log('filename : ', filename);
+      // Delete from Supabase
+      await deleteFileFromSupabase('images', decodeURIComponent(filename));
+      console.log('File deleted');
+      // Delete from database
+      await deleteCertificat(certificat);
+      // Update state
+      setCertificats(certificats.filter((c: Certificat) => c.id !== certificat.id));
+      toast.success('Certificate deleted successfully');
+    } catch (error) {
+      console.error('Error deleting certificate:', error);
+      toast.error('Failed to delete certificate');
+    }
   };
+
+  useEffect(() => {
+    console.log('certificat : ', certificat);
+    setEditedCertificat(certificat);
+  }, [certificat]);
 
   
   return (
@@ -93,17 +139,22 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
         </div>
       </div>
 
-      <div className="flex w-full font-medium text-primary divide-x-2 divide-primary-hover text-center border-t-primary-hover border-t-[2px]">
+      {isStudent && (
+        <div className="flex w-full font-medium text-primary divide-x-2 divide-primary-hover text-center border-t-primary-hover border-t-[2px]">
         <div
           className="w-full rounded-bl-lg py-2 cursor-pointer hover:bg-primary hover:text-white"
           onClick={() => setIsOpenModal(true)}
         >
           Edit
         </div>
-        <div className="w-full rounded-br-lg py-2 cursor-pointer hover:bg-primary hover:text-white" onClick={() => {handleDelete()}}>
+        <div 
+          className="w-full rounded-br-lg py-2 cursor-pointer hover:bg-primary hover:text-white" 
+          onClick={handleDelete}
+        >
           Delete
         </div>
       </div>
+      )}
 
       <EditModal
         isOpenModal={isOpenModal}
@@ -121,6 +172,7 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
           <CertificatInfos
             editedCertificat={editedCertificat}
             updateEditedCertificat={setEditedCertificat}
+            setFile={setFile}
           />
         }
       />

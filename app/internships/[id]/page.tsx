@@ -20,7 +20,7 @@ import {
   WorkMode,
 } from "@/types/types";
 import { Separator } from "@/components/ui/separator";
-
+import { FlagIcon } from "lucide-react";
 function page() {
   const { internships, likeInternship, applyToInternship } = useInternship();
   // const { userProfile , company , getCompany } = useUser();
@@ -285,5 +285,3 @@ function page() {
     </main>
   );
 }
-
-export default page;

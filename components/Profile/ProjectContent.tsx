@@ -4,11 +4,14 @@ import { Eye, FolderOpenDot, ImageIcon, Link, Info } from "lucide-react";
 import Overlay from "../Overlay";
 import EditModal from "./EditModal";
 import InputField from "../InputField";
-import { Project } from "@/types/types";
+import { Project, Role } from "@/types/types";
 import toast from "react-hot-toast"
 import CustomTooltip from "./CustomTooltip";
 import ProjectInfos from "./ProjectInfos";
 import { useUser } from "@/context/userContext";
+import { deleteFileFromSupabase, uploadFileToSupabase } from "@/lib/supabaseStorage";
+import { isStudentRole } from "@/utils/authUtils";
+import { useAuth } from "@/context/authContext";
 
 interface ProjectContentProps {
   project: Project;
@@ -21,9 +24,12 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
   projects,
   setProjects,
 }) => {
-  const { updateProject , deleteProject } = useUser();
+  const { currentUser } = useAuth();
+  const { student , updateProject , deleteProject } = useUser();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [editedProject, setEditedProject] = useState<Project>({} as Project);
+  const [file, setFile] = useState<File | null>(null);
+  const isStudent = isStudentRole(currentUser?.role as Role);
 
   const handleCancel = () => {
     setEditedProject(project);
@@ -48,24 +54,41 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
       return;
     }
 
-    // if (!editedProject.image) {
-    //   toast.error("Please add a project image");
-    //   return;
-    // }
-
-    try {
-      const updatedProject = await updateProject(editedProject);
-      setProjects(projects.map((p: Project) => (p.id === project.id ? updatedProject : p)));
-    } catch (error) {
-      toast.error("Failed to update project : " + error);
+    if (!editedProject.image) {
+      toast.error("Please add a project image");
       return;
     }
-    setEditedProject({
-        id: "",
-        title: "",
-      image: "",
-      link: "",
-    });
+
+
+    if(file){      
+      // Extract the filename from the URL
+      const urlParts = editedProject.image.split('/');
+      const filename = urlParts[urlParts.length - 1];
+      
+      console.log('filename : ', filename);
+      // Delete from Supabase
+      await deleteFileFromSupabase('images', decodeURIComponent(filename));
+      console.log('File deleted');
+      try {
+        const publicUrl = await uploadFileToSupabase(
+          file as File,
+          {
+            bucketName: 'images',
+            fileName: `project-${editedProject.title}-${student?.id}.${file?.name.split('.').pop()}`,
+          }
+        );
+        const updatedProject = await updateProject({...editedProject,image: publicUrl});
+        setEditedProject(updatedProject);
+        setProjects(projects.map((p: Project) => (p.id === project.id ? updatedProject : p)));
+      } catch (error) {
+        toast.error("Failed to update project : " + error);
+        return;
+      }
+    }else{
+      const updatedProject = await updateProject(editedProject);
+      setEditedProject(updatedProject);
+      setProjects(projects.map((p: Project) => (p.id === project.id ? updatedProject : p)));
+    }
     setIsOpenModal(false);
   };
 
@@ -75,12 +98,31 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
     return `https://${url}`;
   };
 
-  const handleDelete = () => {
-    deleteProject(project);
-    setProjects(projects.filter((p: Project) => p.id !== project.id));
+  const handleDelete = async () => {
+    try {
+      // Extract the filename from the URL
+      const urlParts = project.image.split('/');
+      const filename = urlParts[urlParts.length - 1];
+      
+      console.log('filename : ', filename);
+      // Delete from Supabase
+      await deleteFileFromSupabase('images', decodeURIComponent(filename));
+      
+      // Delete from database
+      await deleteProject(project);
+      
+      // Update state
+      setProjects(projects.filter((p: Project) => p.id !== project.id));
+      
+      toast.success('Project deleted successfully');
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      toast.error('Failed to delete project');
+    }
   };
 
   useEffect(() => {
+    console.log('project : ', project);
     setEditedProject(project);
   }, [project]);
 
@@ -103,20 +145,22 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
         {project.title}
       </div>
 
-      <div className="flex w-full font-medium text-primary divide-x-2 divide-primary-hover text-center border-t-primary-hover border-t-[2px]">
-        <div
-          className="w-full rounded-bl-lg py-2 cursor-pointer hover:bg-primary hover:text-white"
-          onClick={() => setIsOpenModal(true)}
-        >
-          Edit
+      {isStudent && (
+        <div className="flex w-full font-medium text-primary divide-x-2 divide-primary-hover text-center border-t-primary-hover border-t-[2px]">
+          <div
+            className="w-full rounded-bl-lg py-2 cursor-pointer hover:bg-primary hover:text-white"
+            onClick={() => setIsOpenModal(true)}
+          >
+            Edit
+          </div>
+          <div
+            className="w-full rounded-br-lg py-2 cursor-pointer hover:bg-primary hover:text-white"
+            onClick={handleDelete}
+          >
+            Delete
+          </div>
         </div>
-        <div
-          className="w-full rounded-br-lg py-2 cursor-pointer hover:bg-primary hover:text-white"
-          onClick={handleDelete}
-        >
-          Delete
-        </div>
-      </div>
+      )}
       <EditModal
         isOpenModal={isOpenModal}
         setIsOpenModal={setIsOpenModal}
@@ -133,6 +177,7 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
           <ProjectInfos
             editedProject={editedProject}
             updateEditedProject={setEditedProject}
+            setFile={setFile}
           />
         }
       />

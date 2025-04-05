@@ -17,53 +17,77 @@ import { Separator } from "../ui/separator";
 import Overlay from "../Overlay";
 import AnimatedSocialButton from "./AnimatedSocialButton";
 import { useUser } from "@/context/userContext";
+import { useAuth } from "@/context/authContext";
+import { uploadFileToSupabase, deleteFileFromSupabase } from '@/lib/supabaseStorage';
+import toast from "react-hot-toast";
+import EditModal from "./EditModal";
+import PortfolioInfos from "./PortfolioInfos";
+import { isStudentRole } from "@/utils/authUtils";
+import { Role } from "@/types/types";
 
 const PortfolioCard = () => {
-  // const student = {
-  //   firstName: "EL BANOURI",
-  //   lastName: "Achraf",
-  //   profileTitle: "Full Stack Developer",
-  //   email: "elbanouri.achraf10@gmail.com",
-  //   tel: "0634807687",
-  //   address: "hay al mandar al jamil , rue andaleb , berrechid",
-  //   githubLink: "https://github.com/AchrafELBANOURI",
-  //   linkedinLink: "https://github.com/AchrafELBANOURI",
-  //   portfolioLink: "https://github.com/AchrafELBANOURI",
-  //   cvLink: "https://github.com/AchrafELBANOURI",
-  //   school: {
-  //     name: "Ecole Nationale des Sciences Appliquees d'Agadir",
-  //     image:
-  //       "https://imgs.search.brave.com/cllfSwAH-XW4sx3vO2M3D9J5x1jWN6IZf_F7g_ycA7A/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9zZWVr/bG9nby5jb20vaW1h/Z2VzL1UvdWl6LWli/bi16b2hyLWxvZ28t/OUM5NzFDMTkyQy1z/ZWVrbG9nby5jb20u/cG5n",
-  //   },
-  // };
-  const {student , setStudent} = useUser();
-
+  const { student , setStudent , updateStudent} = useUser();
+  const { currentUser } = useAuth();
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const isStudent = isStudentRole(currentUser?.role as Role);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!isStudent) return;
+    
     const file = event.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setStudent({
-          ...student,
-          profilePicture: reader.result as string,
+      try {
+        // Upload file to Supabase
+        const publicUrl = await uploadFileToSupabase(file, {
+          bucketName: 'images',
+          fileName: `profile-picture-${student?.id}.${file.name.split('.').pop()}`,
         });
-      };
-      reader.readAsDataURL(file);
+
+        // Update student with the new profile picture URL
+        updateStudent({
+          ...student,
+          profilePicture: publicUrl,
+        });
+      } catch (error) {
+        console.error('Error uploading profile picture:', error);
+        toast.error('Failed to upload profile picture:' + error );
+        // Handle error (show toast, alert, etc.)
+      }
     }
   };
 
+
   const handleAvatarClick = () => {
+    if (!isStudent) return;
     fileInputRef.current?.click();
   };
 
-  const handleResetImage = (e: React.MouseEvent) => {
+  const handleResetImage = async (e: React.MouseEvent) => {
+    if (!isStudent) return;
     e.stopPropagation();
-    setStudent({
-      ...student,
-      profilePicture: "",
-    });
+    if (student.profilePicture) {
+      try {
+        // Extract filename from URL
+        const filename = student.profilePicture.split('/').pop() || '';
+        // Delete from Supabase
+        await deleteFileFromSupabase('images', filename);
+        // Update student
+        updateStudent({
+          ...student,
+          profilePicture: "",
+        });
+      } catch (error) {
+        console.error('Error deleting profile picture:', error);
+        toast.error('Failed to delete profile picture:' + error );
+        // Handle error (show toast, alert, etc.)
+      }
+    } else {
+      setStudent({
+        ...student,
+        profilePicture: "",
+      });
+    }
   };
 
   const links = {
@@ -92,15 +116,15 @@ const PortfolioCard = () => {
             <div className="relative group">
               <div onClick={handleAvatarClick} className="cursor-pointer">
                 <ProfileAvatar
-                  className="w-56 h-56 relative overflow-hidden group"
+                  className="w-56 h-56 text-5xl bg-gray-400 relative overflow-hidden group"
                   avatarImage={student.profilePicture ?? ""}
                   avatarFallback={
                     student.firstName.charAt(0).toUpperCase() + student.lastName.charAt(0).toUpperCase()
                   }
-                  overlay={<Overlay children={<UserPen className="w-20 h-20" />} />}
+                  overlay={isStudent ? <Overlay children={<UserPen className="w-20 h-20" />} /> : undefined}
                 />
               </div>
-              {student.profilePicture === "" && (
+              {isStudent && student.profilePicture && (
                 <div
                   onClick={handleResetImage}
                   className="absolute -bottom-2 right-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-200"
@@ -119,7 +143,10 @@ const PortfolioCard = () => {
         </div>
         {/* <button className="w-[85%] hover:bg-opacity-80 border-gray-400 border-[1px] bg-gray-200 py-1 rounded-md">Edit profile</button> */}
       </div>
-      <div className="bg-gray-50 border-primary-hover py-7 px-10 shadow-sm rounded-lg w-[70%]">
+      <div className="bg-gray-50 relative border-primary-hover py-7 px-10 shadow-sm rounded-lg w-[70%]">
+        {isStudent && (
+          <Pencil className="absolute top-4 right-4 text-primary h-7 w-7 hover:text-primary-hover cursor-pointer" onClick={() => setIsEditing(true)} />
+        )}
         <div className="flex flex-col gap-5 justify-between h-full text-lg">
           <div className="flex flex-col gap-3">
             <div className="flex justify-start items-center gap-3">
@@ -139,7 +166,7 @@ const PortfolioCard = () => {
               <p>
                 {
                   student.location && 
-                  student.location?.address + student.location?.city + student.location?.country
+                  (student.location?.address ?? "") + ", " + (student.location?.city ?? "") + ", " + (student.location?.country ?? "")
                 }
               </p>
             </div>
@@ -157,11 +184,6 @@ const PortfolioCard = () => {
               disabled={!student.links?.linkedin && true}
             />
             <AnimatedSocialButton
-              href={student.links?.cv ?? ""}
-              platform="cv"
-              disabled={!student.links?.cv && true}
-            />
-            <AnimatedSocialButton
               href={student.links?.website ?? ""}
               platform="portfolio"
               disabled={!student.links?.website && true}
@@ -169,6 +191,24 @@ const PortfolioCard = () => {
           </div>
         </div>
       </div>
+      {isEditing && (
+        <EditModal
+          isOpenModal={isEditing}
+          setIsOpenModal={setIsEditing}
+          className="bg-white max-w-xl min-h-[60vh] flex flex-col"
+          title="Add New Project"
+          titleClassName="text-2xl font-medium"
+          cancelButton="Cancel"
+          cancelButtonClassName="bg-gray-200 text-black hover:bg-gray-300"
+          onCancel={() => setIsEditing(false)}
+          confirmButton="Edit"
+          confirmButtonClassName="bg-primary w-20 text-white hover:bg-primary-hover"
+          onConfirm={() => {updateStudent(student); setIsEditing(false)}}
+          body={
+            <PortfolioInfos />
+          }
+        />
+      )}
     </div>
   );
 };

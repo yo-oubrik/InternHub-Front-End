@@ -32,17 +32,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchUser = async () => {
-    try {
-      console.log("fetching...")
+      setLoading(true);
       const data = await fetchWithAuth("/users/me");
+      if (!data) {
+        setLoading(false);
+        logout();
+      }
       setCurrentUser(data);
       setIsAuthenticated(true);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      logout();
-    } finally {
       setLoading(false);
-    }
   };
 
   console.log("current User : ",currentUser);

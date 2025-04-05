@@ -2,42 +2,29 @@
 import React, { useEffect, useState } from "react";
 import PlusButton from "../PlusButton";
 import CertificatContent from "./CertificatContent";
-import { Certificat } from "@/types/types";
+import { Certificat, Role } from "@/types/types";
 import EditModal from "./EditModal";
 import CertificatInfos from "./CertificatInfos";
 import toast from "react-hot-toast";
 import { useUser } from "@/context/userContext";
+import { useAuth } from "@/context/authContext";
+import { isStudentRole } from '@/utils/authUtils';
+import { uploadFileToSupabase } from "@/lib/supabaseStorage";
 
 const CertificateCard = () => {
-  // const initialCertificats: Certificat[] = [
-  //   {
-  //     id: "1",
-  //     title: "Machine Learning Specialization",
-  //     thumbnail: "Certificates/Cisco_Networks.jpg",
-  //     date: "2023"
-  //   },
-  //   {
-  //     id: "2",
-  //     title: "CISCO",
-  //     thumbnail: "Certificates/Cisco_Security.jpg",
-  //     date: "2024"
-  //   }
-  // ];
-
-  const { student , createCertificat , updateCertificat , deleteCertificat } = useUser();
+  const [file, setFile] = useState<File | null>(null);
+  const { student, createCertificat, updateCertificat } = useUser();
+  const { currentUser } = useAuth();
+  const isStudent = isStudentRole(currentUser?.role as Role);
   const [certificats, setCertificats] = useState<Certificat[]>([]);
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [newCertificat, setNewCertificat] = useState<Certificat>({
-    id: "",
-    title: "",
-    thumbnail: "",
-    date: ""
-  });
+  const [newCertificat, setNewCertificat] = useState<Certificat>({} as Certificat);
 
   const handleCertificatUpdate = (updatedCertificat: Certificat) => {
+    if (!isStudent) return;
     updateCertificat(updatedCertificat);
     setCertificats(
-      (prevCertificats) => 
+      (prevCertificats) =>
         prevCertificats.map((certificat) => (certificat.id === updatedCertificat.id ? updatedCertificat : certificat))
     );
   };
@@ -53,19 +40,38 @@ const CertificateCard = () => {
   };
 
   const handleConfirm = async () => {
+    if (!isStudent) return;
     if (!newCertificat.title.trim()) {
       toast.error("Please enter a certificate title");
       return;
     }
 
-    // if (!newCertificat.thumbnail) {
-    //   toast.error("Please upload a certificate image");
-    //   return;
-    // }
+    if (!newCertificat.thumbnail || !file) {
+      toast.error("Please upload a certificate image");
+      return;
+    }
 
+    if (!newCertificat.date) {
+      toast.error("Please enter a certificate date");
+      return;
+    }
 
-    const result = await createCertificat(newCertificat);
-    setCertificats((prev: Certificat[]) => [...prev, result]);
+    try{
+      const publicUrl = await uploadFileToSupabase(
+        file as File,
+        {
+          bucketName: 'images',
+          fileName: `certificate-${newCertificat.title}-${student?.id}.${newCertificat.thumbnail.split('.').pop()}`,
+        }
+      );
+      const result = await createCertificat({
+        ...newCertificat,
+        thumbnail: publicUrl,
+      });
+      setCertificats((prev: Certificat[]) => [...prev, result]);
+    } catch (error) {
+      toast.error("Failed to create certificate : " + error);
+    }
     setIsOpenModal(false);
     setNewCertificat({
       id: "",
@@ -95,31 +101,41 @@ const CertificateCard = () => {
             setCertificats={setCertificats}
           />
         ))}
-        <div className="w-1/2 h-full" onClick={() => setIsOpenModal(true)}>
-          <PlusButton className="w-full h-full" />
-        </div>
+        {certificats.length === 0 && !isStudent && (
+          <div className="col-span-4 text-center">
+            <p className="text-lg text-gray-600">No certificates found.</p>
+          </div>
+        )}
+        {isStudent && (
+          <div className="w-1/2 h-full" onClick={() => setIsOpenModal(true)}>
+            <PlusButton className="w-full h-full" />
+          </div>
+        )}
       </div>
 
-      <EditModal
-        isOpenModal={isOpenModal}
-        setIsOpenModal={setIsOpenModal}
-        className="bg-white max-w-xl min-h-[60vh] flex flex-col"
-        title="Add New Certificate"
-        titleClassName="text-2xl font-medium"
-        cancelButton="Cancel"
-        cancelButtonClassName="bg-gray-200 text-black hover:bg-gray-300"
-        onCancel={handleCancel}
-        confirmButton="Add"
-        confirmButtonClassName="bg-primary w-20 text-white hover:bg-primary-hover"
-        onConfirm={handleConfirm}
-        body={
-          <CertificatInfos
-            editedCertificat={newCertificat}
-            updateEditedCertificat={setNewCertificat}
-            isNewCertificat={true}
-          />
-        }
-      />
+      {isStudent && (
+        <EditModal
+          isOpenModal={isOpenModal}
+          setIsOpenModal={setIsOpenModal}
+          className="bg-white max-w-xl min-h-[60vh] flex flex-col"
+          title="Add New Certificate"
+          titleClassName="text-2xl font-medium"
+          cancelButton="Cancel"
+          cancelButtonClassName="bg-gray-200 text-black hover:bg-gray-300"
+          onCancel={handleCancel}
+          confirmButton="Add"
+          confirmButtonClassName="bg-primary w-20 text-white hover:bg-primary-hover"
+          onConfirm={handleConfirm}
+          body={
+            <CertificatInfos
+              editedCertificat={newCertificat}
+              updateEditedCertificat={setNewCertificat}
+              isNewCertificat={true}
+              setFile={setFile}
+            />
+          }
+        />
+      )}
     </div>
   );
 };

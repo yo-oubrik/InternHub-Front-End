@@ -1,4 +1,5 @@
 export type Links = {
+  motivationLetter?: string;
   linkedin?: string;
   github? : string ; 
   cv? : string ; 

@@ -8,6 +8,8 @@ import TextEditor from "../TextEditor";
 import { Company, Experience } from "@/types/types";
 import { useUser } from "@/context/userContext";
 import toast from "react-hot-toast";
+import { isStudentRole } from "@/utils/authUtils";
+import { useAuth } from "@/context/authContext";
 
 interface ExperienceInfosProps {
     object : Experience | null ;
@@ -19,6 +21,8 @@ interface ExperienceInfosProps {
 const ExperienceInfos = ({ object, setExperiences, setWantToAdd, FLAG = "VIEW" }: ExperienceInfosProps) => {
     const [showEditor, setShowEditor] = useState<boolean>(false);
     const [flag, setFlag] = useState<"VIEW" | "EDIT" | "NEW">(FLAG);
+    const { currentUser } = useAuth();
+    const isStudent = isStudentRole(currentUser?.role);
     // const initialCompanyState = { name: "", logo: "", address: "" };
     // const initialExperienceState = { poste: "", company: initialCompanyState, startDate: "", endDate: "", description: "" };
     const [selectedCompany, setSelectedCompany] = useState<Company>(object?.company || {} as Company);
@@ -165,17 +169,21 @@ const ExperienceInfos = ({ object, setExperiences, setWantToAdd, FLAG = "VIEW" }
                   <>
                     {experience?.startDate} - {experience?.endDate}
                     <div className="flex gap-2">
-                      <Pencil
-                        className="text-primary h-6 w-6 hover:text-primary-hover cursor-pointer"
-                        onClick={() => setFlag("EDIT")}
-                      />
-                      <Trash2 
-                        className="text-primary h-6 w-6 hover:text-primary-hover cursor-pointer" 
-                        onClick={() => {
-                          deleteExperience(experience)
-                          setExperiences((prev) => prev.filter((exp) => exp.id !== experience.id))
-                        }} 
-                      />
+                      {isStudent && (
+                        <Pencil
+                          className="text-primary h-6 w-6 hover:text-primary-hover cursor-pointer"
+                          onClick={() => setFlag("EDIT")}
+                        />
+                      )}
+                      {isStudent && (
+                        <Trash2 
+                          className="text-primary h-6 w-6 hover:text-primary-hover cursor-pointer" 
+                          onClick={() => {
+                            deleteExperience(experience)
+                            setExperiences((prev) => prev.filter((exp) => exp.id !== experience.id))
+                          }} 
+                        />
+                      )}
                     </div>
                   </>
                 ) : (

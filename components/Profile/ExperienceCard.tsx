@@ -2,42 +2,19 @@
 import { Pencil, Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import PlusButton from "../PlusButton";
-import { Experience } from "@/types/types";
+import { Experience, Role } from "@/types/types";
 import CustomAccordion from "../CustomAccordion";
 import { useUser } from "@/context/userContext";
+import { useAuth } from "@/context/authContext";
+import { isStudentRole } from '@/utils/authUtils';
 import ExperienceInfos from "./ExperienceInfos";
 
 const ExperienceCard = () => {
-  // const initialExperiences : Experience[] = [
-  //   {
-  //     poste: "Software Developer",
-  //     startDate: "Jan 2024",
-  //     endDate: "PRESENT",
-  //     company: {
-  //       address: "Agadir",
-  //       logo: "https://imgs.search.brave.com/AtwSiN4R1HWHuQ8ufel7QsF-fatKfuSV000El5av_O0/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9nb29nbGUt/aWNvbi01MTJ4NTEy/LXRxYzllbDNyLnBu/Zw",
-  //       name: "Google",
-  //     },
-  //     description:
-  //       "Développement d’une application bureau from scratch pour surveiller le processus de fabrication en temps réel des puces électroniques à travers toutes les étapes. \n Le projet a inclus la conception de l’UI/UX, le web scraping et le traitement de fichiers Excel avec PyQt, Selenium, Openpyxl et Python.",
-  //   },
-  //   {
-  //     poste: "Software Engineer",
-  //     startDate: "Feb 2023",
-  //     endDate: "May 2023",
-  //     company: {
-  //       address: "France",
-  //       logo: "https://imgs.search.brave.com/SaJEFkC6CkHpv_F2fJqFC5PB1NSDKGGr8LWLC8FZb88/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9vcmFjbGUt/b3JpZ2luYWwtaWNv/bi0yMDQ4eDI2Ni02/eDJwOWZjby5wbmc",
-  //       name: "Oracle",
-  //     },
-  //     description:
-  //       "Responsable du développement de toute la partie Front-End et de la conception UI/UX. \n Technologies : AngularJS, Bootstrap CSS.",
-  //   },
-  // ];
   const { student } = useUser();
+  const { currentUser } = useAuth();
+  const isStudent = isStudentRole(currentUser?.role as Role);
 
-  console.log(student);
-  const [experiences , setExperiences] = useState<Experience[]>([]);
+  console.log(student);  const [experiences , setExperiences] = useState<Experience[]>([]);
   const [wantToAdd, setWantToAdd] = useState<boolean>(false);
 
   useEffect(() => {
@@ -62,7 +39,9 @@ const ExperienceCard = () => {
             FLAG="VIEW"
           />
         ))}
-        {wantToAdd ? (
+        {isStudent && (
+          
+        wantToAdd ? (
           <ExperienceInfos
             object={null}
             setWantToAdd={setWantToAdd}
@@ -71,7 +50,8 @@ const ExperienceCard = () => {
           />
         ) : (
           <PlusButton onClick={() => setWantToAdd(true)} />
-        )}
+        )
+      )}
       </div>
     </div>
   );
