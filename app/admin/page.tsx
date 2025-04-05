@@ -4,8 +4,55 @@ import Link from "next/link";
 
 import { StatCard } from "@/components/Cards/StatCard";
 import { Button } from "@/components/ui/button";
+import { getValidToken } from "@/utils/auth";
+import { useEffect, useState } from "react";
+import axios from "@/lib/axios";
+import toast from "react-hot-toast";
 
 const AdminPageClient = () => {
+  const [flaggedCompaniesCount, setFlaggedCompaniesCount] = useState(0);
+  const [flaggedStudentsCount, setFlaggedStudentsCount] = useState(0);
+  useEffect(() => {
+    async function fetchStatistics() {
+      const token = getValidToken();
+      if (!token) {
+        toast.error("Failed to fetch statistics", {
+          id: "fetch-statistics",
+        });
+        return;
+      }
+      try {
+        const { data: countOfFlaggedCompanies } = await axios.get(
+          "/flagged-companies/count",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setFlaggedCompaniesCount(countOfFlaggedCompanies);
+        // const [companiesResponse, studentsResponse] = await Promise.all([
+        //   axios.get("/flagged-companies/count", {
+        //     headers: {
+        //       Authorization: `Bearer ${token}`,
+        //     },
+        //   }),
+        //   axios.get("flagged-students/count", {
+        //     headers: {
+        //       Authorization: `Bearer ${token}`,
+        //     },
+        //   }),
+        // ]);
+      } catch (error) {
+        toast.error("Failed to fetch statistics", {
+          id: "fetch-statistics",
+        });
+        console.error("Failed to fetch statistics:", error);
+      }
+    }
+    fetchStatistics();
+  }, []);
+
   return (
     <div className="min-h-full-except-header p-8 max-w-screen-lg mx-auto flex flex-col gap-8 justify-center">
       <h1 className="header">Dashboard</h1>
@@ -16,7 +63,7 @@ const AdminPageClient = () => {
       >
         <div className="stats">
           <StatCard
-            count={0}
+            count={flaggedCompaniesCount}
             label="Flagged Companies"
             icon={"/icons/internship_offer.png"}
           />

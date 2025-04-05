@@ -3,6 +3,7 @@ import { StatCard } from "@/components/Cards/StatCard";
 import { LineGraph } from "@/components/LineGraph";
 import { Button } from "@/components/ui/button";
 import axios from "@/lib/axios";
+import { getValidToken } from "@/utils/auth";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -10,22 +11,38 @@ import toast from "react-hot-toast";
 const Page = () => {
   const [totalCompaniesCount, setTotalCompaniesCount] = useState(0);
   const [totalInternshipsCount, setTotalInternshipsCount] = useState(0);
+  const [flaggedCompaniesCount, setFlaggedCompaniesCount] = useState(0);
+
   const [companiesByMonth, setCompaniesByMonth] = useState<{
     [key: string]: number;
   }>({});
   useEffect(() => {
     async function fetchStatistics() {
+      const token = getValidToken();
+      if (!token) {
+        toast.error("Failed to fetch statistics", {
+          id: "fetch-statistics",
+        });
+        return;
+      }
       try {
         const [
           { data: totalCompanies },
           { data: monthlyData },
           { data: totalInternships },
+          { data: countOfFlaggedCompanies },
         ] = await Promise.all([
           axios.get("/companies/count"),
           axios.get("/companies/count-by-month"),
           axios.get("/internships/count"),
+          axios.get("/flagged-companies/count", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
         ]);
         setTotalCompaniesCount(totalCompanies || 0);
+        setFlaggedCompaniesCount(countOfFlaggedCompanies || 0);
         setCompaniesByMonth(monthlyData || {});
         setTotalInternshipsCount(totalInternships || 0);
       } catch (error) {
@@ -62,7 +79,7 @@ const Page = () => {
             icon={"/admin/companies/icons/internships.png"}
           />
           <StatCard
-            count={0}
+            count={flaggedCompaniesCount}
             label="Flagged Companies"
             icon={"/admin/companies/icons/flagged_companies.png"}
           />
