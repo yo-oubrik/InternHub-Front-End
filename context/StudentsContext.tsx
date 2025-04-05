@@ -1,7 +1,7 @@
 "use client";
 
 import { Student } from "@/types/types";
-import { deleteWithAuth, fetchWithAuth } from "@/utils/auth";
+import { deleteWithAuth, RequestWithAuth } from "@/utils/auth";
 import {
   createContext,
   ReactNode,
@@ -27,7 +27,7 @@ export function StudentsProvider({ children }: { children: ReactNode }) {
 
   const fetchStudents = async () => {
     setLoading(true);
-    const data = await fetchWithAuth("/students");
+    const data = await RequestWithAuth("/students");
     setLoading(false);
     if (!data) {
       toast.error("Failed to fetch students", { id: "fetch-students" });

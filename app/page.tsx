@@ -42,9 +42,6 @@ export default function Home() {
           id: "fetch-statistics",
         });
         console.error("Failed to fetch statistics:", err);
-        toast.error("Failed to fetch statistics", {
-          id: "fetch-statistics",
-        });
       }
     }
 

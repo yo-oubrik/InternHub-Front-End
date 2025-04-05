@@ -41,10 +41,10 @@ const Page = () => {
             },
           }),
         ]);
-        setTotalCompaniesCount(totalCompanies || 0);
-        setFlaggedCompaniesCount(countOfFlaggedCompanies || 0);
+        setTotalCompaniesCount(totalCompanies);
+        setFlaggedCompaniesCount(countOfFlaggedCompanies);
         setCompaniesByMonth(monthlyData || {});
-        setTotalInternshipsCount(totalInternships || 0);
+        setTotalInternshipsCount(totalInternships);
       } catch (error) {
         console.error("Error fetching statistics:", error);
         toast.error("Failed to fetch statistics", {

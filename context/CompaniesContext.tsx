@@ -1,7 +1,7 @@
 "use client";
 
 import { Company } from "@/types/types";
-import { deleteWithAuth, fetchWithAuth } from "@/utils/auth";
+import { deleteWithAuth, RequestWithAuth } from "@/utils/auth";
 import {
   createContext,
   ReactNode,
@@ -27,7 +27,7 @@ export function CompaniesProvider({ children }: { children: ReactNode }) {
 
   const fetchCompanies = async () => {
     setIsLoading(true);
-    const data = await fetchWithAuth("/companies");
+    const data = await RequestWithAuth("/companies");
     setIsLoading(false);
     if (!data) {
       toast.error("Failed to fetch companies", { id: "fetch-companies" });
