@@ -139,7 +139,7 @@ export const flaggedStudentColumns =
                   className="flex items-center gap-2 cursor-pointer"
                 >
                   <InfoIcon className="h-4 w-4" />
-                  Show Details
+                  Flags History
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="flex items-center gap-2 cursor-pointer"

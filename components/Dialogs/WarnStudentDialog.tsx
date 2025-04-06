@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { StudentFlag } from "@/types/types";
 import { useState } from "react";
 
-interface NotifyStudentDialogProps {
+interface WarnStudentDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: (message: string) => void;
@@ -26,17 +26,12 @@ export function WarnStudentDialog({
   onOpenChange,
   onConfirm,
   studentFlag,
-}: NotifyStudentDialogProps) {
-  const defaultWarning = `Dear ${studentFlag.flaggedStudent.firstName} ${studentFlag.flaggedStudent.lastName},
-
-This is a warning regarding inappropriate behavior reported in your internship application process.
-
+}: WarnStudentDialogProps) {
+  const defaultWarning = ` This is a warning regarding inappropriate behavior reported in your internship application process.
 Reason for warning: ${studentFlag.reason}
-
 Please be advised that such behavior is against our platform's policies and may result in account suspension.
-
 Best regards,
-Admin Team`;
+`;
 
   const [message, setMessage] = useState(defaultWarning);
 
@@ -48,14 +43,14 @@ Admin Team`;
           <DialogDescription>
             Send a warning notification to{" "}
             <span className="font-medium">
-              {studentFlag.flaggedStudent.email}
+              {studentFlag.firstName + " " + studentFlag.lastName}
             </span>
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="message">Warning Message</Label>
+            <Label htmlFor="message">Warning Message Body</Label>
             <Textarea
               id="message"
               value={message}

@@ -6,6 +6,10 @@ import { getValidToken } from "@/utils/auth";
 import toast from "react-hot-toast";
 import axios from "@/lib/axios";
 import { useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { StudentFlag } from "@/types/types";
+import { Trash2, User } from "lucide-react";
 
 const Page = () => {
   const params = useParams();
@@ -13,6 +17,10 @@ const Page = () => {
   const [unresolvedFlagsCount, setUnresolvedFlagsCount] = useState(0);
   const [resolvedFlagsCount, setResolvedFlagsCount] = useState(0);
   const [warningsCount, setWarningsCount] = useState(0);
+  const [studentFlagsHistory, setStudentFlagsHistory] = useState<StudentFlag[]>(
+    []
+  );
+
   useEffect(() => {
     async function fetchStatistics() {
       const token = getValidToken();
@@ -33,7 +41,7 @@ const Page = () => {
               Authorization: `Bearer ${token}`,
             },
           }),
-          axios.get(`flagged-students/${id}/resolved/count`, {
+          axios.get(`flagged-students/${id}/ignored/count`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -55,11 +63,38 @@ const Page = () => {
       }
     }
     fetchStatistics();
+    async function fetchStudentFlagsHistory() {
+      const token = getValidToken();
+      if (!token) {
+        toast.error("Failed to fetch statistics", {
+          id: "fetch-statistics",
+        });
+        return;
+      }
+      try {
+        const { data: studentFlagsHistory } = await axios.get(
+          `flagged-students/${id}/flags`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setStudentFlagsHistory(studentFlagsHistory);
+        console.log("Student Flags History:", studentFlagsHistory);
+      } catch (error) {
+        toast.error("Failed to fetch student flags history", {
+          id: "fetch-statistics",
+        });
+        console.error("Failed to fetch student flags history:", error);
+      }
+    }
+    fetchStudentFlagsHistory();
   }, []);
   return (
     <div>
-      <div className="max-w-screen-lg mx-auto flex flex-col gap-10 justify-center pt-10">
-        <h1 className="header">Dashboard</h1>
+      <div className="max-w-screen-lg mx-auto flex flex-col gap-10 justify-center mt-10">
+        <h1 className="header">Student Flags History</h1>
         <div
           className={"bg-primary-dark/75 p-5 rounded-lg flex flex-col gap-5"}
         >
@@ -71,7 +106,7 @@ const Page = () => {
             />
             <StatCard
               count={resolvedFlagsCount}
-              label="Total Resolved Flags"
+              label="Total Ignored Flags"
               icon={"/admin/resolved.png"}
             />
             <StatCard
@@ -81,8 +116,25 @@ const Page = () => {
             />
           </div>
         </div>
+        <div className="flex justify-center gap-6">
+          <Button size={"lg"} className="hover:opacity-85 transition w-fit">
+            <Link
+              href={`/profile/${id}`}
+              target="_blank"
+              className="flex gap-2"
+            >
+              <User /> Student Profile
+            </Link>
+          </Button>
+          <Button
+            size={"lg"}
+            className="hover:opacity-85 transition w-fit flex gap-2"
+          >
+            <Trash2 /> Block Student
+          </Button>
+        </div>
       </div>
-      <StudentFlagsHistory data={[]} />
+      <StudentFlagsHistory data={studentFlagsHistory} />
     </div>
   );
 };

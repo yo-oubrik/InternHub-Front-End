@@ -1,7 +1,6 @@
 "use client";
 
 import { IgnoreFlagDialog } from "@/components/Dialogs/IgnoreFlagDialog";
-import { RemoveStudentDialog } from "@/components/Dialogs/RemoveStudentDialog";
 import { WarnStudentDialog } from "@/components/Dialogs/WarnStudentDialog";
 import { SortableHeader } from "@/components/SortableHeader";
 import { Badge, BadgeProps } from "@/components/ui/badge";
@@ -17,14 +16,8 @@ import {
 import { reportStatusMap, StudentFlag } from "@/types/types";
 import { sortDateColumn } from "@/utils/dates/sortDateColumn";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  Bell,
-  Flag,
-  InfoIcon,
-  MoreHorizontal,
-  Trash2,
-  User,
-} from "lucide-react";
+import { Bell, Flag, InfoIcon, MoreHorizontal } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { StudentFlagDetails } from "../StudentFlagDetails";
@@ -33,6 +26,15 @@ export const studentFlagsHistoryColumns = (): ColumnDef<StudentFlag>[] => [
   {
     accessorKey: "companyName",
     header: "Company Name",
+    cell: ({ row }) => {
+      return (
+        <Button variant="link" size="sm" className="text-sm p-0" asChild>
+          <Link href={`/companies/${row.original.companyId}`} target="_blank">
+            {row.original.companyName}
+          </Link>
+        </Button>
+      );
+    },
   },
   {
     accessorKey: "reason",
@@ -70,8 +72,7 @@ export const studentFlagsHistoryColumns = (): ColumnDef<StudentFlag>[] => [
     header: "Actions",
     cell: ({ row }) => {
       const flaggedStudent = row.original;
-      const [isRemoveOpen, setIsRemoveOpen] = useState<boolean>(false);
-      const [isDetailsOpen, setIsDetailsOpen] = useState<boolean>(false);
+      const [isDetailsOpen, setIsDetailsOpen] = useState(false);
       const [showIgnoreConfirm, setShowIgnoreConfirm] = useState(false);
       const [showNotifyConfirm, setShowNotifyConfirm] = useState(false);
       const handleNotifyStudent = () => {
@@ -103,34 +104,14 @@ export const studentFlagsHistoryColumns = (): ColumnDef<StudentFlag>[] => [
               </DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() => {
-                  router.push(
-                    `/admin/flagged-students/${flaggedStudent.studentId}`
-                  );
+                  setIsDetailsOpen(true);
                 }}
                 className="flex items-center gap-2 cursor-pointer"
               >
                 <InfoIcon className="h-4 w-4" />
                 Show Details
               </DropdownMenuItem>
-              <DropdownMenuItem
-                className="flex items-center gap-2 cursor-pointer"
-                onClick={() => {
-                  window.open(
-                    `/students/${flaggedStudent.studentId}`,
-                    "_blank"
-                  );
-                }}
-              >
-                <User /> View Profile
-              </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => setIsRemoveOpen(true)}
-                className="flex items-center gap-2 cursor-pointer text-red-600"
-              >
-                <Trash2 className="h-4 w-4" />
-                Remove Student
-              </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
                   setShowNotifyConfirm(true);
@@ -149,11 +130,7 @@ export const studentFlagsHistoryColumns = (): ColumnDef<StudentFlag>[] => [
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <RemoveStudentDialog
-            studentToRemove={{ ...row.original, id: row.original.studentId }}
-            isOpen={isRemoveOpen}
-            setIsOpen={setIsRemoveOpen}
-          />
+
           <StudentFlagDetails
             isOpen={isDetailsOpen}
             setIsOpen={setIsDetailsOpen}

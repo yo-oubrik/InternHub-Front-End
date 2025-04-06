@@ -50,18 +50,7 @@ export function StudentFlagsHistory({ data }: StudentFlagsHistoryProps) {
   });
 
   return (
-    <div className="space-y-4 mx-28 mt-24">
-      {/* <div className="flex items-center">
-        <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-      </div> */}
-
+    <div className="space-y-4 mx-28 py-20">
       <div className="rounded-md border">
         <Table className="rounded-sm overflow-hidden">
           <TableHeader>

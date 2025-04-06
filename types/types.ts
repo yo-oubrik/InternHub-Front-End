@@ -213,13 +213,18 @@ export interface FlaggedStudentOverview {
   unresolvedFlagsCount: number;
   lastFlagDate: Date;
 }
-export type ReportStatus = "RESOLVED" | "UNRESOLVED" | "WARNED";
+export type ReportStatus = "IGNORED" | "UNRESOLVED" | "WARNED";
 
 export const reportStatusMap = (reportStatus: ReportStatus) => {
   switch (reportStatus) {
-    case "RESOLVED": "outline"
-    case "UNRESOLVED": "secondary"
-    case "WARNED": "destructive"
+    case "IGNORED":
+      return "outline";
+    case "UNRESOLVED":
+      return "secondary";
+    case "WARNED":
+      return "destructive";
+    default:
+      return "default";
   }
 };
 
