@@ -51,9 +51,6 @@ export const studentColumns: ColumnDef<Student>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const student = row.original;
-      const [isRemoveOpen, setIsRemoveOpen] = useState<boolean>(false);
-
       return (
         <>
           <DropdownMenu>
@@ -73,23 +70,8 @@ export const studentColumns: ColumnDef<Student>[] = [
               >
                 <User /> View Profile
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-
-              <DropdownMenuItem
-                onClick={() => setIsRemoveOpen(true)}
-                className="text-red-600"
-              >
-                <Trash2 className="h-4 w-4" />
-                Remove Student
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <RemoveStudentDialog
-            studentToRemove={student}
-            isOpen={isRemoveOpen}
-            setIsOpen={setIsRemoveOpen}
-          />
         </>
       );
     },
