@@ -20,8 +20,8 @@ export const CompanyMaps = () => {
   const lon = -9.53809421587912;
 
   return (
-    <div className='relative w-full flex flex-col gap-4'>
-      <MapContainer className='rounded-lg shadow-sm cursor-pointer' center={[lat , lon]} zoom={20} style={{ height: '700px' , width: '100%'}}>
+    <div className='relative w-[30%] flex flex-col gap-4'>
+      <MapContainer className='rounded-lg shadow-sm cursor-pointer' center={[lat , lon]} zoom={20} style={{ height: '400px'}}>
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

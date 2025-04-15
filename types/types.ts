@@ -95,9 +95,7 @@ export interface Internship {
   duration: number;
   salary: number;
   salaryType: SalaryType;
-  domain: string;
   title: string;
-  updatedAt: Date;
   workMode: WorkMode;
   tags: InternshipType[];
   skills: string[];

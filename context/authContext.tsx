@@ -1,6 +1,6 @@
 "use client";
 import { Role } from "@/types/types";
-import { fetchWithAuth, RequestWithAuth } from "@/utils/auth";
+import { fetchWithAuth } from "@/utils/auth";
 import {
   ReactNode,
   createContext,

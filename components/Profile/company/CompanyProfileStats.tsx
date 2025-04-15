@@ -1,20 +1,30 @@
 "use client";
 
-import { useEffect, useState, useMemo } from 'react';
-import { ArrowLeftIcon, ArrowRightIcon, BarChart3, ChevronRight, Router, UserPlus } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState, useMemo } from "react";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  BarChart3,
+  ChevronRight,
+  Router,
+  UserPlus,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+import { useRouter } from "next/navigation";
 
 interface CompanyProfileStatsProps {
   internships: number;
   applicants: number;
 }
 
-const CompanyProfileStats = ({ internships, applicants }: CompanyProfileStatsProps) => {
-  const router = useRouter() ;
+const CompanyProfileStats = ({
+  internships,
+  applicants,
+}: CompanyProfileStatsProps) => {
+  const router = useRouter();
   const [currentInternships, setCurrentInternships] = useState(0);
   const [currentApplicants, setCurrentApplicants] = useState(0);
   const [animatedValue, setAnimatedValue] = useState(0);
@@ -27,7 +37,7 @@ const CompanyProfileStats = ({ internships, applicants }: CompanyProfileStatsPro
     return (number: number) => {
       return number
         .toString()
-        .split('')
+        .split("")
         .map((digit, index) => (
           <motion.span
             key={index}
@@ -87,13 +97,18 @@ const CompanyProfileStats = ({ internships, applicants }: CompanyProfileStatsPro
   }, [currentApplicants, animateDigits]);
 
   return (
-    <div className="bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[30%] space-y-4">
-      <div className="bg-white p-6 rounded-lg shadow-sm">
+    <div className="flex items-center gap-2 bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[80%] mx-auto">
+      <div className="w-full bg-white p-6 rounded-lg shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <BarChart3 className="w-6 h-6 text-blue-500" />
-          <div className='relative'>
-            <h3 className="text-lg font-medium flex items-center">Total Internships</h3>
-            <div className='flex text-sm text-primary items-center justify-end absolute -right-2' onClick={() => router.push(`internships/company/1`) }>
+          <div className="relative">
+            <h3 className="text-lg font-medium flex items-center">
+              Total Internships
+            </h3>
+            <div
+              className="flex text-sm text-primary items-center justify-end absolute -right-2 cursor-pointer hover:underline"
+              onClick={() => router.push(`internships/company/1`)}
+            >
               <p>List of Internships</p>
               <ChevronRight size={20} />
             </div>
@@ -102,41 +117,24 @@ const CompanyProfileStats = ({ internships, applicants }: CompanyProfileStatsPro
         <div className="text-3xl overflow-hidden font-bold text-blue-500">
           {renderedInternships}
         </div>
-
       </div>
 
-      <div className="bg-white p-6 rounded-lg shadow-sm">
+      <div className="w-full bg-white p-6 rounded-lg shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <UserPlus className="w-6 h-6 text-green-500" />
-          <div className='relative'>
+          <div className="relative">
             <h3 className="text-lg font-medium">Total Applicants</h3>
-            <div className='flex text-sm text-primary items-center justify-end absolute -right-2' onClick={() => router.push(`applications/company/1`)}>
-                <p>List of Applications</p>
-                <ChevronRight size={20} />
-              </div>
+            <div
+              className="flex text-sm text-primary items-center justify-end absolute -right-2 cursor-pointer hover:underline"
+              onClick={() => router.push(`applications/company/1`)}
+            >
+              <p>List of Applications</p>
+              <ChevronRight size={20} />
+            </div>
           </div>
         </div>
         <div className="text-3xl overflow-hidden font-bold text-green-500">
           {renderedApplicants}
-        </div>
-      </div>
-
-      <div>
-        <h3 className="text-lg font-medium mb-4 flex justify-center">Internships to Applicants Ratio</h3>
-        <div className="w-24 h-24 mx-auto">
-          <motion.div
-            transition={{ duration: 2 }}
-          > 
-            <CircularProgressbar
-              value={animatedValue}
-              text={`${animatedValue.toFixed(2)}%`}
-              styles={buildStyles({
-                textColor: '#4A5568',
-                pathColor: '#3182CE',
-                trailColor: '#E2E8F0',
-              })}
-            />
-          </motion.div>
         </div>
       </div>
     </div>
