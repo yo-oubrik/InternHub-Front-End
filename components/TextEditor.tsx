@@ -10,7 +10,7 @@ interface TextEditorProps {
   style: {
     minHeight: string;
     maxHeight?: string;
-    backgroundColor: string;
+    backgroundColor?: string;
     borderColor?: string;
     focusBorderColor?: string;
     

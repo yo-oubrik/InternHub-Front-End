@@ -19,7 +19,7 @@ const ExperienceCard = () => {
 
   useEffect(() => {
     if (student?.experiences) {
-      setExperiences(student.experiences);
+      setExperiences(student?.experiences);
     }
   }, [student?.experiences]);
 

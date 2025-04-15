@@ -1,4 +1,5 @@
 "use client";
+import { Role } from "@/types/types";
 import { fetchWithAuth, RequestWithAuth } from "@/utils/auth";
 import {
   ReactNode,
@@ -12,7 +13,7 @@ export interface User {
   id: string;
   email: string;
   profilePicture: string;
-  role: string;
+  role: Role;
 }
 interface AuthContextType {
   isAuthenticated: boolean;

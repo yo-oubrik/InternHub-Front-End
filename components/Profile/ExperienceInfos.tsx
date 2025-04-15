@@ -5,7 +5,7 @@ import InputField from "../InputField";
 import SearchableCombobox from "../SearchableCombobox";
 import { DatePicker } from "../DatePicker";
 import TextEditor from "../TextEditor";
-import { Company, Experience } from "@/types/types";
+import { Company, Experience, Role } from "@/types/types";
 import { useUser } from "@/context/userContext";
 import toast from "react-hot-toast";
 import { isStudentRole } from "@/utils/authUtils";

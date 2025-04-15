@@ -82,10 +82,10 @@ const CertificateCard = () => {
   };
   
   useEffect(() => {
-    if (student.certificates) {
-      setCertificats(student.certificates);
+    if (student?.certificates) {
+      setCertificats(student?.certificates);
     }
-  }, [student.certificates]);
+  }, [student?.certificates]);
 
   return (
     <div className="bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[90%] mx-auto space-y-7">

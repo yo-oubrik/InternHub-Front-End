@@ -42,7 +42,7 @@ const FormationCard = () => {
 
   useEffect(() => {
     if (student?.formations) {
-      setFormations(student.formations);
+      setFormations(student?.formations);
     }
   }, [student?.formations]);
 

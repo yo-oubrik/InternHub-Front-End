@@ -13,7 +13,7 @@ const InfosCard = () => {
     const { currentUser } = useAuth();
     const isStudent = isStudentRole(currentUser?.role as Role);
     const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-    const [description , setDescription] = useState<string | null>(student.profileDescription);
+    const [description , setDescription] = useState<string | null>(student?.profileDescription);
   return (
     <div className="bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[90%] mx-auto">
       <div className="flex justify-between items-center">
@@ -29,10 +29,10 @@ const InfosCard = () => {
       </div>
       <p
         className={`text-gray-600 px-3 mt-5 mb-3 whitespace-pre-line ${
-          student.profileDescription || "text-center"
+          student?.profileDescription || "text-center"
         }`}
       >
-        {student.profileDescription || "---"}
+        {student?.profileDescription || "---"}
       </p>
       {isOpenModal && (
         <EditModal
@@ -51,7 +51,7 @@ const InfosCard = () => {
           }
           cancelButton="Cancel"
           onCancel={() => {
-            setDescription(student.profileDescription);
+            setDescription(student?.profileDescription);
             setIsOpenModal(false);
           }}
           cancelButtonClassName="border-primary border-[1px] text-primary bg-transparent"

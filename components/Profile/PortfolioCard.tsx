@@ -44,7 +44,7 @@ const PortfolioCard = () => {
           fileName: `profile-picture-${student?.id}.${file.name.split('.').pop()}`,
         });
 
-        // Update student with the new profile picture URL
+        // Update student? with the new profile picture URL
         updateStudent({
           ...student,
           profilePicture: publicUrl,
@@ -66,13 +66,13 @@ const PortfolioCard = () => {
   const handleResetImage = async (e: React.MouseEvent) => {
     if (!isStudent) return;
     e.stopPropagation();
-    if (student.profilePicture) {
+    if (student?.profilePicture) {
       try {
         // Extract filename from URL
-        const filename = student.profilePicture.split('/').pop() || '';
+        const filename = student?.profilePicture.split('/').pop() || '';
         // Delete from Supabase
         await deleteFileFromSupabase('images', filename);
-        // Update student
+        // Update student?
         updateStudent({
           ...student,
           profilePicture: "",
@@ -98,8 +98,8 @@ const PortfolioCard = () => {
     cv: "profile/cv_link.png",
   };
 
-  console.log("first name : ", student.firstName);
-  console.log("last name : ", student.lastName);
+  console.log("first name : ", student?.firstName);
+  console.log("last name : ", student?.lastName);
 
   return (
     <div className="flex flex-row-reverse gap-2 w-[90%] mx-auto">
@@ -117,14 +117,14 @@ const PortfolioCard = () => {
               <div onClick={handleAvatarClick} className="cursor-pointer">
                 <ProfileAvatar
                   className="w-56 h-56 text-5xl bg-gray-400 relative overflow-hidden group"
-                  avatarImage={student.profilePicture ?? ""}
+                  avatarImage={student?.profilePicture ?? ""}
                   avatarFallback={
-                    student.firstName.charAt(0).toUpperCase() + student.lastName.charAt(0).toUpperCase()
+                    student?.firstName.charAt(0).toUpperCase() + student?.lastName.charAt(0).toUpperCase()
                   }
                   overlay={isStudent ? <Overlay children={<UserPen className="w-20 h-20" />} /> : undefined}
                 />
               </div>
-              {isStudent && student.profilePicture && (
+              {isStudent && student?.profilePicture && (
                 <div
                   onClick={handleResetImage}
                   className="absolute -bottom-2 right-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-200"
@@ -135,9 +135,9 @@ const PortfolioCard = () => {
             </div>
             <div className="text-center">
               <h1 className="text-2xl font-bold">
-                {student.firstName + " " + student.lastName}
+                {student?.firstName + " " + student?.lastName}
               </h1>
-              <h3 className="font-mono">{student.profileTitle}</h3>
+              <h3 className="font-mono">{student?.profileTitle}</h3>
             </div>
           </div>
         </div>
@@ -151,22 +151,22 @@ const PortfolioCard = () => {
           <div className="flex flex-col gap-3">
             <div className="flex justify-start items-center gap-3">
               <University className="mb-2" />
-              <p>{student.school}</p>
+              <p>{student?.school}</p>
             </div>
             <div className="flex justify-start items-center gap-3">
               <Mail />
-              <p>{student.email}</p>
+              <p>{student?.email}</p>
             </div>
             <div className="flex justify-start items-center gap-3">
               <Phone />
-              <p>{student.tel}</p>
+              <p>{student?.tel}</p>
             </div>
             <div className="flex justify-start items-center gap-3">
               <MapPinHouse />
               <p>
                 {
-                  student.location && 
-                  (student.location?.address ?? "") + ", " + (student.location?.city ?? "") + ", " + (student.location?.country ?? "")
+                  student?.location && 
+                  (student?.location?.address ?? "") + ", " + (student?.location?.city ?? "") + ", " + (student?.location?.country ?? "")
                 }
               </p>
             </div>
@@ -174,19 +174,19 @@ const PortfolioCard = () => {
           <Separator className="h-[1px] bg-primary-hover mt-4" />
           <div className="flex w-full justify-between items-center">
             <AnimatedSocialButton
-              href={student.links?.github ?? ""}
+              href={student?.links?.github ?? ""}
               platform="github"
-              disabled={!student.links?.github && true}
+              disabled={!student?.links?.github && true}
             />
             <AnimatedSocialButton
-              href={student.links?.linkedin ?? ""}
+              href={student?.links?.linkedin ?? ""}
               platform="linkedin"
-              disabled={!student.links?.linkedin && true}
+              disabled={!student?.links?.linkedin && true}
             />
             <AnimatedSocialButton
-              href={student.links?.website ?? ""}
+              href={student?.links?.website ?? ""}
               platform="portfolio"
-              disabled={!student.links?.website && true}
+              disabled={!student?.links?.website && true}
             />
           </div>
         </div>
