@@ -12,7 +12,6 @@ export default function Page() {
     if (isAuthenticated) {
       router.replace("/");
     }
-    console.log("isAuthenticated : ", isAuthenticated);
   }, [isAuthenticated, router]);
 
   return (

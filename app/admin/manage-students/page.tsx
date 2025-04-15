@@ -6,22 +6,40 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import axios from "@/lib/axios";
+import { getValidToken } from "@/utils/auth";
 
 const Page = () => {
   const [totalStudentsCount, setTotalStudentsCount] = useState(0);
+  const [flaggedStudentsCount, setFlaggedStudentsCount] = useState(0);
   const [studentsByMonth, setStudentsByMonth] = useState<{
     [key: string]: number;
   }>({});
 
   useEffect(() => {
     async function fetchStatistics() {
+      const token = getValidToken();
+      if (!token) {
+        toast.error("Failed to fetch statistics", {
+          id: "fetch-statistics",
+        });
+        return;
+      }
       try {
-        const [{ data: totalStudents }, { data: monthlyData }] =
-          await Promise.all([
-            axios.get("/students/count"),
-            axios.get("/students/count-by-month"),
-          ]);
-        setTotalStudentsCount(totalStudents || 0);
+        const [
+          { data: totalStudents },
+          { data: monthlyData },
+          { data: countOfFlaggedStudents },
+        ] = await Promise.all([
+          axios.get("/students/count"),
+          axios.get("/students/count-by-month"),
+          axios.get("/flagged-companies/count", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+        ]);
+        setTotalStudentsCount(totalStudents);
+        setFlaggedStudentsCount(countOfFlaggedStudents);
         setStudentsByMonth(monthlyData || {});
       } catch (error) {
         console.error("Error fetching statistics:", error);
@@ -47,7 +65,7 @@ const Page = () => {
             icon={"/admin/students/icons/total_students.png"}
           />
           <StatCard
-            count={0}
+            count={flaggedStudentsCount}
             label="Flagged Students"
             icon={"/admin/students/icons/flagged_students.png"}
           />

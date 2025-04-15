@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FlaggedStudent } from "@/types/types";
+import { StudentFlag } from "@/types/types";
 import {
   ColumnFiltersState,
   flexRender,
@@ -23,14 +23,13 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import React from "react";
-import { FlaggedStudentOverview } from "@/types/types";
+import { studentFlagsHistoryColumns } from "./studentFlagsHistoryColumns";
 
-interface FlaggedStudentsTableProps {
-  data: FlaggedStudentOverview[];
+interface StudentFlagsHistoryProps {
+  data: StudentFlag[];
 }
-
-export function FlaggedStudentsTable({ data }: FlaggedStudentsTableProps) {
-  const columns = flaggedStudentColumns();
+export function StudentFlagsHistory({ data }: StudentFlagsHistoryProps) {
+  const columns = studentFlagsHistoryColumns();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -51,18 +50,7 @@ export function FlaggedStudentsTable({ data }: FlaggedStudentsTableProps) {
   });
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-      </div>
-
+    <div className="space-y-4 mx-28 py-20">
       <div className="rounded-md border">
         <Table className="rounded-sm overflow-hidden">
           <TableHeader>
@@ -112,7 +100,7 @@ export function FlaggedStudentsTable({ data }: FlaggedStudentsTableProps) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No flagged students found.
+                  No flags history.
                 </TableCell>
               </TableRow>
             )}

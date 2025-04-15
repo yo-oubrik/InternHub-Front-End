@@ -1,13 +1,26 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./authContext";
-import { Certificat, CertificatRequest, Company, Experience, ExperienceRequest, Formation, FormationRequest, Project, ProjectRequest, Role, Student, StudentRequest } from "@/types/types";
-import { fetchWithAuth } from "@/utils/auth";
+import {
+  Certificat,
+  CertificatRequest,
+  Company,
+  Experience,
+  ExperienceRequest,
+  Formation,
+  FormationRequest,
+  Project,
+  ProjectRequest,
+  Role,
+  Student,
+  StudentRequest,
+} from "@/types/types";
+import { RequestWithAuth } from "@/utils/auth";
 
 interface UserContextType {
-  company: Company ;
+  company: Company;
   companies: Company[];
-  student: Student ;
+  student: Student;
   setCompany: (company: Company) => void;
   setStudent: (student: Student) => void;
   getCompany: (id: string) => Promise<void>;
@@ -15,7 +28,7 @@ interface UserContextType {
   getCompanies: () => Promise<void>;
   updateStudent: (student: Student) => Promise<void>;
   createExperience: (experience: Experience) => Promise<Experience>;
-  updateExperience: (experience: Experience) => Promise<Experience>;  
+  updateExperience: (experience: Experience) => Promise<Experience>;
   deleteExperience: (experience: Experience) => Promise<void>;
   createFormation: (formation: Formation) => Promise<Formation>;
   updateFormation: (formation: Formation) => Promise<Formation>;
@@ -36,13 +49,16 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const { isAuthenticated, currentUser } = useAuth();
   const [company, setCompany] = useState<Company>({} as Company);
   const [companies, setCompanies] = useState<Company[]>([]);
-  const [student, setStudent] = useState<Student>({firstName : "" , lastName : ""} as Student);
+  const [student, setStudent] = useState<Student>({
+    firstName: "",
+    lastName: "",
+  } as Student);
 
-  console.log("current User : ",currentUser);
+  // console.log("current User : ", currentUser);
 
   const getCompany = async (id: string) => {
     try {
-      const data = await fetchWithAuth(`companies/${id}`)
+      const data = await RequestWithAuth(`company/${id}`);
       setCompany(data as Company);
     } catch (error) {
       console.error("Failed to fetch company", error);
@@ -50,7 +66,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const getCompanies = async () => {
     try {
-      const data = await fetchWithAuth('/companies');
+      const data = await RequestWithAuth("/companies");
       console.log("companies : ", data);
       setCompanies(data as Company[]);
     } catch (error) {
@@ -59,16 +75,16 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const getStudent = async (id: string) => {
     try {
-      const data = await fetchWithAuth(`students/${id}`);
+      const data = await RequestWithAuth(`students/${id}`);
       setStudent(data as Student);
     } catch (error) {
       console.error("Failed to fetch student", error);
     }
   };
-  const updateStudent = async ( student: Student) => {
+  const updateStudent = async (student: Student) => {
     try {
-      const studentRequest : StudentRequest = student as StudentRequest ;
-      const data = await fetchWithAuth(`students/${student.id}`, {
+      const studentRequest: StudentRequest = student as StudentRequest;
+      const data = await RequestWithAuth(`students/${student.id}`, {
         method: "PUT",
         body: JSON.stringify(studentRequest),
       });
@@ -79,10 +95,21 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const createExperience = async (experience: Experience) => {
     try {
-      console.log("created ... "+ JSON.stringify({...experience , companyId : experience.company.id , studentId : student.id} as ExperienceRequest));
-      return await fetchWithAuth(`/experiences`, {
+      console.log(
+        "created ... " +
+          JSON.stringify({
+            ...experience,
+            companyId: experience.company.id,
+            studentId: student.id,
+          } as ExperienceRequest)
+      );
+      return await RequestWithAuth(`/experiences`, {
         method: "POST",
-        body: JSON.stringify({...experience , companyId : experience.company.id , studentId : student.id} as ExperienceRequest),
+        body: JSON.stringify({
+          ...experience,
+          companyId: experience.company.id,
+          studentId: student.id,
+        } as ExperienceRequest),
       });
     } catch (error) {
       console.error("Failed to create experience", error);
@@ -90,9 +117,13 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const updateExperience = async (experience: Experience) => {
     try {
-      return await fetchWithAuth(`/experiences/${experience.id}`, {
+      return await RequestWithAuth(`/experiences/${experience.id}`, {
         method: "PUT",
-        body: JSON.stringify({...experience , companyId : experience.company.id , studentId : student.id} as ExperienceRequest),
+        body: JSON.stringify({
+          ...experience,
+          companyId: experience.company.id,
+          studentId: student.id,
+        } as ExperienceRequest),
       });
     } catch (error) {
       console.error("Failed to update experience", error);
@@ -100,7 +131,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const deleteExperience = async (experience: Experience) => {
     try {
-      await fetchWithAuth(`/experiences/${experience.id}`, {
+      await RequestWithAuth(`/experiences/${experience.id}`, {
         method: "DELETE",
       });
     } catch (error) {
@@ -109,9 +140,13 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const createFormation = async (formation: Formation) => {
     try {
-      return await fetchWithAuth(`/formations`, {
+      return await RequestWithAuth(`/formations`, {
         method: "POST",
-        body: JSON.stringify({...formation , companyId : formation.company.id , studentId : student.id} as FormationRequest),
+        body: JSON.stringify({
+          ...formation,
+          companyId: formation.company.id,
+          studentId: student.id,
+        } as FormationRequest),
       });
     } catch (error) {
       console.error("Failed to create formation", error);
@@ -119,9 +154,13 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const updateFormation = async (formation: Formation) => {
     try {
-      return await fetchWithAuth(`/formations/${formation.id}`, {
+      return await RequestWithAuth(`/formations/${formation.id}`, {
         method: "PUT",
-        body: JSON.stringify({...formation , companyId : formation.company.id , studentId : student.id} as FormationRequest),
+        body: JSON.stringify({
+          ...formation,
+          companyId: formation.company.id,
+          studentId: student.id,
+        } as FormationRequest),
       });
     } catch (error) {
       console.error("Failed to update formation", error);
@@ -129,7 +168,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const deleteFormation = async (formation: Formation) => {
     try {
-      await fetchWithAuth(`/formations/${formation.id}`, {
+      await RequestWithAuth(`/formations/${formation.id}`, {
         method: "DELETE",
       });
     } catch (error) {
@@ -138,9 +177,12 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const createProject = async (project: Project) => {
     try {
-      return await fetchWithAuth(`/projects`, {
+      return await RequestWithAuth(`/projects`, {
         method: "POST",
-        body: JSON.stringify({...project , studentId : student.id} as ProjectRequest),
+        body: JSON.stringify({
+          ...project,
+          studentId: student.id,
+        } as ProjectRequest),
       });
     } catch (error) {
       console.error("Failed to create project", error);
@@ -148,9 +190,12 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const updateProject = async (project: Project) => {
     try {
-      return await fetchWithAuth(`/projects/${project.id}`, {
+      return await RequestWithAuth(`/projects/${project.id}`, {
         method: "PUT",
-        body: JSON.stringify({...project , studentId : student.id} as ProjectRequest),
+        body: JSON.stringify({
+          ...project,
+          studentId: student.id,
+        } as ProjectRequest),
       });
     } catch (error) {
       console.error("Failed to update project", error);
@@ -158,7 +203,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const deleteProject = async (project: Project) => {
     try {
-      await fetchWithAuth(`/projects/${project.id}`, {
+      await RequestWithAuth(`/projects/${project.id}`, {
         method: "DELETE",
       });
     } catch (error) {
@@ -167,9 +212,12 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const createCertificat = async (certificat: Certificat) => {
     try {
-      return await fetchWithAuth(`/certificats`, {
+      return await RequestWithAuth(`/certificats`, {
         method: "POST",
-        body: JSON.stringify({...certificat , studentId : student.id} as CertificatRequest),
+        body: JSON.stringify({
+          ...certificat,
+          studentId: student.id,
+        } as CertificatRequest),
       });
     } catch (error) {
       console.error("Failed to create certificat", error);
@@ -177,9 +225,12 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const updateCertificat = async (certificat: Certificat) => {
     try {
-        return await fetchWithAuth(`/certificats/${certificat.id}`, {
+      return await RequestWithAuth(`/certificats/${certificat.id}`, {
         method: "PUT",
-        body: JSON.stringify({...certificat , studentId : student.id} as CertificatRequest),
+        body: JSON.stringify({
+          ...certificat,
+          studentId: student.id,
+        } as CertificatRequest),
       });
     } catch (error) {
       console.error("Failed to update certificat", error);
@@ -187,7 +238,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const deleteCertificat = async (certificat: Certificat) => {
     try {
-      await fetchWithAuth(`/certificats/${certificat.id}`, {
+      await RequestWithAuth(`/certificats/${certificat.id}`, {
         method: "DELETE",
       });
     } catch (error) {
@@ -196,11 +247,11 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    console.log("current user : ",currentUser);
+    // console.log("current user : ", currentUser);
     if (isAuthenticated && currentUser) {
-      if(currentUser.role === Role.COMPANY){
+      if (currentUser.role === Role.COMPANY) {
         getCompany(currentUser.id);
-      } else if(currentUser.role === Role.STUDENT) {
+      } else if (currentUser.role === Role.STUDENT) {
         getStudent(currentUser.id);
       }
     }

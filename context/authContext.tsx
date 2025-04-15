@@ -1,5 +1,5 @@
 "use client";
-import { fetchWithAuth } from "@/utils/auth";
+import { fetchWithAuth, RequestWithAuth } from "@/utils/auth";
 import {
   ReactNode,
   createContext,
@@ -43,14 +43,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(false);
   };
 
-  console.log("current User : ",currentUser);
+  // console.log("current User : ", currentUser);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     const expiresIn = localStorage.getItem("expiresIn");
-    console.log('1');
-    console.log("token : ",token);
-    console.log("expiresIn : ",expiresIn);
+    // console.log("1");
+    // console.log("token : ", token);
+    // console.log("expiresIn : ", expiresIn);
     if (token && expiresIn) {
       const expirationTime = parseInt(expiresIn);
       if (Date.now() < expirationTime) {
@@ -59,7 +59,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         logout();
       }
     } else {
-      setLoading(false); // No token found or it expired . 
+      setLoading(false); // No token found or it expired .
     }
   }, []);
 

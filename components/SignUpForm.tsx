@@ -82,9 +82,10 @@ export const SignUpForm: React.FC<SignInFormProps> = ({ className }) => {
       setIsLoading(true);
       setServerErrors({});
       const student: StudentRequest = { ...data, profilePicture: "" };
-      await axios.post("auth/register/students", student);
-      toast.success("Account created successfully");
-      router.push("/signin");
+      await axios.post("auth/verify-email/students", student);
+      router.push(
+        `/signup/student/verify-email?email=${encodeURIComponent(data.email)}`
+      );
     } catch (e) {
       if (isAxiosError(e)) {
         const errorResponse = e.response?.data as ApiErrorResponse;
