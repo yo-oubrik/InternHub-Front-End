@@ -48,7 +48,7 @@ const EditModal = ({
   onCancel,
 }: EditModalProps) => {
   return (
-    <Dialog open={isOpenModal} onOpenChange={setIsOpenModal}>
+    <Dialog open={isOpenModal} onOpenChange={setIsOpenModal} >
       <DialogContent className={clsx(className)}>
         <DialogHeader className={clsx(headerClassName)}>
           <DialogTitle className={clsx(titleClassName)}>{title}</DialogTitle>

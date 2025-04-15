@@ -4,7 +4,7 @@ import clsx from 'clsx';
 
 interface ProfileAvatarProps {
   avatarImage: string;
-  avatarFallback: string | undefined ;
+  avatarFallback: ReactNode | undefined ;
   overlay? : ReactNode;
   className? : string ;
 }
