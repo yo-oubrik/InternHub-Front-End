@@ -1,6 +1,6 @@
 "use client";
 import Filters from "@/components/Filters";
-import InternshipCard from "@/components/JobItem/InternshipCard";
+import InternshipCard from "@/components/InternshipItem/InternshipCard";
 import SearchForm from "@/components/SearchForm";
 import { useFilters } from "@/context/FiltersContext";
 import { useInternship } from "@/context/internshipContext";

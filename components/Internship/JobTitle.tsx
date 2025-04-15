@@ -8,7 +8,7 @@ import { useInternship } from "@/context/internshipContext";
 import { WorkMode } from "@/types/types";
 
 function JobTitle() {
-  const { InternshipTitle, setInternshipTitle, activeInternshipType, setActiveInternshipType } =
+  const { internship , setInternship } =
     useInternship();
 
   return (
@@ -27,8 +27,8 @@ function JobTitle() {
         <Input
           type="text"
           id="InternshipTitle"
-          value={InternshipTitle}
-          onChange={(e) => setInternshipTitle(e.target.value.trimStart())}
+          value={internship?.title}
+          onChange={(e) => setInternship({...internship, title : e.target.value})}
           className="flex-1 w-full mt-2"
           placeholder="Enter Post Title"
         />
@@ -48,10 +48,10 @@ function JobTitle() {
         </div>
         <div className="flex items-center gap-2">
           <RadioButton
-            value={activeInternshipType}
+            value={internship?.workMode}
             items={["remote", "on-site", "hybrid"]}
             itemsValue={[WorkMode.REMOTE, WorkMode.ON_SITE, WorkMode.HYBRID]}
-            onValueChange={setActiveInternshipType}
+            onValueChange={(value) => setInternship({...internship, workMode : value})}
             classNameGroup="flex flex-col"
             classNameItem="py-1 pl-1 border-border border rounded-md"
           />

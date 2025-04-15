@@ -10,23 +10,9 @@ import JobLocation from "./JobLocation";
 import Summary from "./Summary";
 
 function PostInternshipForm() {
-  const {
-    createInternship,
-    InternshipTitle,
-    internshipDescription,
-    salaryType,
-    activeInternshipType,
-    salary,
-    duration,
-    location,
-    skills,
-    tags,
-    negotiable,
-    renumerated,
-    resetInternshipForm,
-  } = useInternship();
+  const {createInternship , internship , setInternship , resetInternshipForm} = useInternship();
 
-  const sections = ["About","Internship Location","Post Details", "Skills", "Summary"];
+  const sections = ["About","Post Details", "Skills", "Summary"];
   const [visitedSections, setVisitedSections] = React.useState<Set<string>>(
     new Set([sections[0]])
   );
@@ -44,8 +30,6 @@ function PostInternshipForm() {
     switch (activeSection) {
       case "About":
         return <JobTitle />;
-      case "Internship Location":
-        return <JobLocation />;
       case "Post Details":
         return <JobDetails />;
       case "Skills":
@@ -62,39 +46,10 @@ function PostInternshipForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const loc = `${location.address ? location.address + ", " : ""}${
-      location.city ? location.city + ", " : ""
-    }${location.country}`;
-
-    if (activeSection === "Summary") {
-      if (
-        InternshipTitle === "" ||
-        tags.length === 0 ||
-        internshipDescription === "" ||
-        loc === ""
-      ) {
-        setShowAlert(true);
-        return;
-      }
+    if(activeSection === "Summary") {
+      createInternship();
+      resetInternshipForm();
     }
-
-    // createInternship({
-    //   id : '' ,
-    //   title: InternshipTitle,
-    //   description: internshipDescription,
-    //   salaryType,
-    //   workMode: activeInternshipType,
-    //   salary,
-    //   duration,
-    //   location: loc,
-    //   skills,
-    //   tags,
-    //   domain : '' ,
-    //   negotiable,
-    //   renumerated
-    // });
-
-    activeSection === "Summary" && resetInternshipForm();
   };
   return (
     <div className="w-full flex flex-col gap-6">
@@ -151,7 +106,7 @@ function PostInternshipForm() {
                 setActiveSection(sections[currentIndex + 1]);
                 handleSectionChange(sections[currentIndex + 1], "add");
               }}
-              className="px-6 py-2 bg-[#7263F3] text-white rounded-md"
+              className="px-6 py-2 text-white rounded-md"
             />
           )}
 

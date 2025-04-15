@@ -1,55 +1,30 @@
 "use client";
-import axios from "@/lib/axios";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useUser } from "./userContext";
 import {
   Internship,
-  InternshipType,
-  SalaryType,
-  WorkMode,
+  InternshipRequest,
 } from "@/types/types";
-
-
+import { fetchWithAuth } from "@/utils/auth";
+import { useRouter } from "next/navigation";
 
 
 interface InternshipContextType {
+  loading : boolean ;
+  internship: Internship;
+  setInternship: (internship: Internship) => void;
   internships: Internship[];
-  loading: boolean;
-  createInternship: (data: Internship) => void;
-  InternshipTitle: string;
-  internshipDescription: string;
-  activeInternshipType: WorkMode;
-  salary: number;
-  salaryType: SalaryType;
-  duration: number;
-  negotiable: boolean;
-  tags: InternshipType[];
-  skills: string[];
-  location: { country: string; address: string; city: string };
-  renumerated: boolean;
-  setInternshipTitle: React.Dispatch<React.SetStateAction<string>>;
-  setInternshipDescription: React.Dispatch<React.SetStateAction<string>>;
-  setSalary: React.Dispatch<React.SetStateAction<number>>;
-  setActiveInternshipType: React.Dispatch<React.SetStateAction<WorkMode>>;
-  setSalaryType: React.Dispatch<React.SetStateAction<SalaryType>>;
-  setDuration: React.Dispatch<React.SetStateAction<number>>; // durations in months
-  setNegotiable: React.Dispatch<React.SetStateAction<boolean>>;
-  setTags: React.Dispatch<React.SetStateAction<InternshipType[]>>;
-  setSkills: React.Dispatch<React.SetStateAction<string[]>>;
-  setLocation: React.Dispatch<React.SetStateAction<Location>>;
-  setRenumerated: React.Dispatch<React.SetStateAction<boolean>>;
-  userInternships: Internship[];
+  // companyInternships: Internship[];
+  createInternship: () => void;
+  getAllInternships : () => void;
   searchInternships: (location: string, title: string) => void;
+  updateInternship: (internshipId: string) => void;
   getInternshipById: (id: string) => void;
+  getCompanyInternships: () => void;
   likeInternship: (internshipId: string) => void;
   applyToInternship: (id: string) => void;
-  deleteInternship: (id: string) => void;
   handleSearchChange: (searchName: string, value: string) => void;
-  searchQuery: { location: string; title: string };
-  setSearchQuery: React.Dispatch<
-    React.SetStateAction<{ location: string; title: string }>
-  >;
   resetInternshipForm: () => void;
 }
 
@@ -65,61 +40,24 @@ export const InternshipContextProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false);
+  const [internship, setInternship] = useState<Internship>({} as Internship);
+  const [internships , setInternships] = useState<Internship[]>([]);
 
-  // input state
-  const [InternshipTitle, setInternshipTitle] = useState<string>("");
-  const [internshipDescription, setInternshipDescription] =
-    useState<string>("");
-  const [salary, setSalary] = useState<number>(0);
-  const [duration, setDuration] = useState<number>(0);
-  const [activeInternshipType, setActiveInternshipType] = useState<WorkMode>(
-    WorkMode.ON_SITE
-  );
-  const [salaryType, setSalaryType] = useState<SalaryType>(SalaryType.MONTH);
-  const [negotiable, setNegotiable] = useState<boolean>(false);
-  const [renumerated, setRenumerated] = useState<boolean>(false);
-  const [tags, setTags] = useState<InternshipType[]>([]);
-  const [skills, setSkills] = useState<string[]>([]);
-  const [location, setLocation] = useState<Location>({
-    country: "",
-    city: "",
-    address: "",
-  });
 
   // get the user context
-  const { userProfile, getUserProfile } = useUser();
+  const { company , setCompany } = useUser();
+  const router = useRouter();
 
-  const [internships, setInternships] = useState<Internship[]>([]);
-  const [userInternships, setUserInternships] = useState<Internship[]>([]);
-  const [searchQuery, setSearchQuery] = useState({
-    location: "",
-    title: "",
-  });
-
-  const resetInternshipForm = () => {
-    setInternshipTitle("");
-    setInternshipDescription("");
-    setSalary(0);
-    setDuration(0);
-    setActiveInternshipType(WorkMode.ON_SITE);
-    setSalaryType(SalaryType.MONTH);
-    setNegotiable(false);
-    setTags([]);
-    setSkills([]);
-    setLocation({
-      country: "",
-      city: "",
-      address: "",
-    });
-  };
-
-  const createInternship = async (data: Internship) => {
+  const createInternship = async () => {
     try {
       setLoading(true);
-      axios.put("/api/internships", data);
+      await fetchWithAuth(`/internships/create`, {
+        method: "POST",
+        body: JSON.stringify(internship as InternshipRequest),
+      });
       toast.success("Internship created successfully");
       //take me to profile
-      //router.push("/");
+      router.push("/internships");
     } catch (error) {
       console.error("Error creating internship", error);
       toast.error("Ooops! Something went wrong");
@@ -128,10 +66,10 @@ export const InternshipContextProvider: React.FC<{
     }
   };
 
-  const getInternships = async () => {
+  const getAllInternships = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("/api/internships");
+      const res = await fetchWithAuth(`/internships`);
       setInternships(res.data);
     } catch (error) {
       console.log("Error getting internships", error);
@@ -140,15 +78,34 @@ export const InternshipContextProvider: React.FC<{
     }
   };
 
-  const getUserInternships = async (userId: string) => {
+  const getCompanyInternships = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("/api/internships/user/" + userId);
-
-      setUserInternships(res.data);
+      const res = await fetchWithAuth("/internships/company/" + company?.id);
+      setCompany({
+        ...company,
+        internships: res.data
+      });
       setLoading(false);
     } catch (error) {
       console.log("Error getting user internships", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateInternship = async (internshipId: string) => {
+    setLoading(true);
+    try {
+      const res = await fetchWithAuth(`/internships/${internshipId}`, {
+        method: "PUT",
+        body: JSON.stringify(internship),
+      });
+      setInternship(res.data);
+      setLoading(false);
+      return res.data;
+    } catch (error) {
+      console.log("Error updating internship", error);
     } finally {
       setLoading(false);
     }
@@ -164,9 +121,7 @@ export const InternshipContextProvider: React.FC<{
       if (title) query.append("title", title);
 
       // send the request
-      const res = await axios.get(
-        `/api/internships/search?${query.toString()}`
-      );
+      const res = await fetchWithAuth(`/internships/search?${query.toString()}`);
 
       // set internships to the response data
       setInternships(res.data);
@@ -180,31 +135,31 @@ export const InternshipContextProvider: React.FC<{
 
   // get internship by id
   const getInternshipById = async (id: string) => {
-    setLoading(true);
-    try {
-      const res = await axios.get(`/api/internship/${id}`); // to check
-
-      setLoading(false);
-      return res.data;
-    } catch (error) {
-      console.log("Error getting internship by id", error);
-    } finally {
-      setLoading(false);
-    }
+    // setLoading(true);
+    // try {
+    //   const res = await fetchWithAuth(`/internships/${id}`);
+    //   setInternship(res.data);
+    //   setLoading(false);
+    //   return res.data;
+    // } catch (error) {
+    //   console.log("Error getting internship by id", error);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   // like an internship
   const likeInternship = async (internshipId: string) => {
-    console.log("internship liked", internshipId);
-    try {
-      const res = await axios.put(`/api/internships/like/${internshipId}`);
+    // console.log("internship liked", internshipId);
+    // try {
+    //   const res = await fetchWithAuth(`/internships/like/${internshipId}`);
 
-      console.log("internship liked successfully", res);
-      toast.success("internship liked successfully");
-      getInternships();
-    } catch (error) {
-      console.log("Error liking the internship", error);
-    }
+    //   console.log("internship liked successfully", res);
+    //   toast.success("internship liked successfully");
+    //   getInternships();
+    // } catch (error) {
+    //   console.log("Error liking the internship", error);
+    // }
   };
 
   // apply to a internship
@@ -216,42 +171,31 @@ export const InternshipContextProvider: React.FC<{
     //   return;
     // }
 
-    try {
-      await axios.put(`/api/internships/apply/${internshipId}`);
+    // try {
+    //   await axios.put(`/api/internships/apply/${internshipId}`);
 
-      toast.success("Applied to internship successfully");
-      getInternships();
-    } catch (error) {
-      console.log("Error applying to internship", error);
-      toast.error("Error applying to internship");
-    }
+    //   toast.success("Applied to internship successfully");
+    //   getInternships();
+    // } catch (error) {
+    //   console.log("Error applying to internship", error);
+    //   toast.error("Error applying to internship");
+    // }
   };
 
-  // delete a internship
-  const deleteInternship = async (internshipId: string) => {
-    try {
-      await axios.delete(`/api/internship/${internshipId}`);
-      setInternships((prevInternships) =>
-        prevInternships.filter((internship) => internship.id !== internshipId)
-      );
-      setUserInternships((prevInternships) =>
-        prevInternships.filter((internship) => internship.id !== internshipId)
-      );
-
-      toast.success("internship deleted successfully");
-    } catch (error) {
-      console.log("Error deleting internship", error);
-    }
+  // reset Internship Form for post-internship page 
+  const resetInternshipForm = () => {
+    setInternship({} as Internship);
   };
+
 
   //
   const handleSearchChange = (searchName: string, value: string) => {
-    setSearchQuery((prev) => ({ ...prev, [searchName]: value }));
+  //   setSearchQuery((prev) => ({ ...prev, [searchName]: value }));
   };
 
-  // useEffect(() => {
-  //   getInternships();
-  // }, []);
+  useEffect(() => {
+    getAllInternships();
+  }, []);
 
   // useEffect(() => {
   //   if (userProfile?.id) {
@@ -263,41 +207,20 @@ export const InternshipContextProvider: React.FC<{
   return (
     <InternshipContext.Provider
       value={{
-        internships,
         loading,
-        InternshipTitle,
-        internshipDescription,
-        salary,
-        duration,
-        activeInternshipType,
-        salaryType,
-        negotiable,
-        tags,
-        skills,
-        location,
-        renumerated,
-        userInternships,
+        internship,
+        setInternship,
+        internships,
         createInternship,
-        setInternshipTitle,
-        setInternshipDescription,
-        setActiveInternshipType,
-        setSalary,
-        setSalaryType,
-        setDuration,
-        setNegotiable,
-        setTags,
-        setSkills,
-        setLocation,
-        setRenumerated,
+        getAllInternships,
         searchInternships,
         getInternshipById,
+        getCompanyInternships,
+        updateInternship,
         likeInternship,
         applyToInternship,
-        deleteInternship,
         handleSearchChange,
-        searchQuery,
-        setSearchQuery,
-        resetInternshipForm,
+        resetInternshipForm
       }}
     >
       {children}

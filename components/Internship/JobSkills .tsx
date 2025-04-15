@@ -11,7 +11,7 @@ import { InternshipType } from "@/types/types";
 import {  useFilters } from "@/context/FiltersContext";
 
 function JobSkills() {
-  const { skills, setSkills, tags, setTags } = useInternship();
+  const { internship, setInternship } = useInternship();
   const {filters , handleFilterChange} = useFilters();
 
   const skillInputRef = useRef<HTMLInputElement>(null);
@@ -20,19 +20,19 @@ function JobSkills() {
     if (!skillInputRef.current) return;
 
     const skillValue = skillInputRef.current.value.trim();
-    if (skillValue && !skills.includes(skillValue)) {
-      setSkills([...skills, skillValue]);
+    if (skillValue && !internship.skills.includes(skillValue)) {
+      setInternship({...internship, skills : [...internship.skills, skillValue]});
       skillInputRef.current.value = "";
     }
   };
 
   const handleRemoveSkill = (skillToRemove: string) => {
-    setSkills(skills.filter((skill: string) => skill !== skillToRemove));
+    setInternship({...internship, skills : internship.skills.filter((skill: string) => skill !== skillToRemove)});
   };
 
   const handleAddTag = (value: InternshipType) => {
-    if (!tags.includes(value)) {
-      setTags((prev: InternshipType[]) => [...prev, value]);
+    if (!internship.tags.includes(value)) {
+      setInternship({...internship, tags : [...internship.tags, value]});
     }
   };
 
@@ -41,7 +41,7 @@ function JobSkills() {
       handleFilterChange(value.toLowerCase() as keyof typeof filters);
     };
 
-  console.log("tags : ", tags);
+  console.log("tags : ", internship.tags);
 
   return (
     <div className="p-6 flex flex-col gap-4 bg-background border border-border rounded-lg">
@@ -70,7 +70,7 @@ function JobSkills() {
           </div>
 
           <div className="flex flex-wrap gap-2 mt-2">
-            {skills.map((skill: string, index: number) => (
+            {internship.skills.map((skill: string, index: number) => (
               <div
                 key={index}
                 className="bg-primary text-primary-foreground px-3 py-1 rounded-full flex items-center space-x-1"
@@ -100,7 +100,7 @@ function JobSkills() {
         </div>
         <CheckboxButton
           items={[InternshipType.PFA, InternshipType.PFE, InternshipType.INITIATION]}
-          itemsValue={[filters.pfa , filters.pfe , filters.initiation]}
+          itemsValue={[internship.tags.includes(InternshipType.PFA) , internship.tags.includes(InternshipType.PFE) , internship.tags.includes(InternshipType.INITIATION)]}
           onCheckedFunction={handleCheckedFunction}
         />
       </div>

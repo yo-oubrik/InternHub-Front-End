@@ -21,17 +21,8 @@ import TextEditor from "../TextEditor";
 
 function JobDetails() {
   const {
-    setSalary,
-    salary,
-    setSalaryType,
-    duration,
-    setDuration,
-    setNegotiable,
-    negotiable,
-    renumerated,
-    setRenumerated,
-    internshipDescription,
-    setInternshipDescription
+    internship,
+    setInternship
   } = useInternship();
 
   return (
@@ -45,9 +36,9 @@ function JobDetails() {
         </div>
         <div className="flex-1">
           <TextEditor
-            value={internshipDescription}
-            onChange={setInternshipDescription}
-            style={{ minHeight: "400px", maxHeight: "900px" }}
+            value={internship.description}
+            onChange={(value) => setInternship({...internship, description : value})}
+            style={{ minHeight: "400px", backgroundColor: "white" }}
             modules={{ toolbar: true }}
           />
         </div>
@@ -67,8 +58,8 @@ function JobDetails() {
             type="number"
             id="duration"
             name="duration"
-            value={duration}
-            onChange={(e) => setDuration(Number.parseInt(e.target.value))}
+            value={internship.duration}
+            onChange={(e) => setInternship({...internship, duration : Number.parseInt(e.target.value)})}
             className="flex-1 w-full mt-2"
             placeholder="Enter internship duration"
           />
@@ -92,17 +83,17 @@ function JobDetails() {
               type="number"
               id="salary"
               placeholder="Enter Salary"
-              value={salary}
-              onChange={(e) => setSalary(Number.parseFloat(e.target.value))}
+              value={internship.salary}
+              onChange={(e) => setInternship({...internship, salary : Number.parseFloat(e.target.value)})}
               className="w-2/3"
-              disabled={!renumerated ? true : false}
+              disabled={!internship.paid ? true : false}
             />
             <div className="w-1/3">
               <Select
                 onValueChange={(value: string) =>
-                  setSalaryType(value as SalaryType)
+                  setInternship({...internship, salaryType : value as SalaryType})
                 }
-                disabled={!renumerated ? true : false}
+                disabled={!internship.paid ? true : false}
                 defaultValue={SalaryType.MONTH}
               >
                 <SelectTrigger>
@@ -119,20 +110,20 @@ function JobDetails() {
 
           <div className="flex gap-2 mt-2">
             <RadioButton
-              value={negotiable}
-              onValueChange={setNegotiable}
+              value={internship.negotiable}
+              onValueChange={(value) => setInternship({...internship, negotiable : value})}
               items={["Negotiable", "Fixed"]}
               itemsValue={[true, false]}
               classNameGroup="w-2/3 border-border border py-2 px-2 rounded-md"
-              disabled={!renumerated ? true : false}
+              disabled={!internship.paid ? true : false}
             />
             <div className="flex items-center justify-start flex-row-reverse gap-2 w-1/3">
               <Switch
-                id="renumerated"
-                checked={renumerated}
-                onCheckedChange={setRenumerated}
+                id="paid"
+                checked={internship.paid}
+                onCheckedChange={(value) => setInternship({...internship, paid : value})}
               />
-              <Label htmlFor="renumerated">Renumerated</Label>
+              <Label htmlFor="paid">Paid</Label>
             </div>
           </div>
         </div>
