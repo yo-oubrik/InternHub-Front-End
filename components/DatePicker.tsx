@@ -18,9 +18,10 @@ interface Props {
   value?: string;
   setDateValue: (value: string) => void;
   resetDate?: boolean;
+  className?: string;
 }
 
-export function DatePicker({ value = "", setDateValue, resetDate }: Props) {
+export function DatePicker({ value = "", setDateValue, resetDate , className }: Props) {
   const [date, setDate] = useState<Date | undefined>(
     value ? parse(value, "MMM - yyyy", new Date()) : undefined
   );
@@ -41,7 +42,7 @@ export function DatePicker({ value = "", setDateValue, resetDate }: Props) {
           className={cn(
             "w-fit justify-start text-left font-normal text-black",
             !date && "text-muted-foreground"
-          )}
+          ,className)}
         >
           <CalendarIcon />
           {date ? format(date, "MMM yyyy") : <span>Pick a date</span>}

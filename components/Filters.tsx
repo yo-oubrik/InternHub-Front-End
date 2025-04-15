@@ -1,20 +1,24 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
-import RadioButton from "./RadioButton"; // Ensure lowercase 'components'
+import RadioButton from "./RadioButton"; 
 import { Button } from "./ui/button";
 import { useFilters } from "@/context/FiltersContext";
 import { useInternship } from "@/context/internshipContext";
+import { ApplicationStatus } from "@/types/types";
 
-
-function Filters() {
+function Filters({ onFilterChange }: { onFilterChange: (filters: any) => void }) {
   const {
     searchInternships,
     setSearchQuery,
   } = useInternship();
 
   const { handleFilterChange, filters, setFilters } = useFilters();
+
+  const [status, setStatus] = useState<string | null>(null);
+  const [applicationDate, setApplicationDate] = useState<string | null>(null);
+  const [interviewDate, setInterviewDate] = useState<string | null>(null);
 
   const clearAllFilters = () => {
     setFilters({
@@ -27,6 +31,27 @@ function Filters() {
       renumerated: false,
     });
     setSearchQuery({ location: "", title: "" });
+    setStatus(null);
+    setApplicationDate(null);
+    setInterviewDate(null);
+  };
+
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setStatus(value);
+    onFilterChange({ status: value, applicationDate, interviewDate });
+  };
+
+  const handleApplicationDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setApplicationDate(value);
+    onFilterChange({ status, applicationDate: value, interviewDate });
+  };
+
+  const handleInterviewDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInterviewDate(value);
+    onFilterChange({ status, applicationDate, interviewDate: value });
   };
 
   return (
@@ -115,6 +140,53 @@ function Filters() {
           classNameItem="flex items-center space-x-2"
           defaultValue={false}
         />
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <div>
+          <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+            Filter by Status
+          </label>
+          <select
+            id="status"
+            value={status || ""}
+            onChange={handleStatusChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          >
+            <option value="">All</option>
+            {Object.values(ApplicationStatus).map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="applicationDate" className="block text-sm font-medium text-gray-700">
+            Filter by Application Date
+          </label>
+          <input
+            type="date"
+            id="applicationDate"
+            value={applicationDate || ""}
+            onChange={handleApplicationDateChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="interviewDate" className="block text-sm font-medium text-gray-700">
+            Filter by Interview Date
+          </label>
+          <input
+            type="date"
+            id="interviewDate"
+            value={interviewDate || ""}
+            onChange={handleInterviewDateChange}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
       </div>
     </div>
   );

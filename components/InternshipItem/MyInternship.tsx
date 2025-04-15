@@ -5,9 +5,7 @@ import { formatDates } from "@/utils/fotmatDates";
 import { Pencil, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { bookmark, bookmarkEmpty } from "@/utils/Icons";
-import { useInternship } from "@/context/internshipContext";
 import { useAuth } from "@/context/authContext";
-import { useUser } from "@/context/userContext";
 import axios from "axios";
 import { CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
@@ -19,29 +17,29 @@ interface InternshipProps {
 }
 
 function Myinternship({ internship }: InternshipProps) {
-  const { deleteInternship, likeInternship } = useInternship();
-  const { userProfile, getUserProfile } = useUser();
+  // const { deleteInternship, likeInternship } = useInternship();
+  // const { userProfile, getUserProfile } = useUser();
   const { isAuthenticated } = useAuth();
   const [isLiked, setIsLiked] = React.useState(false);
 
   const router = useRouter();
 
   const handleLike = (id: string) => {
-    setIsLiked((prev) => !prev);
-    likeInternship(id);
+    // setIsLiked((prev) => !prev);
+    // likeInternship(id);
   };
 
-  useEffect(() => {
-    if (isAuthenticated && internship.company?.id) {
-      getUserProfile(internship.company.id);
-    }
-  }, [isAuthenticated, internship.company?.id]);
+  // useEffect(() => {
+    // if (isAuthenticated && internship.company?.id) {
+    //   getUserProfile(internship.company.id);
+    // }
+  // }, [isAuthenticated, internship.company?.id]);
 
-  useEffect(() => {
-    if (userProfile?.id) {
-      setIsLiked(internship.likes.includes(userProfile?.id));
-    }
-  }, [internship.likes, userProfile?.id]);
+  // useEffect(() => {
+  //   if (userProfile?.id) {
+  //     setIsLiked(internship.likes.includes(userProfile?.id));
+  //   }
+  // }, [internship.likes, userProfile?.id]);
 
   return (
     <div className="p-8 bg-white rounded-xl flex flex-col gap-5">
@@ -52,7 +50,7 @@ function Myinternship({ internship }: InternshipProps) {
         >
           <Image
             alt={`logo`}
-            src={internship.company?.logo || "/user.png"}
+            src={internship.company?.profilePicture || "/user.png"}
             width={48}
             height={48}
             className="rounded-full shadow-sm"
@@ -67,20 +65,23 @@ function Myinternship({ internship }: InternshipProps) {
             </p>
           </div>
         </div>
-        <button
-          className={`text-2xl ${isLiked ? "text-[#7263f3]" : "text-gray-400"
-            } `}
-          onClick={() => {
-            isAuthenticated
-              ? handleLike(internship.id)
-              : axios.get("http://localhost:3000/api/login"); {/* to check */ }
-          }}
-        >
-          {isLiked ? bookmark : bookmarkEmpty}
-        </button>
+        <div className="flex flex-col items-center">
+          <button
+            className={`text-2xl ${isLiked ? "text-[#7263f3]" : "text-gray-400"
+              } `}
+            onClick={() => {
+              isAuthenticated
+                ? handleLike(internship.id)
+                : axios.get("http://localhost:3000/api/login"); {/* to check */ }
+            }}
+          >
+            {isLiked ? bookmark : bookmarkEmpty}
+          </button>
+          <div>{internship.likes.length}</div>
+        </div>
       </div>
       <div>
-        <p className="text-sm text-muted-foreground mb-2">{internship.location}</p>
+        <p className="text-sm text-muted-foreground mb-2">{(internship.company?.location.address ?? "") +  (internship.company?.location.city ?? "") + (internship.company?.location.country ?? "")}</p>
         <p className="text-sm text-muted-foreground mb-4">
           Posted {formatDates(internship.createdAt)} {/* to check */}
         </p>
@@ -102,7 +103,7 @@ function Myinternship({ internship }: InternshipProps) {
               ))}
             </div>
           </div>
-          {internship.company?.id === userProfile?.id && (
+          {/* {internship.company?.id === company?.id && ( */}
             <div className="self-end">
               <Button variant="ghost" size="icon" className="text-gray-500">
                 <Pencil size={14} />
@@ -114,13 +115,13 @@ function Myinternship({ internship }: InternshipProps) {
                 size="icon"
                 className="text-gray-500
                 hover:text-red-500"
-                onClick={() => deleteInternship(internship.id)}
+                // onClick={() => deleteInternship(internship.id)}
               >
                 <Trash size={14} />
                 <span className="sr-only">Delete internship</span>
               </Button>
             </div>
-          )}
+          {/* )} */}
         </div>
       </div>
     </div>

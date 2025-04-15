@@ -19,8 +19,8 @@ interface InternshipProps {
 
 function InternshipCard({ internship, activeinternship }: InternshipProps) {
   const { likeInternship } = useInternship();
-  const { userProfile } = useUser() ; 
-  const { isAuthenticated } = useAuth(); {/* to check */} 
+  const { student } = useUser() ; 
+  const { isAuthenticated } = useAuth();
   const [isLiked, setIsLiked] = React.useState(false);
 
   const {
@@ -36,12 +36,12 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
 
   
   useEffect(() => {
-    userProfile && setIsLiked(likes.includes(userProfile.id));
-  }, [likes, userProfile?.id]);
+    student && setIsLiked(likes.includes(student.id));
+  }, [likes, student?.id]);
   
   const handleLike = (id: string) => {
     setIsLiked((prev) => !prev);
-    // likeInternship(id);
+    likeInternship(id);
   };
   
   const companyDescription =
@@ -72,7 +72,7 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
         > { /* to check */}
           <div className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center mr-2">
             <Image
-              src={ company?.logo || "/user.png"}
+              src={ company?.profilePicture || "/user.png"}
               alt={ company?.name || "User"}
               width={40}
               height={40}

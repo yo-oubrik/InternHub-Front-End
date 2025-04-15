@@ -4,6 +4,10 @@ export const isStudentRole = (role: Role | undefined): boolean => {
   return role === 'STUDENT';
 };
 
+export const isCompanyRole = (role: Role | undefined): boolean => {
+  return role === 'COMPANY';
+};
+
 export const requireStudentRole = (role: Role | undefined): boolean => {
   if (!isStudentRole(role)) {
     console.warn('Access denied: User must be a student');

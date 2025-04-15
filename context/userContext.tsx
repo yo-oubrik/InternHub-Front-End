@@ -42,7 +42,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const getCompany = async (id: string) => {
     try {
-      const data = await fetchWithAuth(`company/${id}`)
+      const data = await fetchWithAuth(`companies/${id}`)
       setCompany(data as Company);
     } catch (error) {
       console.error("Failed to fetch company", error);

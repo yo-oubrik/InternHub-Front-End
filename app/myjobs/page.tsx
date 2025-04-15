@@ -1,17 +1,19 @@
 "use client";
 import Footer from "@/components/Footer";
-import MyJob from "@/components/JobItem/MyJob";
+import MyJob from "@/components/InternshipItem/MyInternship";
 import { useAuth } from "@/context/authContext";
 import { useInternship } from "@/context/internshipContext";
 import { useUser } from "@/context/userContext";
 import axios from "axios";
 import { Internship } from "@/types/types";
 import React, { useEffect } from "react";
+import { mockInternships } from "@/components/InternshipItem/MyInternshipsList";
 
 function page() {
-  const { userInternships, internships } = useInternship();
-  const { userProfile } = useUser();
+  // const { userInternships, internships } = useInternship();
+  // const { userProfile } = useUser();
   const { isAuthenticated, loading } = useAuth(); {/* to check for loading */ }
+  const userInternships = mockInternships
 
   const [activeTab, setActiveTab] = React.useState("posts");
 
@@ -31,13 +33,13 @@ function page() {
   //   }
   // }, [isAuthenticated]);
 
-  const likedJobs = internships.filter((internship: Internship) => {
-    return internship.likes.includes(userId);
-  });
+  // const likedJobs = internships.filter((internship: Internship) => {
+  //   return internship.likes.includes(userId);
+  // });
 
-  if (loading) {
-    return null;
-  }
+  // if (loading) {
+  //   return null;
+  // }
 
   return (
     <div>
@@ -70,19 +72,19 @@ function page() {
             <p className="text-2xl font-bold">No job posts found.</p>
           </div>
         )}
-
+{/* 
         {activeTab === "likes" && likedJobs.length === 0 && (
           <div className="mt-8 flex items-center">
             <p className="text-2xl font-bold">No liked jobs found.</p>
           </div>
-        )}
+        )} */}
 
         <div className="my-8 grid grid-cols-2 gap-6">
           {activeTab === "posts" &&
             userInternships.map((internship: Internship) => <MyJob key={internship.id} internship={internship} />)}
 
-          {activeTab === "likes" &&
-            likedJobs.map((internship: Internship) => <MyJob key={internship.id} internship={internship} />)}
+          {/* {activeTab === "likes" &&
+            likedJobs.map((internship: Internship) => <MyJob key={internship.id} internship={internship} />)} */}
         </div>
       </div>
 

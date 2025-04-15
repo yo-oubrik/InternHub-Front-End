@@ -63,11 +63,9 @@ export interface Company extends User {
   description: string;
   ice: string;
   rc: string;
-  domain: string;
   phone: string;
   size: string;
   links?: Links;
-  website: string;
   internships?: Internship[];
 }
 
@@ -92,23 +90,55 @@ export enum SalaryType {
 export interface Internship {
   id: string;
   company?: Company;
-  companyId?: string;
   createdAt: Date;
   description: string;
   duration: number;
   salary: number;
   salaryType: SalaryType;
   domain: string;
-  location: string;
   title: string;
   updatedAt: Date;
   workMode: WorkMode;
   tags: InternshipType[];
   skills: string[];
   negotiable: boolean;
-  renumerated: boolean;
+  paid: boolean;
   likes: string[];
-  applicants: string[];
+  applicants: Student[];
+}
+
+export interface Application {
+  id : string ; 
+  student : Student;
+  internship : Internship;
+  status: string;
+  applicationDate : Date;
+  motivationLetter?: string;
+  cv?: string;
+  interviewDate?: Date;
+  interviewDescription? : string;
+}
+
+export enum ApplicationStatus {
+  PENDING = "PENDING",
+  ACCEPTED = "ACCEPTED",
+  REJECTED = "REJECTED",
+  INTERVIEW = "INTERVIEW",
+}
+
+export interface InternshipRequest {
+  companyId?: string;
+  description: string;
+  duration: number;
+  salary: number;
+  salaryType: SalaryType;
+  domain: string;
+  title: string;
+  workMode: WorkMode;
+  tags: InternshipType[];
+  skills: string[];
+  negotiable: boolean;
+  paid: boolean;
 }
 
 export enum flagSeverity {
@@ -217,8 +247,8 @@ export type CertificatRequest = {
   studentId: string;
 }
 
-export interface Location {
-  address: string;
-  city: string;
-  country: string;
-}
+  export interface Location {
+    address: string;
+    city: string;
+    country: string;
+  }

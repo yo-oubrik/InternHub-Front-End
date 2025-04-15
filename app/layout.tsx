@@ -37,7 +37,7 @@ export default function RootLayout({
 
         <ContextProvider>
           <Header />
-          <div className="min-h-[calc(100vh-var(--header-height))]">
+          <div className="px-14 min-h-[calc(100vh-var(--header-height))]">
             {children}
           </div>
           <Footer />
