@@ -75,7 +75,7 @@ export const studentFlagsHistoryColumns = (): ColumnDef<StudentFlag>[] => [
       const [isDetailsOpen, setIsDetailsOpen] = useState(false);
       const [showIgnoreConfirm, setShowIgnoreConfirm] = useState(false);
       const [showNotifyConfirm, setShowNotifyConfirm] = useState(false);
-      const handleNotifyStudent = () => {
+      const handleWarnStudent = () => {
         alert("Notification sent to student");
         setShowNotifyConfirm(false);
       };
@@ -139,7 +139,7 @@ export const studentFlagsHistoryColumns = (): ColumnDef<StudentFlag>[] => [
           <WarnStudentDialog
             isOpen={showNotifyConfirm}
             onOpenChange={setShowNotifyConfirm}
-            onConfirm={handleNotifyStudent}
+            onConfirm={handleWarnStudent}
             studentFlag={row.original}
           />
 

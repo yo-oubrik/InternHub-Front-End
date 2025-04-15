@@ -56,7 +56,7 @@ const Page = () => {
 
   return (
     <div className="min-h-full-except-header max-w-screen-lg mx-auto flex flex-col gap-10 justify-center py-10">
-      <h1 className="header">Dashboard</h1>
+      <h1 className="header">Manage Students</h1>
       <div className={"bg-primary-dark/75 p-5 rounded-lg flex flex-col gap-5"}>
         <div className="stats">
           <StatCard

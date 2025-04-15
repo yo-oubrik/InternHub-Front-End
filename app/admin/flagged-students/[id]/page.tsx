@@ -9,7 +9,8 @@ import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { StudentFlag } from "@/types/types";
-import { Trash2, User } from "lucide-react";
+import { ShieldX, Trash2, User } from "lucide-react";
+import { BlockStudentDialog } from "@/components/Dialogs/BlockStudentDialog";
 
 const Page = () => {
   const params = useParams();
@@ -91,6 +92,8 @@ const Page = () => {
     }
     fetchStudentFlagsHistory();
   }, []);
+  const [isBlockStudentDialogOpen, setIsBlockStudentDialogOpen] =
+    useState(false);
   return (
     <div>
       <div className="max-w-screen-lg mx-auto flex flex-col gap-10 justify-center mt-10">
@@ -123,17 +126,32 @@ const Page = () => {
               target="_blank"
               className="flex gap-2"
             >
-              <User /> Student Profile
+              <User /> View Student Profile
             </Link>
           </Button>
           <Button
             size={"lg"}
             className="hover:opacity-85 transition w-fit flex gap-2"
+            onClick={() => {
+              setIsBlockStudentDialogOpen(true);
+            }}
           >
-            <Trash2 /> Block Student
+            <ShieldX /> Block Student
           </Button>
         </div>
       </div>
+      <BlockStudentDialog
+        isOpen={isBlockStudentDialogOpen}
+        setIsOpen={setIsBlockStudentDialogOpen}
+        studentToBlock={{
+          firstName: "",
+          lastName: "",
+          id: "",
+        }}
+      />
+      <p className="text-red-500 text-center mt-6 text-lg">
+        Student Has Been Blocked At : 22/22/22
+      </p>
       <StudentFlagsHistory data={studentFlagsHistory} />
     </div>
   );
