@@ -30,6 +30,9 @@ import PdfViewer from "../PdfViewer";
 import PrepareInterview from "./PrepareInterview";
 import { SortableHeader } from "../SortableHeader";
 import { sortDateColumn } from "@/utils/dates/sortDateColumn";
+import { WarnStudentDialog } from "../Dialogs/WarnStudentDialog";
+import { AcceptApplicationDialog } from "./AcceptApplicationDialog";
+import { AcceptApplication } from "./AcceptApplicationFunction";
 
 export const CompanyApplicationsColumns: ColumnDef<Application>[] = [
   {
@@ -83,7 +86,7 @@ export const CompanyApplicationsColumns: ColumnDef<Application>[] = [
         <>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
+              <Button variant="ghost" className="h-8 w-8 p-0 ">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -91,7 +94,7 @@ export const CompanyApplicationsColumns: ColumnDef<Application>[] = [
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() =>
-                  router.push(`/student/${row.original.student.id}`)
+                  router.push(`/profile/student/${row.original.student.id}`)
                 }
               >
                 <User strokeWidth={3} className="mr-2 h-4 w-4" />
@@ -143,25 +146,11 @@ export const CompanyApplicationsColumns: ColumnDef<Application>[] = [
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <EditModal
-            title="Schedule Interview"
-            description="Please fill in the details for the interview."
-            isOpenModal={withInterview}
-            setIsOpenModal={setWithInterview}
-            className="min-w-[600px] min-h-[70vh] flex flex-col"
-            onConfirm={() => {}}
-            onCancel={() => setWithInterview(false)}
-            confirmButton="Schedule"
-            cancelButton="Cancel"
-            cancelButtonClassName="border border-primary text-primary bg-transparent hover:text-primary-hover"
-            body={
-              <PrepareInterview
-                interviewDate=""
-                setInterviewDate={() => {}}
-                interviewDescription=""
-                setInterviewDescription={() => {}}
-              />
-            }
+          <AcceptApplicationDialog
+            isOpen={withInterview}
+            setIsOpen={setWithInterview}
+            onConfirm={AcceptApplication}
+            studentAccepted={row.original.student}
           />
         </>
       );

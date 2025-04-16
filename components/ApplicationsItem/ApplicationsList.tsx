@@ -13,7 +13,7 @@ export const mockApplications: Application[] = Array.from(
     {
       id: `${i * 2 + 1}`,
       student: {
-        id: "771d56c6-7802-4f7c-bc80-4ec97a4ddd59",
+        id: "67269fe9-66b4-486d-9282-4a3780450853",
         role: Role.STUDENT,
         createdAt: new Date("2025-04-15T02:40:50.990826"),
         updatedAt: new Date("2025-04-15T02:40:50.990826"),
@@ -83,7 +83,7 @@ export const mockApplications: Application[] = Array.from(
     {
       id: `${i * 2 + 2}`,
       student: {
-        id: "771d56c6-7802-4f7c-bc80-4ec97a4ddd59",
+        id: "67269fe9-66b4-486d-9282-4a3780450853",
         role: Role.STUDENT,
         createdAt: new Date("2025-04-15T02:40:50.990826"),
         updatedAt: new Date("2025-04-15T02:40:50.990826"),
