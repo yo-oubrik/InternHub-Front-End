@@ -1,13 +1,10 @@
 "use client";
-import React, { useState, useRef } from 'react';
-import ProfileAvatar from '@/components/Profile/ProfileAvatar';
-import { uploadFileToSupabase } from '@/lib/supabaseStorage';
-import toast from 'react-hot-toast';
-import CompanyInfosForm from '@/components/Profile/company/update-form/CompanyInfosForm';
-import Button from '@/components/Button';
-import { CompanyLocation } from '@/components/Profile/company/update-form/CompanyLocation';
-import { ArrowLeft, Router } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import React, { useState, useRef } from "react";
+import CompanyInfosForm from "@/components/Profile/company/update-form/CompanyInfosForm";
+import Button from "@/components/Button";
+import { CompanyLocation } from "@/components/Profile/company/update-form/CompanyLocation";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const UpdateCompanyProfile = () => {
   const router = useRouter();
@@ -26,13 +23,15 @@ const UpdateCompanyProfile = () => {
       case 1:
         return (
           <div>
-            <h2 className="text-xl font-bold mb-4">Update Company Information</h2>
+            <h2 className="text-xl font-bold mb-4">
+              Update Company Information
+            </h2>
             <CompanyInfosForm />
-            <div className='w-full flex justify-end'>  
+            <div className="w-full flex justify-end">
               <Button
-                label='Next'
+                label="Next"
                 onClick={nextStep}
-                className='mt-4 px-4 py-2 rounded'
+                className="mt-4 px-4 py-2 rounded"
               />
             </div>
           </div>
@@ -44,13 +43,13 @@ const UpdateCompanyProfile = () => {
             <CompanyLocation />
             <div className="mt-4 flex justify-between">
               <Button
-                label='Previous'
+                label="Previous"
                 onClick={prevStep}
                 outline={true}
                 className="px-4 py-2 rounded"
               />
               <Button
-                label='Next'
+                label="Next"
                 onClick={nextStep}
                 className="px-4 py-2 rounded"
               />
@@ -63,7 +62,7 @@ const UpdateCompanyProfile = () => {
             <h2 className="text-xl font-bold">Summary</h2>
             {/* Display a summary of the updates */}
             <Button
-              label='Previous'
+              label="Previous"
               onClick={prevStep}
               outline={true}
               className="mt-4 px-4 py-2 rounded"
@@ -78,7 +77,10 @@ const UpdateCompanyProfile = () => {
   return (
     <div className="p-6 mb-8 bg-white rounded shadow-md">
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2 mb-4 cursor-pointer hover:text-primary" onClick={() => router.push('/profile/company')}>
+        <div
+          className="flex items-center gap-2 mb-4 cursor-pointer hover:text-primary"
+          onClick={() => router.push("/profile/company")}
+        >
           <ArrowLeft size={20} />
           <span>Back to profile</span>
         </div>
@@ -86,7 +88,7 @@ const UpdateCompanyProfile = () => {
           <div className="h-2 bg-gray-200 rounded">
             <div
               className="h-2 bg-primary rounded"
-              style ={{ width: `${step * 33}%` }}
+              style={{ width: `${step * 33}%` }}
             ></div>
           </div>
         </div>

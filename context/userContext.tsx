@@ -21,6 +21,8 @@ interface UserContextType {
   company: Company;
   companies: Company[];
   student: Student;
+  isUserProfile: boolean;
+  checkIsUserProfile: (userProfileId: string | undefined) => void;
   setCompany: (company: Company) => void;
   setStudent: (student: Student) => void;
   getCompany: (id: string) => Promise<void>;
@@ -47,6 +49,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { isAuthenticated, currentUser } = useAuth();
+  const [isUserProfile, setIsUserProfile] = useState<boolean>(false);
   const [company, setCompany] = useState<Company>({} as Company);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [student, setStudent] = useState<Student>({
@@ -246,8 +249,14 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const checkIsUserProfile = (userProfileId: string | undefined): void => {
+    currentUser
+      ? setIsUserProfile(userProfileId === currentUser?.id)
+      : setIsUserProfile(false);
+  };
+
   useEffect(() => {
-    // console.log("current user : ", currentUser);
+    console.log("this is from user context");
     if (isAuthenticated && currentUser) {
       if (currentUser.role === Role.COMPANY) {
         getCompany(currentUser.id);
@@ -260,6 +269,8 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <UserContext.Provider
       value={{
+        isUserProfile,
+        checkIsUserProfile,
         company,
         setCompany,
         getCompany,

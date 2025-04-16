@@ -5,137 +5,90 @@ import {
   ArrowLeftIcon,
   ArrowRightIcon,
   BarChart3,
+  CheckCircle,
   ChevronRight,
+  Clock,
   Router,
   UserPlus,
+  XCircle,
 } from "lucide-react";
-import { motion } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 interface CompanyProfileStatsProps {
-  internships: number;
   applicants: number;
+  pendingApplicants: number;
+  acceptedApplicants: number;
+  rejectedApplicants: number;
 }
 
 const CompanyProfileStats = ({
-  internships,
   applicants,
+  pendingApplicants,
+  acceptedApplicants,
+  rejectedApplicants,
 }: CompanyProfileStatsProps) => {
   const router = useRouter();
-  const [currentInternships, setCurrentInternships] = useState(0);
-  const [currentApplicants, setCurrentApplicants] = useState(0);
-  const [animatedValue, setAnimatedValue] = useState(0);
-  const { ref, inView } = useInView({ triggerOnce: true });
-  const internshipsAnimationSpeed = internships + 1;
-  const applicantsAnimationSpeed = internships / applicants + 1;
-
-  // Memoize the animation function since it's used multiple times
-  const animateDigits = useMemo(() => {
-    return (number: number) => {
-      return number
-        .toString()
-        .split("")
-        .map((digit, index) => (
-          <motion.span
-            key={index}
-            initial={{ y: 10 }}
-            animate={{ y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.01 }}
-            className="inline-block"
-          >
-            {digit}
-          </motion.span>
-        ));
-    };
-  }, []);
-
-  useEffect(() => {
-    const internshipsInterval = setInterval(() => {
-      if (currentInternships < internships) {
-        setCurrentInternships((prev) => Math.min(prev + 1, internships));
-      }
-    }, internshipsAnimationSpeed);
-
-    const applicantsInterval = setInterval(() => {
-      if (currentApplicants < applicants) {
-        setCurrentApplicants((prev) => Math.min(prev + 1, applicants));
-      }
-    }, applicantsAnimationSpeed);
-
-    return () => {
-      clearInterval(internshipsInterval);
-      clearInterval(applicantsInterval);
-    };
-  }, [internships, applicants, currentInternships, currentApplicants]);
-
-  const ratio = applicants > 0 ? (internships / applicants) * 100 : 0;
-
-  useEffect(() => {
-    const animation = setInterval(() => {
-      setAnimatedValue((prev) => {
-        if (prev >= ratio) {
-          clearInterval(animation);
-          return ratio;
-        }
-        return prev + 0.01;
-      });
-    }, 10);
-
-    return () => clearInterval(animation);
-  }, [ratio]);
-
-  // Memoize the rendered digits to prevent unnecessary re-renders
-  const renderedInternships = useMemo(() => {
-    return animateDigits(currentInternships);
-  }, [currentInternships, animateDigits]);
-
-  const renderedApplicants = useMemo(() => {
-    return animateDigits(currentApplicants);
-  }, [currentApplicants, animateDigits]);
 
   return (
-    <div className="flex items-center gap-2 bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[80%] mx-auto">
+    <div className="grid grid-cols-2 items-center gap-2 bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[75%] mx-auto">
       <div className="w-full bg-white p-6 rounded-lg shadow-sm">
         <div className="flex items-center justify-between mb-4">
-          <BarChart3 className="w-6 h-6 text-blue-500" />
+          <UserPlus className="w-6 h-6 text-blue-500" />
           <div className="relative">
-            <h3 className="text-lg font-medium flex items-center">
-              Total Internships
-            </h3>
-            <div
-              className="flex text-sm text-primary items-center justify-end absolute -right-2 cursor-pointer hover:underline"
-              onClick={() => router.push(`internships/company/1`)}
-            >
-              <p>List of Internships</p>
-              <ChevronRight size={20} />
-            </div>
+            <h3 className="text-lg font-medium">Total Applicants</h3>
           </div>
         </div>
         <div className="text-3xl overflow-hidden font-bold text-blue-500">
-          {renderedInternships}
+          {applicants}
         </div>
       </div>
 
       <div className="w-full bg-white p-6 rounded-lg shadow-sm">
         <div className="flex items-center justify-between mb-4">
-          <UserPlus className="w-6 h-6 text-green-500" />
+          <Clock className="w-6 h-6 text-yellow-500" />
           <div className="relative">
-            <h3 className="text-lg font-medium">Total Applicants</h3>
-            <div
-              className="flex text-sm text-primary items-center justify-end absolute -right-2 cursor-pointer hover:underline"
-              onClick={() => router.push(`applications/company/1`)}
-            >
-              <p>List of Applications</p>
-              <ChevronRight size={20} />
-            </div>
+            <h3 className="text-lg font-medium">Pending Applications</h3>
+          </div>
+        </div>
+        <div className="text-3xl overflow-hidden font-bold text-yellow-500">
+          {pendingApplicants}
+        </div>
+      </div>
+
+      <div className="w-full bg-white p-6 rounded-lg shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <CheckCircle className="w-6 h-6 text-green-500" />
+          <div className="relative">
+            <h3 className="text-lg font-medium">Accepted Applicants</h3>
           </div>
         </div>
         <div className="text-3xl overflow-hidden font-bold text-green-500">
-          {renderedApplicants}
+          {acceptedApplicants}
         </div>
+      </div>
+
+      <div className="w-full bg-white p-6 rounded-lg shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <XCircle className="w-6 h-6 text-red-500" />
+          <div className="relative">
+            <h3 className="text-lg font-medium">Rejected Applications</h3>
+          </div>
+        </div>
+        <div className="text-3xl overflow-hidden font-bold text-red-500">
+          {rejectedApplicants}
+        </div>
+      </div>
+      <div className="col-span-2 flex items-center justify-center mt-4">
+        <Button
+          variant="outline"
+          className="text-primary hover:bg-primary hover:text-white group"
+          onClick={() => router.push(`/company/1/applications`)}
+        >
+          <span>Manage Applications</span>
+          <ArrowRightIcon className="w-6 h-6 text-primary group-hover:text-white" />
+        </Button>
       </div>
     </div>
   );

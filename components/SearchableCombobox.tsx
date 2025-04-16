@@ -21,28 +21,36 @@ import { Company } from "@/types/types";
 import { cx } from "class-variance-authority";
 
 interface Props {
-    defaultValue? : string ; 
-    options: Company[];
-    onSelect: (value: string) => void;
+  defaultValue?: string;
+  options: Company[];
+  onSelect: (value: string) => void;
 }
 
-export function SearchableCombobox( {defaultValue="" , options , onSelect} : Props) {
+export function SearchableCombobox({
+  defaultValue = "",
+  options,
+  onSelect,
+}: Props) {
   const [open, setOpen] = React.useState<boolean>(false);
-  const [value, setValue] = React.useState<string>(defaultValue); 
+  const [value, setValue] = React.useState<string>(defaultValue);
   const [search, setSearch] = React.useState<string>("");
-  const [selectedOption , setSelectedOption] = React.useState<Company | undefined>();
+  const [selectedOption, setSelectedOption] = React.useState<
+    Company | undefined
+  >();
 
   console.log("defaultValue : ", defaultValue);
   console.log("value : ", value);
   console.log("options : ", options);
 
   // Filter options based on search input (search companyName)
-  const filteredOptions = options.filter((option) =>
+  const filteredOptions = options?.filter((option) =>
     option.name.toLowerCase().includes(search.toLowerCase())
   );
 
   React.useEffect(() => {
-    setSelectedOption(options.find((option) => option.name === value) || undefined);
+    setSelectedOption(
+      options.find((option) => option.name === value) || undefined
+    );
   }, [value]);
 
   return (
@@ -52,10 +60,17 @@ export function SearchableCombobox( {defaultValue="" , options , onSelect} : Pro
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={cx(selectedOption ? "text-black" : "text-muted-foreground", "w-full justify-between font-medium text-sm focus:ring-1 focus:ring-primary rounded-md")}
+          className={cx(
+            selectedOption ? "text-black" : "text-muted-foreground",
+            "w-full justify-between font-medium text-sm focus:ring-1 focus:ring-primary rounded-md"
+          )}
         >
           {selectedOption
-            ? `${selectedOption.name} - ${selectedOption.location.city + " , " + selectedOption.location.country}`
+            ? `${selectedOption.name} - ${
+                selectedOption.location.city +
+                " , " +
+                selectedOption.location.country
+              }`
             : "Select company..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -70,7 +85,7 @@ export function SearchableCombobox( {defaultValue="" , options , onSelect} : Pro
           <CommandList>
             <CommandEmpty>No companies found.</CommandEmpty>
             <CommandGroup>
-              {filteredOptions.map((option) => (
+              {filteredOptions?.map((option) => (
                 <CommandItem
                   key={option.id}
                   value={option.name}
@@ -79,8 +94,7 @@ export function SearchableCombobox( {defaultValue="" , options , onSelect} : Pro
                     setOpen(false);
                     setSearch("");
                     onSelect(currentValue);
-                  }
-                }
+                  }}
                   className="flex items-center gap-2"
                 >
                   <Check
@@ -90,10 +104,10 @@ export function SearchableCombobox( {defaultValue="" , options , onSelect} : Pro
                     )}
                   />
                   <div className="flex flex-col gap-2 flex-1">
-                      <div className="font-medium">{option.name}</div>
-                      <div className="text-sm text-muted-foreground truncate">
-                        {option.location?.address}
-                      </div>
+                    <div className="font-medium">{option.name}</div>
+                    <div className="text-sm text-muted-foreground truncate">
+                      {option.location?.address}
+                    </div>
                   </div>
                 </CommandItem>
               ))}
