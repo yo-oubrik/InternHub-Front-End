@@ -34,7 +34,9 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
   const [statusFilter, setStatusFilter] = React.useState<string>("");
   const [recentFilter, setRecentFilter] = React.useState<string>("");
 
@@ -53,54 +55,22 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  const handleStatusFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleStatusFilterChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setStatusFilter(event.target.value);
     table.getColumn("status")?.setFilterValue(event.target.value);
   };
 
-  const handleRecentFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleRecentFilterChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setRecentFilter(event.target.value);
     table.getColumn("applicationDate")?.setFilterValue(event.target.value);
   };
 
   return (
     <div>
-      <div className="flex items-center py-4 gap-4">
-        <div>
-          <label htmlFor="statusFilter" className="block text-sm font-medium text-gray-700">
-            Filter by Status
-          </label>
-          <select
-            id="statusFilter"
-            value={statusFilter}
-            onChange={handleStatusFilterChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          >
-            <option value="">All</option>
-            {Object.values(ApplicationStatus).map((status) => (
-              <option key={status} value={status}>
-                {status}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="recentFilter" className="block text-sm font-medium text-gray-700">
-            Filter by Recent
-          </label>
-          <select
-            id="recentFilter"
-            value={recentFilter}
-            onChange={handleRecentFilterChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          >
-            <option value="">All</option>
-            <option value="applicationDate">Application Date</option>
-            <option value="interviewDate">Interview Date</option>
-          </select>
-        </div>
-      </div>
       <div className="rounded-md border">
         <Table className="rounded-sm overflow-hidden">
           <TableHeader>
@@ -164,6 +134,10 @@ export function DataTable<TData, TValue>({
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         />
+        <span className="text-gray-700 font-normal">
+          Page {table.getState().pagination.pageIndex + 1} /{" "}
+          {table.getPageCount()}
+        </span>
         <Button
           label="Next"
           outline={true}

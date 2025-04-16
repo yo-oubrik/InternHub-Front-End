@@ -59,7 +59,6 @@ export interface StudentRequest {
 export interface Company extends User {
   name: string;
   location: Location;
-  applicationDate: Date;
   description: string;
   ice: string;
   rc: string;
@@ -109,7 +108,7 @@ export interface Application {
   id : string ; 
   student : Student;
   internship : Internship;
-  status: string;
+  status: ApplicationStatus;
   applicationDate : Date;
   motivationLetter?: string;
   cv?: string;
@@ -121,8 +120,19 @@ export enum ApplicationStatus {
   PENDING = "PENDING",
   ACCEPTED = "ACCEPTED",
   REJECTED = "REJECTED",
-  INTERVIEW = "INTERVIEW",
 }
+
+export const getColorsByApplicationStatus = (status : ApplicationStatus ) => {
+  switch (status) {
+    case ApplicationStatus.ACCEPTED:
+      return "bg-green-500 hover:bg-green-600";
+    case ApplicationStatus.REJECTED:
+      return "bg-red-500 hover:bg-red-600";
+    case ApplicationStatus.PENDING:
+      return "bg-blue-500 hover:bg-blue-600"
+  }
+};
+
 
 export interface InternshipRequest {
   companyId?: string;

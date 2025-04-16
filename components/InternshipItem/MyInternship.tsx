@@ -8,6 +8,7 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Internship, SalaryType } from "@/types/types";
 import formatMoney from "@/utils/formatMoney";
+import { cleanAndTruncateHTML } from "@/utils/Formating";
 
 interface InternshipProps {
   internship: Internship;
@@ -16,16 +17,6 @@ interface InternshipProps {
 function Myinternship({ internship }: InternshipProps) {
   const router = useRouter();
   // const { isAuthenticated } = useAuth();
-
-  // Fonction pour nettoyer le HTML et tronquer le texte
-  const cleanAndTruncateHTML = (html: string, maxLength: number = 120) => {
-    // Supprimer les balises HTML
-    const textOnly = html.replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ");
-    // Tronquer si nécessaire
-    return textOnly.length > maxLength
-      ? textOnly.substring(0, maxLength) + "..."
-      : textOnly;
-  };
 
   return (
     <div className="p-8 bg-white rounded-xl flex flex-col gap-5">
