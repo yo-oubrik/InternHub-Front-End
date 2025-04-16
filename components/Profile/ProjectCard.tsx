@@ -8,14 +8,12 @@ import ProjectInfos from "./ProjectInfos";
 import toast from "react-hot-toast";
 import { useUser } from "@/context/userContext";
 import { useAuth } from "@/context/authContext";
-import { isStudentRole } from '@/utils/authUtils';
 import { uploadFileToSupabase } from "@/lib/supabaseStorage";
 
 const ProjectCard = () => {
   const [file, setFile] = useState<File | null>(null);
-  const { student, createProject } = useUser();
+  const { student, createProject, isUserProfile } = useUser();
   const { currentUser } = useAuth();
-  const isStudent = isStudentRole(currentUser?.role as Role);
   const [projects, setProjects] = useState<Project[]>([]);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [newProject, setNewProject] = useState<Project>({} as Project);
@@ -53,16 +51,14 @@ const ProjectCard = () => {
       return;
     }
 
-    console.log('new project : ', newProject);
+    console.log("new project : ", newProject);
     try {
-
-      const publicUrl = await uploadFileToSupabase(
-        file as File,
-        {
-          bucketName: 'images',
-          fileName: `project-${newProject.title}-${student?.id}.${newProject.image.split('.').pop()}`,
-        }
-      );
+      const publicUrl = await uploadFileToSupabase(file as File, {
+        bucketName: "images",
+        fileName: `project-${newProject.title}-${student?.id}.${newProject.image
+          .split(".")
+          .pop()}`,
+      });
       const result = await createProject({
         ...newProject,
         image: publicUrl,
@@ -73,7 +69,7 @@ const ProjectCard = () => {
     }
     setIsOpenModal(false);
     setNewProject({
-      id: "" ,
+      id: "",
       title: "",
       image: "",
       link: "",
@@ -91,30 +87,32 @@ const ProjectCard = () => {
       <div className="flex justify-between items-center">
         <h2 className="text-3xl text-gray-800 font-medium">Projects</h2>
       </div>
-      <div className={`px-4 gap-6 grid grid-cols-4 ${projects.length > 0 ? 'grid-cols-1 text-center' : ''}`}>
-        {
-            projects.map((project) => (
-            <ProjectContent
-              key={project.id}
-              project={project}
-              projects={projects}
-              setProjects={setProjects}
-            />
-            ))
-        }
-        {projects.length === 0 && !isStudent && (
+      <div
+        className={`px-4 gap-6 grid grid-cols-4 ${
+          projects.length > 0 ? "grid-cols-1 text-center" : ""
+        }`}
+      >
+        {projects.map((project) => (
+          <ProjectContent
+            key={project.id}
+            project={project}
+            projects={projects}
+            setProjects={setProjects}
+          />
+        ))}
+        {projects.length === 0 && !isUserProfile && (
           <div className="col-span-4 text-center">
             <p className="text-lg text-gray-600">No projects found.</p>
           </div>
         )}
-        {isStudent && (
+        {isUserProfile && (
           <div className="w-1/2 h-full" onClick={() => setIsOpenModal(true)}>
             <PlusButton className="w-full h-full" />
           </div>
         )}
       </div>
 
-      {isStudent && (
+      {isUserProfile && (
         <EditModal
           isOpenModal={isOpenModal}
           setIsOpenModal={setIsOpenModal}

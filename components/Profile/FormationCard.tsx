@@ -1,11 +1,10 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import PlusButton from "../PlusButton";
 import CustomAccordion from "../CustomAccordion";
 import { Formation, Role } from "@/types/types";
 import { useUser } from "@/context/userContext";
 import { useAuth } from "@/context/authContext";
-import { isStudentRole } from '@/utils/authUtils';
 import FormationInfos from "./FormationInfos";
 
 const FormationCard = () => {
@@ -34,10 +33,9 @@ const FormationCard = () => {
   //   },
   // ];
 
-  const { student } = useUser();
+  const { student, isUserProfile } = useUser();
   const { currentUser } = useAuth();
-  const isStudent = isStudentRole(currentUser?.role as Role);
-  const [formations , setFormations] = useState<Formation[]>([]);
+  const [formations, setFormations] = useState<Formation[]>([]);
   const [wantToAdd, setWantToAdd] = useState<boolean>(false);
 
   useEffect(() => {
@@ -52,19 +50,22 @@ const FormationCard = () => {
         <h2 className="text-3xl text-gray-800 font-medium">Education</h2>
       </div>
       <div className="px-4 space-y-4">
-        {
-          formations.map((formation, index) => (
-            <FormationInfos
-                key={index}
-                object={formation}
-                setWantToAdd={setWantToAdd}
-                setFormations={setFormations}
-                FLAG="VIEW"
-            />
-          ))
-        }
-        {isStudent && (
-          wantToAdd ? (
+        {formations.length === 0 && !isUserProfile && (
+          <div className="col-span-4 text-center">
+            <p className="text-lg text-gray-600">No Formations found.</p>
+          </div>
+        )}
+        {formations.map((formation, index) => (
+          <FormationInfos
+            key={index}
+            object={formation}
+            setWantToAdd={setWantToAdd}
+            setFormations={setFormations}
+            FLAG="VIEW"
+          />
+        ))}
+        {isUserProfile &&
+          (wantToAdd ? (
             <FormationInfos
               object={null}
               setWantToAdd={setWantToAdd}
@@ -73,8 +74,7 @@ const FormationCard = () => {
             />
           ) : (
             <PlusButton onClick={() => setWantToAdd(true)} />
-          )
-        )}
+          ))}
       </div>
     </div>
   );

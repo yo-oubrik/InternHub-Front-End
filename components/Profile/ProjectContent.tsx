@@ -5,12 +5,14 @@ import Overlay from "../Overlay";
 import EditModal from "./EditModal";
 import InputField from "../InputField";
 import { Project, Role } from "@/types/types";
-import toast from "react-hot-toast"
+import toast from "react-hot-toast";
 import CustomTooltip from "./CustomTooltip";
 import ProjectInfos from "./ProjectInfos";
 import { useUser } from "@/context/userContext";
-import { deleteFileFromSupabase, uploadFileToSupabase } from "@/lib/supabaseStorage";
-import { isStudentRole } from "@/utils/authUtils";
+import {
+  deleteFileFromSupabase,
+  uploadFileToSupabase,
+} from "@/lib/supabaseStorage";
 import { useAuth } from "@/context/authContext";
 
 interface ProjectContentProps {
@@ -25,11 +27,10 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
   setProjects,
 }) => {
   const { currentUser } = useAuth();
-  const { student , updateProject , deleteProject } = useUser();
+  const { student, updateProject, deleteProject, isUserProfile } = useUser();
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [editedProject, setEditedProject] = useState<Project>({} as Project);
   const [file, setFile] = useState<File | null>(null);
-  const isStudent = isStudentRole(currentUser?.role as Role);
 
   const handleCancel = () => {
     setEditedProject(project);
@@ -59,77 +60,88 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
       return;
     }
 
-
-    if(file){      
+    if (file) {
       // Extract the filename from the URL
-      const urlParts = editedProject.image.split('/');
+      const urlParts = editedProject.image.split("/");
       const filename = urlParts[urlParts.length - 1];
-      
-      console.log('filename : ', filename);
+
+      console.log("filename : ", filename);
       // Delete from Supabase
-      await deleteFileFromSupabase('images', decodeURIComponent(filename));
-      console.log('File deleted');
+      await deleteFileFromSupabase("images", decodeURIComponent(filename));
+      console.log("File deleted");
       try {
-        const publicUrl = await uploadFileToSupabase(
-          file as File,
-          {
-            bucketName: 'images',
-            fileName: `project-${editedProject.title}-${student?.id}.${file?.name.split('.').pop()}`,
-          }
-        );
-        const updatedProject = await updateProject({...editedProject,image: publicUrl});
+        const publicUrl = await uploadFileToSupabase(file as File, {
+          bucketName: "images",
+          fileName: `project-${editedProject.title}-${student?.id}.${file?.name
+            .split(".")
+            .pop()}`,
+        });
+        const updatedProject = await updateProject({
+          ...editedProject,
+          image: publicUrl,
+        });
         setEditedProject(updatedProject);
-        setProjects(projects.map((p: Project) => (p.id === project.id ? updatedProject : p)));
+        setProjects(
+          projects.map((p: Project) =>
+            p.id === project.id ? updatedProject : p
+          )
+        );
       } catch (error) {
         toast.error("Failed to update project : " + error);
         return;
       }
-    }else{
+    } else {
       const updatedProject = await updateProject(editedProject);
       setEditedProject(updatedProject);
-      setProjects(projects.map((p: Project) => (p.id === project.id ? updatedProject : p)));
+      setProjects(
+        projects.map((p: Project) => (p.id === project.id ? updatedProject : p))
+      );
     }
     setIsOpenModal(false);
   };
 
   const getFullUrl = (url: string) => {
-    if (!url) return '';
-    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (!url) return "";
+    if (url.startsWith("http://") || url.startsWith("https://")) return url;
     return `https://${url}`;
   };
 
   const handleDelete = async () => {
     try {
       // Extract the filename from the URL
-      const urlParts = project.image.split('/');
+      const urlParts = project.image.split("/");
       const filename = urlParts[urlParts.length - 1];
-      
-      console.log('filename : ', filename);
+
+      console.log("filename : ", filename);
       // Delete from Supabase
-      await deleteFileFromSupabase('images', decodeURIComponent(filename));
-      
+      await deleteFileFromSupabase("images", decodeURIComponent(filename));
+
       // Delete from database
       await deleteProject(project);
-      
+
       // Update state
       setProjects(projects.filter((p: Project) => p.id !== project.id));
-      
-      toast.success('Project deleted successfully');
+
+      toast.success("Project deleted successfully");
     } catch (error) {
-      console.error('Error deleting project:', error);
-      toast.error('Failed to delete project');
+      console.error("Error deleting project:", error);
+      toast.error("Failed to delete project");
     }
   };
 
   useEffect(() => {
-    console.log('project : ', project);
+    console.log("project : ", project);
     setEditedProject(project);
   }, [project]);
 
   return (
     <div className="rounded-lg flex flex-col justify-between border shadow-md hover:scale-105 transition-all duration-300">
       <div className="relative overflow-hidden w-full rounded-t-lg border-b-gray-300 border-[1px] group">
-        <a href={getFullUrl(project.link)} target="_blank" rel="noopener noreferrer">
+        <a
+          href={getFullUrl(project.link)}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <img
             src={project.image}
             alt="Thumbnail"
@@ -145,7 +157,7 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
         {project.title}
       </div>
 
-      {isStudent && (
+      {isUserProfile && (
         <div className="flex w-full font-medium text-primary divide-x-2 divide-primary-hover text-center border-t-primary-hover border-t-[2px]">
           <div
             className="w-full rounded-bl-lg py-2 cursor-pointer hover:bg-primary hover:text-white"

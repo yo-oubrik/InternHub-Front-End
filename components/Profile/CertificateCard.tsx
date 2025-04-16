@@ -8,24 +8,26 @@ import CertificatInfos from "./CertificatInfos";
 import toast from "react-hot-toast";
 import { useUser } from "@/context/userContext";
 import { useAuth } from "@/context/authContext";
-import { isStudentRole } from '@/utils/authUtils';
 import { uploadFileToSupabase } from "@/lib/supabaseStorage";
 
 const CertificateCard = () => {
   const [file, setFile] = useState<File | null>(null);
-  const { student, createCertificat, updateCertificat } = useUser();
+  const { student, createCertificat, updateCertificat, isUserProfile } =
+    useUser();
   const { currentUser } = useAuth();
-  const isStudent = isStudentRole(currentUser?.role as Role);
   const [certificats, setCertificats] = useState<Certificat[]>([]);
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [newCertificat, setNewCertificat] = useState<Certificat>({} as Certificat);
+  const [newCertificat, setNewCertificat] = useState<Certificat>(
+    {} as Certificat
+  );
 
   const handleCertificatUpdate = (updatedCertificat: Certificat) => {
-    if (!isStudent) return;
+    if (!isUserProfile) return;
     updateCertificat(updatedCertificat);
-    setCertificats(
-      (prevCertificats) =>
-        prevCertificats.map((certificat) => (certificat.id === updatedCertificat.id ? updatedCertificat : certificat))
+    setCertificats((prevCertificats) =>
+      prevCertificats.map((certificat) =>
+        certificat.id === updatedCertificat.id ? updatedCertificat : certificat
+      )
     );
   };
 
@@ -34,13 +36,13 @@ const CertificateCard = () => {
       id: "",
       title: "",
       thumbnail: "",
-      date: ""
+      date: "",
     });
     setIsOpenModal(false);
   };
 
   const handleConfirm = async () => {
-    if (!isStudent) return;
+    if (!isUserProfile) return;
     if (!newCertificat.title.trim()) {
       toast.error("Please enter a certificate title");
       return;
@@ -56,14 +58,13 @@ const CertificateCard = () => {
       return;
     }
 
-    try{
-      const publicUrl = await uploadFileToSupabase(
-        file as File,
-        {
-          bucketName: 'images',
-          fileName: `certificate-${newCertificat.title}-${student?.id}.${newCertificat.thumbnail.split('.').pop()}`,
-        }
-      );
+    try {
+      const publicUrl = await uploadFileToSupabase(file as File, {
+        bucketName: "images",
+        fileName: `certificate-${newCertificat.title}-${
+          student?.id
+        }.${newCertificat.thumbnail.split(".").pop()}`,
+      });
       const result = await createCertificat({
         ...newCertificat,
         thumbnail: publicUrl,
@@ -77,10 +78,10 @@ const CertificateCard = () => {
       id: "",
       title: "",
       thumbnail: "",
-      date: ""
+      date: "",
     });
   };
-  
+
   useEffect(() => {
     if (student?.certificates) {
       setCertificats(student?.certificates);
@@ -101,19 +102,19 @@ const CertificateCard = () => {
             setCertificats={setCertificats}
           />
         ))}
-        {certificats.length === 0 && !isStudent && (
+        {certificats.length === 0 && !isUserProfile && (
           <div className="col-span-4 text-center">
             <p className="text-lg text-gray-600">No certificates found.</p>
           </div>
         )}
-        {isStudent && (
+        {isUserProfile && (
           <div className="w-1/2 h-full" onClick={() => setIsOpenModal(true)}>
             <PlusButton className="w-full h-full" />
           </div>
         )}
       </div>
 
-      {isStudent && (
+      {isUserProfile && (
         <EditModal
           isOpenModal={isOpenModal}
           setIsOpenModal={setIsOpenModal}

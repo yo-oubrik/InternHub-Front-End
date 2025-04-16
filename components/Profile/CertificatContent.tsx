@@ -8,9 +8,11 @@ import { Certificat, Role } from "@/types/types";
 import toast from "react-hot-toast";
 import CertificatInfos from "./CertificatInfos";
 import { useUser } from "@/context/userContext";
-import { deleteFileFromSupabase, uploadFileToSupabase } from "@/lib/supabaseStorage";
+import {
+  deleteFileFromSupabase,
+  uploadFileToSupabase,
+} from "@/lib/supabaseStorage";
 import { useAuth } from "@/context/authContext";
-import { isStudentRole } from "@/utils/authUtils";
 
 interface CertificatContentProps {
   certificat: Certificat;
@@ -24,11 +26,12 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
   setCertificats,
 }) => {
   const { currentUser } = useAuth();
-  const { student ,updateCertificat , deleteCertificat } = useUser();
+  const { student, updateCertificat, deleteCertificat, isUserProfile } =
+    useUser();
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [editedCertificat, setEditedCertificat] = useState<Certificat>(certificat);
+  const [editedCertificat, setEditedCertificat] =
+    useState<Certificat>(certificat);
   const [file, setFile] = useState<File | null>(null);
-  const isStudent = isStudentRole(currentUser?.role as Role);
 
   const handleCancel = () => {
     setEditedCertificat(certificat);
@@ -51,24 +54,26 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
       return;
     }
 
-    if(file){
+    if (file) {
       // Extract the filename from the URL
-      const urlParts = editedCertificat.thumbnail.split('/');
+      const urlParts = editedCertificat.thumbnail.split("/");
       const filename = urlParts[urlParts.length - 1];
-      
-      console.log('filename : ', filename);
+
+      console.log("filename : ", filename);
       // Delete from Supabase
-      await deleteFileFromSupabase('images', decodeURIComponent(filename));
-      console.log('File deleted');
+      await deleteFileFromSupabase("images", decodeURIComponent(filename));
+      console.log("File deleted");
       try {
-        const publicUrl = await uploadFileToSupabase(
-          file as File,
-          {
-            bucketName: 'images',
-            fileName: `certificate-${editedCertificat.title}-${student?.id}.${file?.name.split('.').pop()}`,
-          }
-        );
-        const updatedCertificat = await updateCertificat({...editedCertificat,thumbnail: publicUrl});
+        const publicUrl = await uploadFileToSupabase(file as File, {
+          bucketName: "images",
+          fileName: `certificate-${editedCertificat.title}-${
+            student?.id
+          }.${file?.name.split(".").pop()}`,
+        });
+        const updatedCertificat = await updateCertificat({
+          ...editedCertificat,
+          thumbnail: publicUrl,
+        });
         setEditedCertificat(updatedCertificat);
         setCertificats(
           certificats.map((c: Certificat) =>
@@ -79,7 +84,7 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
         toast.error("Failed to update certificate : " + error);
         return;
       }
-    }else{
+    } else {
       const updatedCertificat = await updateCertificat(editedCertificat);
       setCertificats(
         certificats.map((c: Certificat) =>
@@ -91,32 +96,33 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
   };
 
   const handleDelete = async () => {
-    try{
+    try {
       // Extract the filename from the URL
-      const urlParts = certificat.thumbnail.split('/');
+      const urlParts = certificat.thumbnail.split("/");
       const filename = urlParts[urlParts.length - 1];
-      
-      console.log('filename : ', filename);
+
+      console.log("filename : ", filename);
       // Delete from Supabase
-      await deleteFileFromSupabase('images', decodeURIComponent(filename));
-      console.log('File deleted');
+      await deleteFileFromSupabase("images", decodeURIComponent(filename));
+      console.log("File deleted");
       // Delete from database
       await deleteCertificat(certificat);
       // Update state
-      setCertificats(certificats.filter((c: Certificat) => c.id !== certificat.id));
-      toast.success('Certificate deleted successfully');
+      setCertificats(
+        certificats.filter((c: Certificat) => c.id !== certificat.id)
+      );
+      toast.success("Certificate deleted successfully");
     } catch (error) {
-      console.error('Error deleting certificate:', error);
-      toast.error('Failed to delete certificate');
+      console.error("Error deleting certificate:", error);
+      toast.error("Failed to delete certificate");
     }
   };
 
   useEffect(() => {
-    console.log('certificat : ', certificat);
+    console.log("certificat : ", certificat);
     setEditedCertificat(certificat);
   }, [certificat]);
 
-  
   return (
     <div className="rounded-lg flex flex-col justify-between border shadow-md hover:shadow-primary-hover hover:scale-105 transition-all duration-300">
       <div className="relative overflow-hidden w-full rounded-t-lg border-b-gray-300 border-[1px] group">
@@ -126,7 +132,9 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
             alt="certificat image"
             className="w-full h-40 object-cover group-hover:rotate-2 group-hover:scale-110 duration-100 ease-in"
           />
-          <Overlay children={<FileDown className="w-14 h-14 text-primary-hover" />} />
+          <Overlay
+            children={<FileDown className="w-14 h-14 text-primary-hover" />}
+          />
         </div>
       </div>
       <div className="px-2 mt-4 mb-3 space-y-3">
@@ -139,21 +147,21 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
         </div>
       </div>
 
-      {isStudent && (
+      {isUserProfile && (
         <div className="flex w-full font-medium text-primary divide-x-2 divide-primary-hover text-center border-t-primary-hover border-t-[2px]">
-        <div
-          className="w-full rounded-bl-lg py-2 cursor-pointer hover:bg-primary hover:text-white"
-          onClick={() => setIsOpenModal(true)}
-        >
-          Edit
+          <div
+            className="w-full rounded-bl-lg py-2 cursor-pointer hover:bg-primary hover:text-white"
+            onClick={() => setIsOpenModal(true)}
+          >
+            Edit
+          </div>
+          <div
+            className="w-full rounded-br-lg py-2 cursor-pointer hover:bg-primary hover:text-white"
+            onClick={handleDelete}
+          >
+            Delete
+          </div>
         </div>
-        <div 
-          className="w-full rounded-br-lg py-2 cursor-pointer hover:bg-primary hover:text-white" 
-          onClick={handleDelete}
-        >
-          Delete
-        </div>
-      </div>
       )}
 
       <EditModal

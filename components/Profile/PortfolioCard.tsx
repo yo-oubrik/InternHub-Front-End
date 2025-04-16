@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useRef, useState } from "react";
 import ProfileAvatar from "./ProfileAvatar";
 import {
@@ -18,30 +18,34 @@ import Overlay from "../Overlay";
 import AnimatedSocialButton from "./AnimatedSocialButton";
 import { useUser } from "@/context/userContext";
 import { useAuth } from "@/context/authContext";
-import { uploadFileToSupabase, deleteFileFromSupabase } from '@/lib/supabaseStorage';
+import {
+  uploadFileToSupabase,
+  deleteFileFromSupabase,
+} from "@/lib/supabaseStorage";
 import toast from "react-hot-toast";
 import EditModal from "./EditModal";
 import PortfolioInfos from "./PortfolioInfos";
-import { isStudentRole } from "@/utils/authUtils";
-import { Role } from "@/types/types";
 
 const PortfolioCard = () => {
-  const { student , setStudent , updateStudent} = useUser();
+  const { student, setStudent, updateStudent, isUserProfile } = useUser();
   const { currentUser } = useAuth();
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const isStudent = isStudentRole(currentUser?.role as Role);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!isStudent) return;
-    
+  const handleImageSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    if (!isUserProfile) return;
+
     const file = event.target.files?.[0];
     if (file) {
       try {
         // Upload file to Supabase
         const publicUrl = await uploadFileToSupabase(file, {
-          bucketName: 'images',
-          fileName: `profile-picture-${student?.id}.${file.name.split('.').pop()}`,
+          bucketName: "images",
+          fileName: `profile-picture-${student?.id}.${file.name
+            .split(".")
+            .pop()}`,
         });
 
         // Update student? with the new profile picture URL
@@ -50,36 +54,35 @@ const PortfolioCard = () => {
           profilePicture: publicUrl,
         });
       } catch (error) {
-        console.error('Error uploading profile picture:', error);
-        toast.error('Failed to upload profile picture:' + error );
+        console.error("Error uploading profile picture:", error);
+        toast.error("Failed to upload profile picture:" + error);
         // Handle error (show toast, alert, etc.)
       }
     }
   };
 
-
   const handleAvatarClick = () => {
-    if (!isStudent) return;
+    if (!isUserProfile) return;
     fileInputRef.current?.click();
   };
 
   const handleResetImage = async (e: React.MouseEvent) => {
-    if (!isStudent) return;
+    if (!isUserProfile) return;
     e.stopPropagation();
     if (student?.profilePicture) {
       try {
         // Extract filename from URL
-        const filename = student?.profilePicture.split('/').pop() || '';
+        const filename = student?.profilePicture.split("/").pop() || "";
         // Delete from Supabase
-        await deleteFileFromSupabase('images', filename);
+        await deleteFileFromSupabase("images", filename);
         // Update student?
         updateStudent({
           ...student,
           profilePicture: "",
         });
       } catch (error) {
-        console.error('Error deleting profile picture:', error);
-        toast.error('Failed to delete profile picture:' + error );
+        console.error("Error deleting profile picture:", error);
+        toast.error("Failed to delete profile picture:" + error);
         // Handle error (show toast, alert, etc.)
       }
     } else {
@@ -97,9 +100,6 @@ const PortfolioCard = () => {
     portfolio: "profile/portfolio_link.png",
     cv: "profile/cv_link.png",
   };
-
-  console.log("first name : ", student?.firstName);
-  console.log("last name : ", student?.lastName);
 
   return (
     <div className="flex flex-row-reverse gap-2 w-[90%] mx-auto">
@@ -119,12 +119,17 @@ const PortfolioCard = () => {
                   className="w-56 h-56 text-5xl bg-gray-400 relative overflow-hidden group"
                   avatarImage={student?.profilePicture ?? ""}
                   avatarFallback={
-                    student?.firstName.charAt(0).toUpperCase() + student?.lastName.charAt(0).toUpperCase()
+                    student?.firstName.charAt(0).toUpperCase() +
+                    student?.lastName.charAt(0).toUpperCase()
                   }
-                  overlay={isStudent ? <Overlay children={<UserPen className="w-20 h-20" />} /> : undefined}
+                  overlay={
+                    isUserProfile ? (
+                      <Overlay children={<UserPen className="w-20 h-20" />} />
+                    ) : undefined
+                  }
                 />
               </div>
-              {isStudent && student?.profilePicture && (
+              {isUserProfile && student?.profilePicture && (
                 <div
                   onClick={handleResetImage}
                   className="absolute -bottom-2 right-10 bg-white rounded-full p-2 shadow-md hover:bg-gray-100 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-200"
@@ -144,14 +149,17 @@ const PortfolioCard = () => {
         {/* <button className="w-[85%] hover:bg-opacity-80 border-gray-400 border-[1px] bg-gray-200 py-1 rounded-md">Edit profile</button> */}
       </div>
       <div className="bg-gray-50 relative border-primary-hover py-7 px-10 shadow-sm rounded-lg w-[70%]">
-        {isStudent && (
-          <Pencil className="absolute top-4 right-4 text-primary h-7 w-7 hover:text-primary-hover cursor-pointer" onClick={() => setIsEditing(true)} />
+        {isUserProfile && (
+          <Pencil
+            className="absolute top-4 right-4 text-primary h-7 w-7 hover:text-primary-hover cursor-pointer"
+            onClick={() => setIsEditing(true)}
+          />
         )}
         <div className="flex flex-col gap-5 justify-between h-full text-lg">
           <div className="flex flex-col gap-3">
             <div className="flex justify-start items-center gap-3">
               <University className="mb-2" />
-              <p>{student?.school}</p>
+              <p>{student?.school || "Not set"}</p>
             </div>
             <div className="flex justify-start items-center gap-3">
               <Mail />
@@ -159,15 +167,18 @@ const PortfolioCard = () => {
             </div>
             <div className="flex justify-start items-center gap-3">
               <Phone />
-              <p>{student?.tel}</p>
+              <p>{student?.tel ?? "Not set"}</p>
             </div>
             <div className="flex justify-start items-center gap-3">
               <MapPinHouse />
               <p>
-                {
-                  student?.location && 
-                  (student?.location?.address ?? "") + ", " + (student?.location?.city ?? "") + ", " + (student?.location?.country ?? "")
-                }
+                {student?.location
+                  ? (student?.location?.address ?? "") +
+                    ", " +
+                    (student?.location?.city ?? "") +
+                    ", " +
+                    (student?.location?.country ?? "")
+                  : "Not set"}
               </p>
             </div>
           </div>
@@ -203,10 +214,11 @@ const PortfolioCard = () => {
           onCancel={() => setIsEditing(false)}
           confirmButton="Edit"
           confirmButtonClassName="bg-primary w-20 text-white hover:bg-primary-hover"
-          onConfirm={() => {updateStudent(student); setIsEditing(false)}}
-          body={
-            <PortfolioInfos />
-          }
+          onConfirm={() => {
+            updateStudent(student);
+            setIsEditing(false);
+          }}
+          body={<PortfolioInfos />}
         />
       )}
     </div>

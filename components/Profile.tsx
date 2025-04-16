@@ -5,8 +5,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAuth, User } from "@/context/authContext";
-import { LogOut, Settings } from "lucide-react";
+import { useAuth } from "@/context/authContext";
+import { User } from "@/types/types";
+import { LogOut, User as UserIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -32,9 +33,13 @@ export const Profile: React.FC<ProfileProps> = ({ user }) => {
         </DropdownMenuTrigger>
       </div>
       <DropdownMenuContent className="w-56" align="end">
-        <DropdownMenuItem onClick={() => router.push('/profile')}>
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Settings</span>
+        <DropdownMenuItem
+          onClick={() =>
+            router.push(`/profile/${user.role.toLowerCase()}/${user.id}`)
+          }
+        >
+          <UserIcon className="mr-2 h-4 w-4" />
+          <span>Profile</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer"
