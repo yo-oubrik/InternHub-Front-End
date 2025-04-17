@@ -2,22 +2,18 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useUser } from "./userContext";
-import {
-  Internship,
-  InternshipRequest,
-} from "@/types/types";
-import { fetchWithAuth } from "@/utils/auth";
+import { Internship, InternshipRequest } from "@/types/types";
+import { RequestWithAuth as fetchWithAuth } from "@/utils/auth";
 import { useRouter } from "next/navigation";
 
-
 interface InternshipContextType {
-  loading : boolean ;
+  loading: boolean;
   internship: Internship;
   setInternship: (internship: Internship) => void;
   internships: Internship[];
   // companyInternships: Internship[];
   createInternship: () => void;
-  getAllInternships : () => void;
+  getAllInternships: () => void;
   searchInternships: (location: string, title: string) => void;
   updateInternship: (internshipId: string) => void;
   getInternshipById: (id: string) => void;
@@ -41,11 +37,10 @@ export const InternshipContextProvider: React.FC<{
 }> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [internship, setInternship] = useState<Internship>({} as Internship);
-  const [internships , setInternships] = useState<Internship[]>([]);
-
+  const [internships, setInternships] = useState<Internship[]>([]);
 
   // get the user context
-  const { company , setCompany } = useUser();
+  const { company, setCompany } = useUser();
   const router = useRouter();
 
   const createInternship = async () => {
@@ -84,7 +79,7 @@ export const InternshipContextProvider: React.FC<{
       const res = await fetchWithAuth("/internships/company/" + company?.id);
       setCompany({
         ...company,
-        internships: res.data
+        internships: res.data,
       });
       setLoading(false);
     } catch (error) {
@@ -121,7 +116,9 @@ export const InternshipContextProvider: React.FC<{
       if (title) query.append("title", title);
 
       // send the request
-      const res = await fetchWithAuth(`/internships/search?${query.toString()}`);
+      const res = await fetchWithAuth(
+        `/internships/search?${query.toString()}`
+      );
 
       // set internships to the response data
       setInternships(res.data);
@@ -153,7 +150,6 @@ export const InternshipContextProvider: React.FC<{
     // console.log("internship liked", internshipId);
     // try {
     //   const res = await fetchWithAuth(`/internships/like/${internshipId}`);
-
     //   console.log("internship liked successfully", res);
     //   toast.success("internship liked successfully");
     //   getInternships();
@@ -165,15 +161,12 @@ export const InternshipContextProvider: React.FC<{
   // apply to a internship
   const applyToInternship = async (internshipId: string) => {
     // const internship = internships.find((internship) => internship.id === internshipId);
-
     // if (internship && internship.applicants.includes(userProfile._id)) {
     //   toast.error("You have already applied to this internship");
     //   return;
     // }
-
     // try {
     //   await axios.put(`/api/internships/apply/${internshipId}`);
-
     //   toast.success("Applied to internship successfully");
     //   getInternships();
     // } catch (error) {
@@ -182,15 +175,14 @@ export const InternshipContextProvider: React.FC<{
     // }
   };
 
-  // reset Internship Form for post-internship page 
+  // reset Internship Form for post-internship page
   const resetInternshipForm = () => {
     setInternship({} as Internship);
   };
 
-
   //
   const handleSearchChange = (searchName: string, value: string) => {
-  //   setSearchQuery((prev) => ({ ...prev, [searchName]: value }));
+    //   setSearchQuery((prev) => ({ ...prev, [searchName]: value }));
   };
 
   useEffect(() => {
@@ -220,7 +212,7 @@ export const InternshipContextProvider: React.FC<{
         likeInternship,
         applyToInternship,
         handleSearchChange,
-        resetInternshipForm
+        resetInternshipForm,
       }}
     >
       {children}

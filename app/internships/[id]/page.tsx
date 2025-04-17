@@ -10,12 +10,7 @@ import { useAuth } from "@/context/authContext";
 import InternshipCard from "@/components/InternshipItem/InternshipCard";
 import { useInternship } from "@/context/internshipContext";
 import { useUser } from "@/context/userContext";
-import {
-  Internship,
-  Role,
-  SalaryType,
-  Student,
-} from "@/types/types";
+import { Internship, Role, SalaryType, Student } from "@/types/types";
 import EditModal from "@/components/Profile/EditModal";
 import ApplicationProcess from "@/components/internships/ApplicationProcess";
 
@@ -30,11 +25,15 @@ export default function page() {
   const [isLiked, setIsLiked] = useState(false);
   const [isApplied, setIsApplied] = useState(false);
   const [showApplication, setShowApplication] = useState(false);
-  const [cv , setCV] = useState<File | null>(null);
-  const [motivationLetter , setMotivationLetter] = useState<File | null>(null);
+  const [cv, setCV] = useState<File | null>(null);
+  const [motivationLetter, setMotivationLetter] = useState<File | null>(null);
 
-  const currentInternship = internships.find((internship: Internship) => internship.id === id);
-  const otherJobs = internships.filter((internship: Internship) => internship.id !== id);
+  const currentInternship = internships.find(
+    (internship: Internship) => internship.id === id
+  );
+  const otherJobs = internships.filter(
+    (internship: Internship) => internship.id !== id
+  );
 
   if (!currentInternship) return null;
 
@@ -43,10 +42,14 @@ export default function page() {
   }, [currentInternship.likes, student?.id]);
 
   useEffect(() => {
-    student && setIsApplied(currentInternship.applicants.map((student: Student) => student.id).includes(student.id));
+    student &&
+      setIsApplied(
+        currentInternship.applicants
+          .map((student: Student) => student.id)
+          .includes(student.id)
+      );
   }, [currentInternship.applicants, student?.id]);
 
-  
   // useEffect(()=> {
   //   getCompany(createdBy);
   // },[createdBy]);
@@ -71,7 +74,9 @@ export default function page() {
               <div className="flex items-center gap-3">
                 <div className="w-16 h-16 relative overflow-hidden rounded-md flex items-center justify-center bg-gray-200">
                   <Image
-                    src={currentInternship.company?.profilePicture || "/user.png"}
+                    src={
+                      currentInternship.company?.profilePicture || "/user.png"
+                    }
                     alt={currentInternship.company?.name || "User"}
                     width={60}
                     height={60}
@@ -80,7 +85,9 @@ export default function page() {
                 </div>
 
                 <div>
-                  <p className="font-bold text-xl">{currentInternship.company?.name}</p>
+                  <p className="font-bold text-xl">
+                    {currentInternship.company?.name}
+                  </p>
                   <p className="text-lg">Recruiter</p>
                 </div>
               </div>
@@ -89,7 +96,7 @@ export default function page() {
                   isLiked ? "text-primary" : "text-gray-400"
                 }`}
                 onClick={() => {
-                  handleLike(currentInternship.id)
+                  handleLike(currentInternship.id);
                 }}
               >
                 {isLiked ? bookmark : bookmarkEmpty}
@@ -98,8 +105,12 @@ export default function page() {
             {/* <Separator/> */}
 
             <div className="flex flex-col gap-2">
-              <h1 className="text-2xl font-semibold">{currentInternship.title}</h1>
-              <p className="text-gray-500">{currentInternship.company?.location?.address}</p>
+              <h1 className="text-2xl font-semibold">
+                {currentInternship.title}
+              </h1>
+              <p className="text-gray-500">
+                {currentInternship.company?.location?.address}
+              </p>
             </div>
 
             <div className="mt-2 flex gap-4 justify-between items-stretch">
@@ -127,13 +138,17 @@ export default function page() {
 
               <p className="flex-1 p-4 text-center flex flex-col items-center justify-center gap-1 bg-purple-500/20 rounded-xl">
                 <span className="text-lg">Posted</span>
-                <span className="font-bold">{formatDates(currentInternship.createdAt)}</span>{" "}
+                <span className="font-bold">
+                  {formatDates(currentInternship.createdAt)}
+                </span>{" "}
                 {/* to check */}
               </p>
 
               <p className="flex-1 p-4 flex flex-col items-center justify-center gap-1 bg-blue-500/20 rounded-xl">
                 <span className="text-lg">Applicants</span>
-                <span className="font-bold ">{currentInternship.applicants?.length}</span>
+                <span className="font-bold ">
+                  {currentInternship.applicants?.length}
+                </span>
               </p>
 
               <p className="flex-1 p-4 flex flex-col items-center justify-center gap-1 bg-yellow-500/20 rounded-xl">
@@ -178,11 +193,14 @@ export default function page() {
           </button>
 
           <div className="flex flex-col gap-2 rounded-md">
-            <InternshipCard activeinternship internship={{ ...currentInternship }} />
+            <InternshipCard
+              activeinternship
+              internship={{ ...currentInternship }}
+            />
 
             {otherJobs.map((internship) => (
-            <InternshipCard internship={internship} key={internship.id} />
-          ))}
+              <InternshipCard internship={internship} key={internship.id} />
+            ))}
           </div>
 
           <div className="p-6 flex flex-col gap-2 bg-white shadow-md border-b-2 border-primary rounded-xl">
@@ -221,8 +239,7 @@ export default function page() {
           </div>
         </div>
       </div>
-      {
-        showApplication &&
+      {showApplication && (
         <EditModal
           isOpenModal={showApplication}
           setIsOpenModal={setShowApplication}
@@ -236,13 +253,13 @@ export default function page() {
           confirmButtonClassName="bg-primary w-20 text-white hover:bg-primary-hover"
           onConfirm={handleConfirm}
           body={
-          <ApplicationProcess
-            setCV={setCV}
-            setMotivationLetter={setMotivationLetter}
-          />
+            <ApplicationProcess
+              setCV={setCV}
+              setMotivationLetter={setMotivationLetter}
+            />
           }
         />
-      }
+      )}
     </main>
   );
 }

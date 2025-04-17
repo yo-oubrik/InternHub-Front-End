@@ -1,12 +1,10 @@
-"use client"
-import { Pencil, Plus } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import PlusButton from "../PlusButton";
-import { Experience, Role } from "@/types/types";
-import CustomAccordion from "../CustomAccordion";
-import { useUser } from "@/context/userContext";
+"use client";
 import { useAuth } from "@/context/authContext";
-import { isStudentRole } from '@/utils/authUtils';
+import { useUser } from "@/context/userContext";
+import { Experience, Role } from "@/types/types";
+import { isStudentRole } from "@/utils/authUtils";
+import { useEffect, useState } from "react";
+import PlusButton from "../PlusButton";
 import ExperienceInfos from "./ExperienceInfos";
 
 const ExperienceCard = () => {
@@ -14,7 +12,7 @@ const ExperienceCard = () => {
   const { currentUser } = useAuth();
   const isStudent = isStudentRole(currentUser?.role as Role);
 
-  console.log(student);  const [experiences , setExperiences] = useState<Experience[]>([]);
+  const [experiences, setExperiences] = useState<Experience[]>([]);
   const [wantToAdd, setWantToAdd] = useState<boolean>(false);
 
   useEffect(() => {
@@ -23,7 +21,6 @@ const ExperienceCard = () => {
     }
   }, [student?.experiences]);
 
-  console.log('experiences : ',experiences);
   return (
     <div className="bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[90%] mx-auto space-y-7">
       <div className="flex justify-between items-center">
@@ -39,19 +36,17 @@ const ExperienceCard = () => {
             FLAG="VIEW"
           />
         ))}
-        {isStudent && (
-          
-        wantToAdd ? (
-          <ExperienceInfos
-            object={null}
-            setWantToAdd={setWantToAdd}
-            setExperiences={setExperiences}
-            FLAG="NEW"
-          />
-        ) : (
-          <PlusButton onClick={() => setWantToAdd(true)} />
-        )
-      )}
+        {isStudent &&
+          (wantToAdd ? (
+            <ExperienceInfos
+              object={null}
+              setWantToAdd={setWantToAdd}
+              setExperiences={setExperiences}
+              FLAG="NEW"
+            />
+          ) : (
+            <PlusButton onClick={() => setWantToAdd(true)} />
+          ))}
       </div>
     </div>
   );

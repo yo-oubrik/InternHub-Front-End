@@ -2,14 +2,20 @@
 import React from "react";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
-import { Location , useInternship } from "@/context/internshipContext";
+import { Location, useInternship } from "@/context/internshipContext";
 
 function JobLocation() {
-  const { setLocation, location } = useInternship();
+  const { internship, setInternship } = useInternship();
 
   const handleLocationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name , value } = e.target;
-    setLocation((prev: Location) => ({ ...prev, [name]: value }));
+    const { name, value } = e.target;
+    setInternship({
+      ...internship,
+      location: {
+        ...internship.location,
+        [name]: value,
+      },
+    });
   };
 
   return (
@@ -25,7 +31,7 @@ function JobLocation() {
             type="text"
             id="country"
             name="country"
-            value={location.country}
+            value={internship.location.country}
             onChange={handleLocationChange}
             className="flex-1 w-full mt-2"
             placeholder="Enter Country"
@@ -39,7 +45,7 @@ function JobLocation() {
             type="text"
             id="city"
             name="city"
-            value={location.city}
+            value={internship.location.city}
             onChange={handleLocationChange}
             className="flex-1 w-full mt-2"
             placeholder="Enter City"
@@ -55,7 +61,7 @@ function JobLocation() {
           type="text"
           id="address"
           name="address"
-          value={location.address}
+          value={internship.location.address}
           onChange={handleLocationChange}
           className="flex-1 w-full mt-2"
           placeholder="Enter Address"

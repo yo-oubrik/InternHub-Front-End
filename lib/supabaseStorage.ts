@@ -21,14 +21,13 @@ export async function uploadFileToSupabase(
   file: File,
   options: UploadFileOptions
 ): Promise<string> {
-  console.log("file name: ", file.name);
   try {
     // Convert file to ArrayBuffer
     const fileBuffer = await file.arrayBuffer();
-    
+
     // Generate a unique file name with timestamp to prevent collisions
     const uniqueFileName = options.fileName;
-    
+
     // First try to delete the file if it exists
     try {
       await supabase.storage
@@ -36,7 +35,6 @@ export async function uploadFileToSupabase(
         .remove([uniqueFileName]);
     } catch (error) {
       // If file doesn't exist, this will fail but that's okay
-      console.log('File did not exist, proceeding with upload');
     }
 
     // Upload file to Supabase

@@ -1,4 +1,11 @@
-import { Application, ApplicationStatus, InternshipType, Role, SalaryType, WorkMode } from "@/types/types";
+import {
+  Application,
+  ApplicationStatus,
+  InternshipType,
+  Role,
+  SalaryType,
+  WorkMode,
+} from "@/types/types";
 
 export const mockApplications: Application[] = [
   {
@@ -35,11 +42,6 @@ export const mockApplications: Application[] = [
         id: "1",
         name: "TechCorp",
         profilePicture: "/user.png",
-        location: {
-          address: "123 Main St",
-          city: "San Francisco",
-          country: "USA",
-        },
         applicationDate: new Date("2025-01-01"),
         description: "A leading tech company",
         ice: "123456",
@@ -53,12 +55,15 @@ export const mockApplications: Application[] = [
         internships: [],
       },
       createdAt: new Date("2025-04-01"),
-      updatedAt: new Date("2025-04-01"),
       description: "Develop and maintain frontend applications.",
       duration: 6,
       salary: 5000,
       salaryType: SalaryType.MONTH,
-      domain: "Web Development",
+      location: {
+        address: "123 Main St",
+        city: "San Francisco",
+        country: "USA",
+      },
       workMode: WorkMode.REMOTE,
       tags: [InternshipType.PFE],
       skills: ["React", "JavaScript", "CSS"],

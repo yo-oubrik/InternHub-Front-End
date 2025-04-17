@@ -80,7 +80,8 @@ Best regards,`;
   };
 
   const handleConfirm = () => {
-    onConfirm(reason, subject, attachments);
+    // onConfirm(reason, subject, attachments);
+    console.log("Message:", reason);
   };
 
   const handleCancel = () => {

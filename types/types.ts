@@ -58,7 +58,6 @@ export interface StudentRequest {
 
 export interface Company extends User {
   name: string;
-  location: Location;
   applicationDate: Date;
   description: string;
   ice: string;
@@ -96,6 +95,7 @@ export interface Internship {
   salary: number;
   salaryType: SalaryType;
   title: string;
+  location: Location;
   workMode: WorkMode;
   tags: InternshipType[];
   skills: string[];
@@ -106,15 +106,15 @@ export interface Internship {
 }
 
 export interface Application {
-  id : string ; 
-  student : Student;
-  internship : Internship;
+  id: string;
+  student: Student;
+  internship: Internship;
   status: string;
-  applicationDate : Date;
+  applicationDate: Date;
   motivationLetter?: string;
   cv?: string;
   interviewDate?: Date;
-  interviewDescription? : string;
+  interviewDescription?: string;
 }
 
 export enum ApplicationStatus {
@@ -130,7 +130,6 @@ export interface InternshipRequest {
   duration: number;
   salary: number;
   salaryType: SalaryType;
-  domain: string;
   title: string;
   workMode: WorkMode;
   tags: InternshipType[];

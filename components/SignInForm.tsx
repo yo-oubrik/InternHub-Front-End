@@ -116,7 +116,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({ className }) => {
                   <p className="text-red-500">{errors.password.message}</p>
                 )}
                 <a
-                  href="#"
+                  href="/forgot-password"
                   className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                 >
                   Forgot your password?

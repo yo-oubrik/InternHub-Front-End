@@ -36,7 +36,6 @@ export const CompanySignUpForm: React.FC<CompanySignUpFormProps> = ({}) => {
         .string()
         .min(10, "Description must be at least 10 characters")
         .max(500, "Description must be less than 500 characters"),
-      address: z.string().min(1, "Address is required"),
       email: z.string().email("Invalid email format"),
       ice: z
         .string()
@@ -61,7 +60,6 @@ export const CompanySignUpForm: React.FC<CompanySignUpFormProps> = ({}) => {
     defaultValues: {
       name: "",
       description: "",
-      address: "",
       email: "",
       ice: "",
       password: "",
@@ -124,16 +122,6 @@ export const CompanySignUpForm: React.FC<CompanySignUpFormProps> = ({}) => {
               {(errors.description || serverErrors.description) && (
                 <p className="text-red-500">
                   {errors.description?.message || serverErrors.description}
-                </p>
-              )}
-            </div>
-
-            <div className="grid gap-2">
-              <Label>Address</Label>
-              <Input {...register("address")} />
-              {(errors.address || serverErrors.address) && (
-                <p className="text-red-500">
-                  {errors.address?.message || serverErrors.address}
                 </p>
               )}
             </div>

@@ -55,6 +55,11 @@ export const mockInternships: Internship[] = Array.from(
         paid: true,
         likes: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
         applicants: [{ id: "1" }, { id: "2" }] as Student[],
+        location: {
+          address: "123 Main St",
+          city: "San Francisco",
+          country: "USA",
+        },
       },
     },
     {
@@ -98,6 +103,11 @@ export const mockInternships: Internship[] = Array.from(
         paid: true,
         likes: ["11", "12", "13", "14", "15", "16", "17", "18", "19", "20"],
         applicants: [],
+        location: {
+          address: "123 Main St",
+          city: "San Francisco",
+          country: "USA",
+        },
       },
     },
   ]

@@ -1,62 +1,65 @@
-"use client"
-import React, { useRef, useState } from "react";
-import ProfileAvatar from "./ProfileAvatar";
+"use client";
+import { useAuth } from "@/context/authContext";
+import { useUser } from "@/context/userContext";
 import {
-  Check,
+  deleteFileFromSupabase,
+  uploadFileToSupabase,
+} from "@/lib/supabaseStorage";
+import { Role } from "@/types/types";
+import { isStudentRole } from "@/utils/authUtils";
+import {
   Mail,
   MapPinHouse,
   Pencil,
   Phone,
+  RotateCcw,
   University,
   UserPen,
-  X,
-  RotateCcw,
 } from "lucide-react";
-import TooltipSocialLinks from "./TooltipSocialLinks";
-import { Separator } from "../ui/separator";
-import Overlay from "../Overlay";
-import AnimatedSocialButton from "./AnimatedSocialButton";
-import { useUser } from "@/context/userContext";
-import { useAuth } from "@/context/authContext";
-import { uploadFileToSupabase, deleteFileFromSupabase } from '@/lib/supabaseStorage';
+import React, { useRef, useState } from "react";
 import toast from "react-hot-toast";
+import Overlay from "../Overlay";
+import { Separator } from "../ui/separator";
+import AnimatedSocialButton from "./AnimatedSocialButton";
 import EditModal from "./EditModal";
 import PortfolioInfos from "./PortfolioInfos";
-import { isStudentRole } from "@/utils/authUtils";
-import { Role } from "@/types/types";
+import ProfileAvatar from "./ProfileAvatar";
 
 const PortfolioCard = () => {
-  const { student , setStudent , updateStudent} = useUser();
+  const { student, setStudent, updateStudent } = useUser();
   const { currentUser } = useAuth();
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const isStudent = isStudentRole(currentUser?.role as Role);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (!isStudent) return;
-    
+
     const file = event.target.files?.[0];
     if (file) {
       try {
         // Upload file to Supabase
         const publicUrl = await uploadFileToSupabase(file, {
-          bucketName: 'images',
-          fileName: `profile-picture-${student?.id}.${file.name.split('.').pop()}`,
+          bucketName: "images",
+          // pop() to get the file extension
+          fileName: `profile-picture-${student?.id}.${file.name
+            .split(".")
+            .pop()}`,
         });
-
         // Update student? with the new profile picture URL
         updateStudent({
           ...student,
           profilePicture: publicUrl,
         });
       } catch (error) {
-        console.error('Error uploading profile picture:', error);
-        toast.error('Failed to upload profile picture:' + error );
+        console.error("Error uploading profile picture:", error);
+        toast.error("Failed to upload profile picture");
         // Handle error (show toast, alert, etc.)
       }
     }
   };
-
 
   const handleAvatarClick = () => {
     if (!isStudent) return;
@@ -69,17 +72,17 @@ const PortfolioCard = () => {
     if (student?.profilePicture) {
       try {
         // Extract filename from URL
-        const filename = student?.profilePicture.split('/').pop() || '';
+        const filename = student?.profilePicture.split("/").pop() || "";
         // Delete from Supabase
-        await deleteFileFromSupabase('images', filename);
+        await deleteFileFromSupabase("images", filename);
         // Update student?
         updateStudent({
           ...student,
           profilePicture: "",
         });
       } catch (error) {
-        console.error('Error deleting profile picture:', error);
-        toast.error('Failed to delete profile picture:' + error );
+        console.error("Error deleting profile picture:", error);
+        toast.error("Failed to delete profile picture:" + error);
         // Handle error (show toast, alert, etc.)
       }
     } else {
@@ -97,9 +100,6 @@ const PortfolioCard = () => {
     portfolio: "profile/portfolio_link.png",
     cv: "profile/cv_link.png",
   };
-
-  console.log("first name : ", student?.firstName);
-  console.log("last name : ", student?.lastName);
 
   return (
     <div className="flex flex-row-reverse gap-2 w-[90%] mx-auto">
@@ -119,9 +119,14 @@ const PortfolioCard = () => {
                   className="w-56 h-56 text-5xl bg-gray-400 relative overflow-hidden group"
                   avatarImage={student?.profilePicture ?? ""}
                   avatarFallback={
-                    student?.firstName.charAt(0).toUpperCase() + student?.lastName.charAt(0).toUpperCase()
+                    student?.firstName.charAt(0).toUpperCase() +
+                    student?.lastName.charAt(0).toUpperCase()
                   }
-                  overlay={isStudent ? <Overlay children={<UserPen className="w-20 h-20" />} /> : undefined}
+                  overlay={
+                    isStudent ? (
+                      <Overlay children={<UserPen className="w-20 h-20" />} />
+                    ) : undefined
+                  }
                 />
               </div>
               {isStudent && student?.profilePicture && (
@@ -145,7 +150,10 @@ const PortfolioCard = () => {
       </div>
       <div className="bg-gray-50 relative border-primary-hover py-7 px-10 shadow-sm rounded-lg w-[70%]">
         {isStudent && (
-          <Pencil className="absolute top-4 right-4 text-primary h-7 w-7 hover:text-primary-hover cursor-pointer" onClick={() => setIsEditing(true)} />
+          <Pencil
+            className="absolute top-4 right-4 text-primary h-7 w-7 hover:text-primary-hover cursor-pointer"
+            onClick={() => setIsEditing(true)}
+          />
         )}
         <div className="flex flex-col gap-5 justify-between h-full text-lg">
           <div className="flex flex-col gap-3">
@@ -164,10 +172,12 @@ const PortfolioCard = () => {
             <div className="flex justify-start items-center gap-3">
               <MapPinHouse />
               <p>
-                {
-                  student?.location && 
-                  (student?.location?.address ?? "") + ", " + (student?.location?.city ?? "") + ", " + (student?.location?.country ?? "")
-                }
+                {student?.location &&
+                  (student?.location?.address ?? "") +
+                    ", " +
+                    (student?.location?.city ?? "") +
+                    ", " +
+                    (student?.location?.country ?? "")}
               </p>
             </div>
           </div>
@@ -203,10 +213,11 @@ const PortfolioCard = () => {
           onCancel={() => setIsEditing(false)}
           confirmButton="Edit"
           confirmButtonClassName="bg-primary w-20 text-white hover:bg-primary-hover"
-          onConfirm={() => {updateStudent(student); setIsEditing(false)}}
-          body={
-            <PortfolioInfos />
-          }
+          onConfirm={() => {
+            updateStudent(student);
+            setIsEditing(false);
+          }}
+          body={<PortfolioInfos />}
         />
       )}
     </div>
