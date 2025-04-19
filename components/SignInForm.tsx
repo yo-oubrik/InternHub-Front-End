@@ -58,9 +58,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({ className }) => {
     try {
       setIsLoading(true);
       const loginRequest: LoginRequest = data;
-      console.log("Login request:", loginRequest);
       const response = await api.post("/auth/login", loginRequest);
-      console.log("Login response:", response.data);
       const authResponse: AuthResponse = response.data;
       localStorage.setItem("token", authResponse.token);
       localStorage.setItem("expiresIn", authResponse.expiresIn.toString());
