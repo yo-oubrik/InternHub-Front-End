@@ -26,8 +26,7 @@ export const RemoveStudentDialog: React.FC<RemoveStudentDialogProps> = ({
   isOpen,
   setIsOpen,
 }) => {
-  const { removeStudent, isLoading } = useStudents();
-
+  const { removeStudent } = useStudents();
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-md">
@@ -44,7 +43,7 @@ export const RemoveStudentDialog: React.FC<RemoveStudentDialogProps> = ({
             type="button"
             variant="outline"
             onClick={() => setIsOpen(false)}
-            disabled={isLoading}
+            disabled={false}
           >
             Cancel
           </Button>
@@ -55,9 +54,9 @@ export const RemoveStudentDialog: React.FC<RemoveStudentDialogProps> = ({
               removeStudent(student.id);
               setIsOpen(false);
             }}
-            disabled={isLoading}
+            disabled={false}
           >
-            {isLoading ? "Removing..." : "Remove Student"}
+            {false ? "Removing..." : "Remove Student"}
           </Button>
         </DialogFooter>
       </DialogContent>

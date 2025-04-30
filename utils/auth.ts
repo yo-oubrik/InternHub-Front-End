@@ -1,4 +1,5 @@
 import axios from "@/lib/axios";
+import toast from "react-hot-toast";
 
 export const getValidToken = () => {
     const token = localStorage.getItem("token");
@@ -54,9 +55,6 @@ export const RequestWithAuth = async (url: string, options?: {
     }
 };
 
-
-
-
 export const fetchWithAuth = async (url: string) => {
     try {
         const token = getValidToken();
@@ -95,4 +93,41 @@ export const deleteWithAuth = async (url: string) => {
     }
 }
 
+export const putWithAuth = async (endpoint: string, requestBody: any, errorMessage: string, successMessage: string): Promise<boolean> => {
+    const token = getValidToken();
+    if (!token) {
+        toast.error(errorMessage, {
+            id: endpoint,
+        });
+        return false;
+    }
+
+    try {
+        const response = await axios.put(
+            endpoint,
+            requestBody,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        // Check if response was successful
+        if (response.status >= 200 && response.status < 300) {
+            toast.success(successMessage, {
+                id: endpoint,
+            });
+            return true;
+        } else {
+            throw new Error(`Request failed with status: ${response.status}`);
+        }
+    } catch (error) {
+        toast.error(errorMessage, {
+            id: endpoint,
+        });
+        console.error(errorMessage, error);
+        return false;
+    }
+}
 

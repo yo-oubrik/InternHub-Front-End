@@ -42,8 +42,9 @@ export interface Student extends User {
   formations?: Formation[];
   projects?: Project[];
   certificates?: Certificat[];
+  blocked: boolean;
+  blockedAt: Date | null;
 }
-
 
 export interface StudentRequest {
   profileTitle?: string;
@@ -152,7 +153,6 @@ export const severityMap: Record<flagSeverity, BadgeVariant> = {
   [flagSeverity.LOW]: "outline",
 };
 
-
 export interface ApiErrorResponse {
   timestamp: string;
   status: number;
@@ -162,43 +162,41 @@ export interface ApiErrorResponse {
   validationErrors?: Record<string, string>;
 }
 
-
 export interface Experience {
-  id: string,
-  poste: string,
-  startDate: string,
-  endDate: string,
-  company: Company,
-  description: string,
+  id: string;
+  poste: string;
+  startDate: string;
+  endDate: string;
+  company: Company;
+  description: string;
 }
 
 export type ExperienceRequest = {
-  poste: string,
-  startDate: string,
-  endDate: string,
-  description: string,
-  companyId: string,
-  studentId: string,
-}
+  poste: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  companyId: string;
+  studentId: string;
+};
 
 export interface Formation {
-  id: string,
-  domain: string,
-  diploma: string,
-  startDate: string,
-  endDate: string,
-  company: Company,
+  id: string;
+  domain: string;
+  diploma: string;
+  startDate: string;
+  endDate: string;
+  company: Company;
 }
 
 export type FormationRequest = {
-  domain: string,
-  diploma: string,
-  startDate: string,
-  endDate: string,
-  companyId: string,
-  studentId: string,
-}
-
+  domain: string;
+  diploma: string;
+  startDate: string;
+  endDate: string;
+  companyId: string;
+  studentId: string;
+};
 
 export interface Project {
   id: string;
@@ -212,7 +210,7 @@ export type ProjectRequest = {
   image: string;
   link: string;
   studentId: string;
-}
+};
 
 export interface Certificat {
   id: string;
@@ -226,7 +224,7 @@ export type CertificatRequest = {
   thumbnail: string;
   date: string;
   studentId: string;
-}
+};
 
 export interface Location {
   address: string;
@@ -240,12 +238,14 @@ export interface FlaggedStudentOverview {
   email: string;
   unresolvedFlagsCount: number;
   lastFlagDate: Date;
+  blocked: boolean;
+  blockedAt: Date | null;
 }
-export type ReportStatus = "IGNORED" | "UNRESOLVED" | "WARNED";
+export type ReportStatus = "RESOLVED" | "UNRESOLVED" | "WARNED";
 
 export const reportStatusMap = (reportStatus: ReportStatus) => {
   switch (reportStatus) {
-    case "IGNORED":
+    case "RESOLVED":
       return "outline";
     case "UNRESOLVED":
       return "secondary";
@@ -260,7 +260,8 @@ export interface StudentFlag {
   id: string;
   reason: string;
   description: string;
-  date: Date;
+  createdAt: Date;
+  updatedAt: Date;
   reportStatus: ReportStatus;
   studentId: string;
   companyId: string;

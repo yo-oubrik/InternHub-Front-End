@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FlaggedStudent } from "@/types/types";
+import { FlaggedStudentOverview } from "@/types/types";
 import {
   ColumnFiltersState,
   flexRender,
@@ -23,7 +23,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import React from "react";
-import { FlaggedStudentOverview } from "@/types/types";
 
 interface FlaggedStudentsTableProps {
   data: FlaggedStudentOverview[];
