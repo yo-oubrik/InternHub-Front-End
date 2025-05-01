@@ -136,20 +136,10 @@ const CompanyProfile = () => {
         <div className="space-y-2">
           <div className="w-full flex items-center">
             <h1 className="text-2xl font-medium text-nowrap">
-              {company?.name ?? "Company Name"}
+              {company?.name || "Not set"}
             </h1>
-            <Dot />
-            <p className="text-2xl font-medium">Company</p>
           </div>
-          <p className="text-base font-light">
-            {company?.location
-              ? company?.location?.address +
-                ", " +
-                company?.location?.city +
-                ", " +
-                company?.location?.country
-              : "Location not set"}
-          </p>
+          <p className="text-base font-light">Company</p>
         </div>
         {isUserProfile && (
           <div className="w-full flex justify-end">
@@ -185,9 +175,8 @@ const CompanyProfile = () => {
 
         <div className="bg-white p-4 rounded-lg shadow-sm text-lg">
           <h3 className="font-medium mb-2">Company Details</h3>
-          <p className="text-base text-gray-600">ICE: {company?.ice}</p>
           <p className="text-base text-gray-600">
-            Size: {company?.size || "Not set"}
+            ICE: {company?.ice ?? "Not set"}
           </p>
         </div>
 

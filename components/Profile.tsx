@@ -6,14 +6,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/authContext";
-import { User } from "@/types/types";
+import { Company, Student, User } from "@/types/types";
 import { LogOut, User as UserIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 
 interface ProfileProps {
-  user: User;
+  user: User | Company | Student;
 }
 export const Profile: React.FC<ProfileProps> = ({ user }) => {
   const { logout } = useAuth();
@@ -24,7 +24,7 @@ export const Profile: React.FC<ProfileProps> = ({ user }) => {
       <div className="flex items-center gap-4">
         <DropdownMenuTrigger asChild className="cursor-pointer">
           <Image
-            src={profilePicture ? profilePicture : "/user.png"}
+            src={profilePicture || "/user.png"}
             alt="avatar"
             width={36}
             height={36}

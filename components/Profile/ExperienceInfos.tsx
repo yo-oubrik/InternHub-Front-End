@@ -21,6 +21,7 @@ import { Company, Experience, Role } from "@/types/types";
 import { useUser } from "@/context/userContext";
 import toast from "react-hot-toast";
 import { useAuth } from "@/context/authContext";
+import { Button } from "../ui/button";
 
 interface ExperienceInfosProps {
   object: Experience | null;
@@ -109,7 +110,6 @@ const ExperienceInfos = ({
           )
         );
       }
-      console.log("flagged : ", flag);
       setFlag("VIEW");
     } catch (error) {
       toast.error("Failed to save experience : " + error);
@@ -185,12 +185,14 @@ const ExperienceInfos = ({
                           poste: e.target.value,
                         })
                       }
+                      className="border border-gray-300 focus:bg-gray-100/50 hover:bg-gray-100/50 focus:text-gray-700 hover:text-gray-700"
                     />
                     <p className="flex font-normal text-gray-700">
                       <SearchableCombobox
                         defaultValue={experience?.company?.name ?? ""}
                         options={companies}
                         onSelect={handleSelectCombobox}
+                        classNameButton="bg-background border border-gray-300 hover:bg-gray-100/50 hover:text-gray-700"
                       />
                     </p>
                   </>
@@ -228,6 +230,7 @@ const ExperienceInfos = ({
                     setDateValue={(value: string) =>
                       setExperience({ ...experience, startDate: value })
                     }
+                    className="bg-background border border-gray-300 hover:bg-gray-100/50 hover:text-gray-700"
                   />
                   <span className="mt-2">-</span>
                   <div
@@ -247,15 +250,17 @@ const ExperienceInfos = ({
                         setExperience({ ...experience, endDate: value })
                       }
                       resetDate={experience?.endDate === "PRESENT"}
+                      className="bg-background border border-gray-300 hover:bg-gray-100/50 hover:text-gray-700"
                     />
-                    <div
+                    <Button
+                      variant={"outline"}
                       onClick={() =>
                         setExperience({ ...experience, endDate: "PRESENT" })
                       }
-                      className="rounded-md bg-background py-2 px-4 border border-gray-200 font-medium text-sm cursor-pointer"
+                      className="rounded-md bg-background border border-gray-300 hover:bg-gray-100/50 hover:text-gray-700 text-black py-2 px-4 font-medium text-sm cursor-pointer"
                     >
                       PRESENT
-                    </div>
+                    </Button>
                   </div>
                 </>
               )}
@@ -283,7 +288,7 @@ const ExperienceInfos = ({
                 />
               ) : (
                 <span
-                  className="bg-background rounded-lg py-4 w-full h-full text-center cursor-text"
+                  className="bg-background rounded-lg py-4 w-full h-full text-center cursor-text border border-gray-300 hover:bg-gray-100/50 hover:text-gray-700"
                   onClick={() => setShowEditor(true)}
                 >
                   Click Here to Add Description

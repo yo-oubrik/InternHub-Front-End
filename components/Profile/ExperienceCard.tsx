@@ -22,7 +22,6 @@ const ExperienceCard = () => {
     }
   }, [student?.experiences]);
 
-  console.log("experiences : ", experiences);
   return (
     <div className="bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[90%] mx-auto space-y-7">
       <div className="flex justify-between items-center">

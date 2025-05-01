@@ -1,6 +1,6 @@
 "use client";
 import { Pencil } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import EditModal from "./EditModal";
 import { Textarea } from "../ui/textarea";
 import { useUser } from "@/context/userContext";
@@ -11,9 +11,10 @@ const InfosCard = () => {
   const { student, updateStudent, isUserProfile } = useUser();
   const { currentUser } = useAuth();
   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
-  const [description, setDescription] = useState<string | null>(
-    student?.profileDescription
-  );
+  const [description, setDescription] = useState<string>("");
+  useEffect(() => {
+    setDescription(student?.profileDescription || "");
+  }, [student?.profileDescription]);
   return (
     <div className="bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[90%] mx-auto">
       <div className="flex justify-between items-center">
@@ -28,8 +29,8 @@ const InfosCard = () => {
         )}
       </div>
       <p
-        className={`text-gray-600 px-3 mt-5 mb-3 whitespace-pre-line ${
-          student?.profileDescription || "text-center"
+        className={`text-gray-600 px-3 mt-5 mb-3 whitespace-break-spaces ${
+          student?.profileDescription ? "" : "text-center"
         }`}
       >
         {student?.profileDescription || "---"}
@@ -51,7 +52,7 @@ const InfosCard = () => {
           }
           cancelButton="Cancel"
           onCancel={() => {
-            setDescription(student?.profileDescription);
+            setDescription(student?.profileDescription || "");
             setIsOpenModal(false);
           }}
           cancelButtonClassName="border-primary border-[1px] text-primary bg-transparent"

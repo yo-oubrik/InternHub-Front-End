@@ -15,6 +15,7 @@ import {
 import "react-circular-progressbar/dist/styles.css";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/context/userContext";
 
 interface CompanyProfileStatsProps {
   applicants: number;
@@ -30,6 +31,7 @@ const CompanyProfileStats = ({
   rejectedApplicants,
 }: CompanyProfileStatsProps) => {
   const router = useRouter();
+  const {company} = useUser();
 
   return (
     <div className="grid grid-cols-2 items-center gap-2 bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[75%] mx-auto">
@@ -84,7 +86,7 @@ const CompanyProfileStats = ({
         <Button
           variant="outline"
           className="text-primary hover:bg-primary hover:text-white group"
-          onClick={() => router.push(`/company/1/applications`)}
+          onClick={() => router.push(`/company/${company.id}/applications`)}
         >
           <span>Manage Applications</span>
           <ArrowRightIcon className="w-6 h-6 text-primary group-hover:text-white" />

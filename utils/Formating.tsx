@@ -14,9 +14,9 @@ const formatSalary = (
   salaryType: SalaryType,
   negotiable: boolean
 ): string => {
-  if (!renumerated) return "Not Renumerated";
+  if (!renumerated) return "Not Paid";
   if (!salary) return "Not set";
-  return `${salary} ${salaryType.toLowerCase()}${
+  return `${salary} DH / ${salaryType.toLowerCase()}${
     negotiable ? " (Negotiable)" : ""
   }`;
 };
