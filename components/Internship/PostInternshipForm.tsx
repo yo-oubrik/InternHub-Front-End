@@ -6,13 +6,14 @@ import JobDetails from "./JobDetails";
 import JobSkills from "./JobSkills ";
 import JobTitle from "./JobTitle";
 import { useInternship } from "@/context/internshipContext";
-import JobLocation from "./JobLocation";
 import Summary from "./Summary";
+import toast from "react-hot-toast";
+import { object } from "zod";
 
 function PostInternshipForm() {
-  const {createInternship , internship , setInternship , resetInternshipForm} = useInternship();
+  const { createInternship, resetInternshipForm, internship } = useInternship();
 
-  const sections = ["About","Post Details", "Skills", "Summary"];
+  const sections = ["About", "Post Details", "Skills", "Summary"];
   const [visitedSections, setVisitedSections] = React.useState<Set<string>>(
     new Set([sections[0]])
   );
@@ -24,6 +25,67 @@ function PostInternshipForm() {
       Type === "add" ? updatedSet.add(section) : updatedSet.delete(section);
       return updatedSet;
     });
+  };
+
+  const validateInternshipTitleForm = () => {
+    const title = internship?.title;
+    const workMode = internship?.workMode;
+
+    if (!title || !workMode) {
+      return false;
+    }
+    return true;
+  };
+
+  const validateInternshipDetailsForm = () => {
+    const description = internship?.description;
+    const duration = internship?.duration;
+    const salary = internship?.salary;
+    const paid = internship?.paid;
+    const salaryType = internship?.salaryType;
+
+    if (
+      !description ||
+      !duration ||
+      (paid && (!salary || salary < 500 || !salaryType))
+    ) {
+      return false;
+    }
+    return true;
+  };
+
+  const validateInternshipSkillsForm = () => {
+    const skills = internship?.skills;
+    const tags = internship?.tags;
+    if (!skills || skills.length === 0 || !tags || tags.length === 0) {
+      return false;
+    }
+    return true;
+  };
+
+  const handleNextSection = () => {
+    if (activeSection === "About") {
+      if (!validateInternshipTitleForm()) {
+        toast.error("Please fill all the fields", { id: "error" });
+        return;
+      }
+    }
+    if (activeSection === "Post Details") {
+      if (!validateInternshipDetailsForm()) {
+        toast.error("Please fill all the fields", { id: "error" });
+        return;
+      }
+    }
+    if (activeSection === "Skills") {
+      if (!validateInternshipSkillsForm()) {
+        toast.error("Please fill all the fields", { id: "error" });
+        return;
+      }
+    }
+
+    const currentIndex = sections.indexOf(activeSection);
+    setActiveSection(sections[currentIndex + 1]);
+    handleSectionChange(sections[currentIndex + 1], "add");
   };
 
   const renderStages = () => {
@@ -41,12 +103,10 @@ function PostInternshipForm() {
     }
   };
 
-  const [showAlert, setShowAlert] = React.useState(false);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if(activeSection === "Summary") {
+    if (activeSection === "Summary") {
       createInternship();
       resetInternshipForm();
     }
@@ -101,11 +161,7 @@ function PostInternshipForm() {
           {activeSection !== "Summary" && (
             <Button
               label="Next"
-              onClick={() => {
-                const currentIndex = sections.indexOf(activeSection);
-                setActiveSection(sections[currentIndex + 1]);
-                handleSectionChange(sections[currentIndex + 1], "add");
-              }}
+              onClick={handleNextSection}
               className="px-6 py-2 text-white rounded-md"
             />
           )}
@@ -120,21 +176,6 @@ function PostInternshipForm() {
           )}
         </div>
       </form>
-      {showAlert && (
-        <AlertModal
-          isOpenModal={showAlert}
-          setIsOpenModal={setShowAlert}
-          title="🚨 Missing Required Fields"
-          titleClassName="mb-1"
-          content={
-            "Oops! It looks like you missed some required fields. Please review the form and complete all necessary details before proceeding."
-          }
-          contentClassName="text-base"
-          confirmButton={false}
-          cancelButtonClassName="bg-primary hover:bg-primary-hover text-white hover:text-white"
-          onCancel={() => setShowAlert(false)}
-        />
-      )}
     </div>
   );
 }

@@ -92,28 +92,48 @@ export interface Internship {
   createdAt: Date;
   description: string;
   duration: number;
-  salary: number;
+  salary: number | null;
   salaryType: SalaryType;
   title: string;
   workMode: WorkMode;
   tags: InternshipType[];
   skills: string[];
+  motivationLetterRequired : boolean;
+  negotiable: boolean;
+  paid: boolean ;
+  likes: string[];
+  isEnded : boolean ;
+  applicants : Student[];
+}
+
+export interface InternshipRequest {
+  description: string;
+  duration: number;
+  salary: number;
+  salaryType: SalaryType;
+  title: string;
+  workMode: WorkMode;
+  motivationLetterRequired : boolean ;
+  tags: InternshipType[];
+  skills: string[];
   negotiable: boolean;
   paid: boolean;
-  likes: string[];
-  applicants: Student[];
 }
 
 export interface Application {
-  id : string ; 
-  student : Student;
-  internship : Internship;
+  studentResponse : Student;
+  internshipResponse : Internship;
   status: ApplicationStatus;
   applicationDate : Date;
-  motivationLetter?: string;
-  cv?: string;
-  interviewDate?: Date;
-  interviewDescription? : string;
+  motivationLetter: string | null;
+  cv: string;
+}
+
+export interface ApplicationRequest {
+  internshipId: string;
+  status: ApplicationStatus;
+  motivationLetter: string | null ;
+  cv: string;
 }
 
 export enum ApplicationStatus {
@@ -132,22 +152,6 @@ export const getColorsByApplicationStatus = (status : ApplicationStatus ) => {
       return "bg-blue-500 hover:bg-blue-600"
   }
 };
-
-
-export interface InternshipRequest {
-  companyId?: string;
-  description: string;
-  duration: number;
-  salary: number;
-  salaryType: SalaryType;
-  domain: string;
-  title: string;
-  workMode: WorkMode;
-  tags: InternshipType[];
-  skills: string[];
-  negotiable: boolean;
-  paid: boolean;
-}
 
 export enum flagSeverity {
   LOW = "low",

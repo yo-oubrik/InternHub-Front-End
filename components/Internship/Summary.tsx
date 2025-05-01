@@ -3,12 +3,12 @@ import { useInternship } from "@/context/internshipContext";
 import { WorkMode, SalaryType, InternshipType } from "@/types/types";
 import { Separator } from "../ui/separator";
 import { Label } from "../ui/label";
-import { 
-  Briefcase, 
-  MapPin, 
-  Clock, 
-  DollarSign, 
-  Building2, 
+import {
+  Briefcase,
+  MapPin,
+  Clock,
+  DollarSign,
+  Building2,
   GraduationCap,
   Code2,
   FileText,
@@ -21,16 +21,22 @@ import {
   FileText as FileTextIcon,
   Home,
   Building2 as Office,
-  Laptop
+  Laptop,
 } from "lucide-react";
-import { formatWorkMode, formatSalary, formatLocation, formatDuration, formatTitle, formatTags, formatSkills, formatDescription } from "@/utils/Formating";
+import {
+  formatWorkMode,
+  formatSalary,
+  formatLocation,
+  formatDuration,
+  formatTitle,
+  formatTags,
+  formatSkills,
+  formatDescription,
+  cleanAndTruncateHTML,
+} from "@/utils/Formating";
 
 function Summary() {
-  const {
-    internship,
-  } = useInternship();
-
-  
+  const { internship } = useInternship();
 
   const getWorkModeIcon = () => {
     switch (internship.workMode) {
@@ -83,7 +89,9 @@ function Summary() {
               </div>
               <div>
                 <Label className="text-sm font-medium">Title</Label>
-                <p className="text-sm text-muted-foreground mt-1">{formatTitle(internship.title)}</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {formatTitle(internship.title)}
+                </p>
               </div>
             </div>
 
@@ -95,16 +103,20 @@ function Summary() {
                 <Label className="text-sm font-medium">Type</Label>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {formatTags(internship.tags) === "Not set" ? (
-                    <span className="text-sm text-muted-foreground">Not set</span>
+                    <span className="text-sm text-muted-foreground">
+                      Not set
+                    </span>
                   ) : (
-                    (formatTags(internship.tags) as InternshipType[]).map((tag: InternshipType, index: number) => (
-                      <span
-                        key={index}
-                        className="bg-primary/10 text-primary px-2 py-1 rounded-full text-sm"
-                      >
-                        {tag}
-                      </span>
-                    ))
+                    (formatTags(internship.tags) as InternshipType[]).map(
+                      (tag: InternshipType, index: number) => (
+                        <span
+                          key={index}
+                          className="bg-primary/10 text-primary px-2 py-1 rounded-full text-sm"
+                        >
+                          {tag}
+                        </span>
+                      )
+                    )
                   )}
                 </div>
               </div>
@@ -118,7 +130,9 @@ function Summary() {
               </div>
               <div>
                 <Label className="text-sm font-medium">Work Mode</Label>
-                <p className="text-sm text-muted-foreground mt-1">{formatWorkMode(internship.workMode)}</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {formatWorkMode(internship.workMode)}
+                </p>
               </div>
             </div>
 
@@ -128,7 +142,9 @@ function Summary() {
               </div>
               <div>
                 <Label className="text-sm font-medium">Duration</Label>
-                <p className="text-sm text-muted-foreground mt-1">{formatDuration(internship.duration)}</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {formatDuration(internship.duration)}
+                </p>
               </div>
             </div>
           </div>
@@ -150,14 +166,20 @@ function Summary() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
           <div className="flex items-start gap-3">
             <div className="p-2 bg-primary/10 rounded-lg mt-1">
               <Wallet className="w-4 h-4 text-primary" />
             </div>
             <div>
               <Label className="text-sm font-medium">Compensation</Label>
-              <p className="text-sm text-muted-foreground mt-1">{formatSalary(internship.paid, internship.salary, internship.salaryType, internship.negotiable)}</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {formatSalary(
+                  internship.paid,
+                  internship?.salary || 0,
+                  internship.salaryType,
+                  internship.negotiable
+                )}
+              </p>
             </div>
           </div>
         </div>
@@ -187,14 +209,16 @@ function Summary() {
               {formatSkills(internship.skills) === "Not set" ? (
                 <span className="text-sm text-muted-foreground">Not set</span>
               ) : (
-                (formatSkills(internship.skills) as string[]).map((skill: string, index: number) => (
-                  <span
-                    key={index}
-                    className="bg-primary/10 text-primary px-2 py-1 rounded-full text-sm"
-                  >
-                    {skill}
-                  </span>
-                ))
+                (formatSkills(internship.skills) as string[]).map(
+                  (skill: string, index: number) => (
+                    <span
+                      key={index}
+                      className="bg-primary/10 text-primary px-2 py-1 rounded-full text-sm"
+                    >
+                      {skill}
+                    </span>
+                  )
+                )
               )}
             </div>
           </div>
@@ -218,14 +242,17 @@ function Summary() {
         {formatDescription(internship.description) === "Not set" ? (
           <p className="text-sm text-muted-foreground">Not set</p>
         ) : (
-          <div
-            className="text-sm text-muted-foreground prose prose-sm max-w-none"
-            dangerouslySetInnerHTML={{ __html: internship.description }}
-          />
+          // <div
+          //   className="text-sm text-muted-foreground prose prose-sm max-w-none"
+          //   dangerouslySetInnerHTML={{
+          //     __html: internship.description,
+          //   }}
+          // />
+          <div dangerouslySetInnerHTML={{ __html: internship.description }} />
         )}
       </div>
     </div>
   );
 }
 
-export default Summary; 
+export default Summary;

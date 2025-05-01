@@ -14,16 +14,11 @@ import { Switch } from "../ui/switch";
 import { useInternship } from "@/context/internshipContext";
 import { Label } from "../ui/label";
 import RadioButton from "../RadioButton";
-import { SalaryType } from "@/types/types";
+import { SalaryType, WorkMode } from "@/types/types";
 import TextEditor from "../TextEditor";
 
-
-
 function JobDetails() {
-  const {
-    internship,
-    setInternship
-  } = useInternship();
+  const { internship, setInternship } = useInternship();
 
   return (
     <div className="p-6 flex flex-col gap-4 bg-background border border-border rounded-lg">
@@ -37,7 +32,9 @@ function JobDetails() {
         <div className="flex-1">
           <TextEditor
             value={internship.description}
-            onChange={(value) => setInternship({...internship, description : value})}
+            onChange={(value) =>
+              setInternship({ ...internship, description: value })
+            }
             style={{ minHeight: "400px", backgroundColor: "white" }}
             modules={{ toolbar: true }}
           />
@@ -53,13 +50,18 @@ function JobDetails() {
             Enter the duration of the internship post.
           </Label>
         </div>
-        <div className="flex-1">
+        <div className="flex items-center gap-2">
           <Input
             type="number"
             id="duration"
             name="duration"
             value={internship.duration}
-            onChange={(e) => setInternship({...internship, duration : Number.parseInt(e.target.value)})}
+            onChange={(e) =>
+              setInternship({
+                ...internship,
+                duration: Number.parseInt(e.target.value),
+              })
+            }
             className="flex-1 w-full mt-2"
             placeholder="Enter internship duration"
           />
@@ -76,22 +78,29 @@ function JobDetails() {
             Enter the salary range for the internship.
           </Label>
         </div>
-
         <div className="flex flex-col gap-2">
           <div className="flex justify-center items-center gap-2">
             <Input
               type="number"
               id="salary"
               placeholder="Enter Salary"
-              value={internship.salary}
-              onChange={(e) => setInternship({...internship, salary : Number.parseFloat(e.target.value)})}
+              value={internship.salary ?? ""}
+              onChange={(e) =>
+                setInternship({
+                  ...internship,
+                  salary: Number.parseFloat(e.target.value),
+                })
+              }
               className="w-2/3"
               disabled={!internship.paid ? true : false}
             />
             <div className="w-1/3">
               <Select
                 onValueChange={(value: string) =>
-                  setInternship({...internship, salaryType : value as SalaryType})
+                  setInternship({
+                    ...internship,
+                    salaryType: value as SalaryType,
+                  })
                 }
                 disabled={!internship.paid ? true : false}
                 defaultValue={SalaryType.MONTH}
@@ -111,7 +120,9 @@ function JobDetails() {
           <div className="flex gap-2 mt-2">
             <RadioButton
               value={internship.negotiable}
-              onValueChange={(value) => setInternship({...internship, negotiable : value})}
+              onValueChange={(value) =>
+                setInternship({ ...internship, negotiable: value })
+              }
               items={["Negotiable", "Fixed"]}
               itemsValue={[true, false]}
               classNameGroup="w-2/3 border-border border py-2 px-2 rounded-md"
@@ -121,11 +132,42 @@ function JobDetails() {
               <Switch
                 id="paid"
                 checked={internship.paid}
-                onCheckedChange={(value) => setInternship({...internship, paid : value})}
+                onCheckedChange={(value) =>
+                  setInternship({ ...internship, paid: value })
+                }
               />
               <Label htmlFor="paid">Paid</Label>
             </div>
           </div>
+        </div>
+      </div>
+
+      <Separator className="my-2" />
+
+      <div className="grid grid-cols-2 gap-6">
+        <div className="flex-1">
+          <h3 className="text-black font-bold">Motivation Letter</h3>
+          <Label htmlFor="motivationRequired" className="text-gray-500 mt-2">
+            Specify if a motivation letter is required for this internship.
+          </Label>
+        </div>
+        <div className="flex items-center gap-2">
+          <RadioButton
+            value={internship?.motivationLetterRequired}
+            items={["Mandatory", "Optional"]}
+            itemsValue={[true, false]}
+            onValueChange={(value) => {
+              setInternship({
+                ...internship,
+                motivationLetterRequired: value,
+              });
+            }}
+            classNameGroup="flex flex-row justify-between"
+            classNameItemContainer="bg-white border-border border space-x-0 h-full rounded-md cursor-pointer"
+            classNameLabel="cursor-pointer font-medium w-full h-full p-6"
+            classNameItem="hidden"
+            classNameItemContainerWhenChecked="border border-primary text-primary"
+          />
         </div>
       </div>
     </div>

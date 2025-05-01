@@ -28,16 +28,6 @@ export async function uploadFileToSupabase(
     
     // Generate a unique file name with timestamp to prevent collisions
     const uniqueFileName = options.fileName;
-    
-    // First try to delete the file if it exists
-    try {
-      await supabase.storage
-        .from(options.bucketName)
-        .remove([uniqueFileName]);
-    } catch (error) {
-      // If file doesn't exist, this will fail but that's okay
-      console.log('File did not exist, proceeding with upload');
-    }
 
     // Upload file to Supabase
     const { data, error } = await supabase.storage

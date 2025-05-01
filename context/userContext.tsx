@@ -25,8 +25,8 @@ interface UserContextType {
   checkIsUserProfile: (userProfileId: string | undefined) => void;
   setCompany: (company: Company) => void;
   setStudent: (student: Student) => void;
-  getCompany: (id: string) => Promise<void>;
-  getStudent: (id: string) => Promise<void>;
+  getCompany: (id: string) => Promise<Company>;
+  getStudent: (id: string) => Promise<Student>;
   getCompanies: () => Promise<void>;
   updateStudent: (student: Student) => Promise<void>;
   createExperience: (experience: Experience) => Promise<Experience>;
@@ -49,6 +49,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const { isAuthenticated, currentUser } = useAuth();
+  // const { getCompanyInternships } = useInternship();
   const [isUserProfile, setIsUserProfile] = useState<boolean>(false);
   const [company, setCompany] = useState<Company>({} as Company);
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -57,15 +58,13 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     lastName: "",
   } as Student);
 
-  // console.log("current User : ", currentUser);
-
   const getCompany = async (id: string) => {
-    try {
-      const data = await RequestWithAuth(`company/${id}`);
-      setCompany(data as Company);
-    } catch (error) {
-      console.error("Failed to fetch company", error);
+    const data = await RequestWithAuth(`companies/${id}`);
+    if (!data) {
+      console.error("Failed to fetch company");
+      return null;
     }
+    return data;
   };
   const getCompanies = async () => {
     try {
@@ -77,16 +76,20 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
   const getStudent = async (id: string) => {
+    if (!id) return null;
     try {
       const data = await RequestWithAuth(`students/${id}`);
-      setStudent(data as Student);
+      return data;
     } catch (error) {
       console.error("Failed to fetch student", error);
+      return null;
     }
   };
   const updateStudent = async (student: Student) => {
     try {
       const studentRequest: StudentRequest = student as StudentRequest;
+      console.log("student id ", student.id);
+      console.log("current user id ", currentUser?.id);
       const data = await RequestWithAuth(`students/${student.id}`, {
         method: "PUT",
         body: JSON.stringify(studentRequest),
@@ -255,16 +258,19 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
       : setIsUserProfile(false);
   };
 
-  useEffect(() => {
-    console.log("this is from user context");
-    if (isAuthenticated && currentUser) {
-      if (currentUser.role === Role.COMPANY) {
-        getCompany(currentUser.id);
-      } else if (currentUser.role === Role.STUDENT) {
-        getStudent(currentUser.id);
-      }
-    }
-  }, [isAuthenticated, currentUser]);
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     if (isAuthenticated && currentUser) {
+  //       if (currentUser.role === Role.COMPANY) {
+  //         const companyData = await getCompany(currentUser.id);
+  //         setCompany(companyData);
+  //       } else if (currentUser.role === Role.STUDENT) {
+  //         await getStudent(currentUser.id);
+  //       }
+  //     }
+  //   };
+  //   fetchUserData();
+  // }, [isAuthenticated, currentUser]);
 
   return (
     <UserContext.Provider

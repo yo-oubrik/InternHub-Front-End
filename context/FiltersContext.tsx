@@ -14,13 +14,16 @@ interface FiltersProps {
   pfa: boolean;
   pfe: boolean;
   initiation: boolean;
-  renumerated: boolean;
+  paid: boolean | null;
 }
 
 interface FiltersContextProps {
   filters: FiltersProps;
   setFilters: React.Dispatch<React.SetStateAction<FiltersProps>>;
-  handleFilterChange: (filterName: keyof FiltersProps) => void;
+  handleFilterChange: (
+    filterName: keyof FiltersProps,
+    value: boolean | null
+  ) => void;
 }
 
 const FiltersContext = createContext<FiltersContextProps | null>(null);
@@ -35,13 +38,16 @@ export const FiltersContextProvider: React.FC<{
     pfa: false,
     pfe: false,
     initiation: false,
-    renumerated: false,
+    paid: null,
   });
 
-  const handleFilterChange = (filterName: keyof FiltersProps) => {
+  const handleFilterChange = (
+    filterName: keyof FiltersProps,
+    value: boolean | null
+  ) => {
     setFilters((prev) => ({
       ...prev,
-      [filterName]: !prev[filterName], // Now TypeScript recognizes the key
+      [filterName]: value,
     }));
   };
 

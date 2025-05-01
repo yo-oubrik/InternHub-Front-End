@@ -1,8 +1,10 @@
 "use client";
 import { Role } from "@/types/types";
-import { fetchWithAuth } from "@/utils/auth";
+import { RequestWithAuth as fetchWithAuth } from "@/utils/auth";
 import {
+  Dispatch,
   ReactNode,
+  SetStateAction,
   createContext,
   useContext,
   useEffect,
@@ -19,6 +21,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   currentUser: User | null;
   loading: boolean;
+  setLoading: Dispatch<SetStateAction<boolean>>;
   logout: () => void;
 }
 
@@ -33,15 +36,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchUser = async () => {
+    // setLoading(true);
+    // const data = await fetchWithAuth("/users/me");
+    // console.log("data is data : ", data);
+    // if (!data) {
+    //   setLoading(false);
+    //   logout();
+    // }
+    // setCurrentUser(data);
+    // setIsAuthenticated(true);
+    // setLoading(false);
+    try {
       setLoading(true);
       const data = await fetchWithAuth("/users/me");
-      if (!data) {
-        setLoading(false);
-        logout();
+      if (data) {
+        setCurrentUser(data);
+        setIsAuthenticated(true);
+      } else {
+        await logout();
       }
-      setCurrentUser(data);
-      setIsAuthenticated(true);
-      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      await logout();
+    } finally {
+      setLoading(false); // Always set loading to false when done
+    }
   };
 
   // console.log("current User : ", currentUser);
@@ -49,9 +68,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const expiresIn = localStorage.getItem("expiresIn");
-    // console.log("1");
-    // console.log("token : ", token);
-    // console.log("expiresIn : ", expiresIn);
     if (token && expiresIn) {
       const expirationTime = parseInt(expiresIn);
       if (Date.now() < expirationTime) {
@@ -60,7 +76,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         logout();
       }
     } else {
-      setLoading(false); // No token found or it expired .
+      setLoading(false);
     }
   }, []);
 
@@ -75,7 +91,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, currentUser, loading, logout }}
+      value={{ isAuthenticated, currentUser, loading, setLoading, logout }}
     >
       {children}
     </AuthContext.Provider>

@@ -19,7 +19,7 @@ interface InternshipProps {
 
 function InternshipCard({ internship, activeinternship }: InternshipProps) {
   const { likeInternship } = useInternship();
-  const { student } = useUser() ; 
+  const { student } = useUser();
   const { isAuthenticated } = useAuth();
   const [isLiked, setIsLiked] = React.useState(false);
 
@@ -34,16 +34,15 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
     company,
   } = internship;
 
-  
   useEffect(() => {
-    student && setIsLiked(likes.includes(student.id));
+    student && setIsLiked(likes?.includes(student.id));
   }, [likes, student?.id]);
-  
+
   const handleLike = (id: string) => {
     setIsLiked((prev) => !prev);
     likeInternship(id);
   };
-  
+
   const companyDescription =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut purus eget nunc.";
 
@@ -69,33 +68,33 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
         <div
           className="group flex gap-1 items-center cursor-pointer"
           onClick={() => axios.get(`/internship/${internship.id}`)}
-        > { /* to check */}
+        >
+          {" "}
+          {/* to check */}
           <div className="w-12 h-12 bg-gray-200 rounded-md flex items-center justify-center mr-2">
             <Image
-              src={ company?.profilePicture || "/user.png"}
-              alt={ company?.name || "User"}
+              src={company?.profilePicture || "/user.png"}
+              alt={company?.name || "User"}
               width={40}
               height={40}
               className="rounded-md"
             />
           </div>
-
           <div className="flex flex-col">
             <h4 className="text-base font-bold hover:underline">{title}</h4>
             <p className="text-sm">
-              {company?.name} : {applicants.length}{" "}
-              {applicants.length > 1 ? "Applicants" : "Applicant"}
+              {company?.name} : {applicants?.length}{" "}
+              {applicants?.length > 1 ? "Applicants" : "Applicant"}
             </p>
           </div>
         </div>
 
         <button
-          className={`text-2xl ${isLiked ? "text-primary" : "text-gray-400"
-            } `}
+          className={`text-2xl ${isLiked ? "text-primary" : "text-gray-400"} `}
           onClick={() => {
             // isAuthenticated ?
-              handleLike(internship.id)
-              // : axios.get("http://localhost:3000/api/login"); {/* to check */ }
+            handleLike(internship?.id);
+            // : axios.get("http://localhost:3000/api/login"); {/* to check */ }
           }}
         >
           {isLiked ? bookmark : bookmarkEmpty}
@@ -103,14 +102,18 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        <span className={`py-1 px-3 text-xs font-medium rounded-md border ${workModeBg(workMode)}`}>
+        <span
+          className={`py-1 px-3 text-xs font-medium rounded-md border ${workModeBg(
+            workMode
+          )}`}
+        >
           {workMode}
         </span>
       </div>
 
       <p>
-        {companyDescription.length > 100
-          ? `${companyDescription.substring(0, 100)}...`
+        {companyDescription?.length > 100
+          ? `${companyDescription?.substring(0, 100)}...`
           : companyDescription}
       </p>
 
@@ -118,14 +121,16 @@ function InternshipCard({ internship, activeinternship }: InternshipProps) {
 
       <div className="flex justify-between items-center gap-6">
         <p>
-          <span className="font-bold text-nowrap">{formatMoney(salary)} MAD</span>
+          <span className="font-bold text-nowrap">
+            {formatMoney(salary || 0)} MAD
+          </span>
           <span className="font-medium text-gray-400 text-base">
             /
             {salaryType === SalaryType.YEAR
               ? "per year"
               : salaryType === SalaryType.MONTH
-                ? "per month"
-                : "per hour"}
+              ? "per month"
+              : "per hour"}
           </span>
         </p>
 

@@ -8,40 +8,52 @@ import CheckboxButton from "../CheckboxButton";
 import Button from "../Button";
 import { useInternship } from "@/context/internshipContext";
 import { InternshipType } from "@/types/types";
-import {  useFilters } from "@/context/FiltersContext";
+import { useFilters } from "@/context/FiltersContext";
 
 function JobSkills() {
   const { internship, setInternship } = useInternship();
-  const {filters , handleFilterChange} = useFilters();
+  const { filters, handleFilterChange } = useFilters();
 
   const skillInputRef = useRef<HTMLInputElement>(null);
+
+  console.log("internship", internship);
 
   const handleAddSkill = () => {
     if (!skillInputRef.current) return;
 
     const skillValue = skillInputRef.current.value.trim();
-    if (skillValue && !internship.skills.includes(skillValue)) {
-      setInternship({...internship, skills : [...internship.skills, skillValue]});
+    if (skillValue && !internship?.skills?.includes(skillValue)) {
+      setInternship({
+        ...internship,
+        skills: [...internship?.skills, skillValue],
+      });
       skillInputRef.current.value = "";
     }
   };
 
   const handleRemoveSkill = (skillToRemove: string) => {
-    setInternship({...internship, skills : internship.skills.filter((skill: string) => skill !== skillToRemove)});
+    setInternship({
+      ...internship,
+      skills: internship?.skills?.filter(
+        (skill: string) => skill !== skillToRemove
+      ),
+    });
   };
 
   const handleAddTag = (value: InternshipType) => {
-    if (!internship.tags.includes(value)) {
-      setInternship({...internship, tags : [...internship.tags, value]});
+    if (!internship?.tags?.includes(value)) {
+      setInternship({ ...internship, tags: [...internship?.tags, value] });
+    } else {
+      setInternship({
+        ...internship,
+        tags: internship?.tags?.filter((tag: InternshipType) => tag !== value),
+      });
     }
   };
 
-  const handleCheckedFunction = ( value : InternshipType) => {
-      handleAddTag(value);
-      handleFilterChange(value.toLowerCase() as keyof typeof filters);
-    };
-
-  console.log("tags : ", internship.tags);
+  const handleCheckedFunction = (key: InternshipType, value: boolean) => {
+    handleAddTag(key);
+  };
 
   return (
     <div className="p-6 flex flex-col gap-4 bg-background border border-border rounded-lg">
@@ -70,7 +82,7 @@ function JobSkills() {
           </div>
 
           <div className="flex flex-wrap gap-2 mt-2">
-            {internship.skills.map((skill: string, index: number) => (
+            {internship?.skills.map((skill: string, index: number) => (
               <div
                 key={index}
                 className="bg-primary text-primary-foreground px-3 py-1 rounded-full flex items-center space-x-1"
@@ -99,9 +111,22 @@ function JobSkills() {
           </Label>
         </div>
         <CheckboxButton
-          items={[InternshipType.PFA, InternshipType.PFE, InternshipType.INITIATION]}
-          itemsValue={[internship.tags.includes(InternshipType.PFA) , internship.tags.includes(InternshipType.PFE) , internship.tags.includes(InternshipType.INITIATION)]}
+          items={[
+            InternshipType.PFA,
+            InternshipType.PFE,
+            InternshipType.INITIATION,
+          ]}
+          itemsValue={[
+            internship?.tags.includes(InternshipType.PFA),
+            internship?.tags.includes(InternshipType.PFE),
+            internship?.tags.includes(InternshipType.INITIATION),
+          ]}
           onCheckedFunction={handleCheckedFunction}
+          classNameGroup="flex flex-row justify-between space-y-0 w-full"
+          classNameItemContainer="bg-white border-border border space-x-0 rounded-md cursor-pointer"
+          classNameLabel="cursor-pointer font-medium w-full h-full p-6"
+          classNameItem="hidden"
+          classNameItemContainerWhenChecked="border border-primary text-primary"
         />
       </div>
     </div>

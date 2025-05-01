@@ -17,41 +17,39 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Company } from "@/types/types";
+import { Internship } from "@/types/types";
 import { cx } from "class-variance-authority";
 
 interface Props {
   defaultValue?: string;
-  options: any[];
+  options: Internship[];
   onSelect: (value: any) => void;
-  classNameButton?: string;
 }
 
-export function SearchableCombobox({
+export function InternshipCommandSearch({
   defaultValue = "",
   options,
   onSelect,
-  classNameButton,
 }: Props) {
   const [open, setOpen] = React.useState<boolean>(false);
-  const [value, setValue] = React.useState<string>(defaultValue);
+  const [value, setValue] = React.useState<string>();
   const [search, setSearch] = React.useState<string>("");
   const [selectedOption, setSelectedOption] = React.useState<
-    Company | undefined
+    Internship | undefined
   >();
-
-  console.log("defaultValue : ", defaultValue);
-  console.log("value : ", value);
-  console.log("options : ", options);
 
   // Filter options based on search input (search companyName)
   const filteredOptions = options?.filter((option) =>
-    option.name.toLowerCase().includes(search.toLowerCase())
+    option.title.toLowerCase().includes(search.toLowerCase())
   );
 
   React.useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
+
+  React.useEffect(() => {
     setSelectedOption(
-      options.find((option) => option.name === value) || undefined
+      options.find((option) => option.title === value) || undefined
     );
   }, [value]);
 
@@ -64,11 +62,10 @@ export function SearchableCombobox({
           aria-expanded={open}
           className={cx(
             selectedOption ? "text-black" : "text-muted-foreground",
-            "w-full justify-between font-medium text-sm focus:ring-1 focus:ring-primary rounded-md",
-            classNameButton
+            "w-fit bg-white justify-between font-medium text-sm focus:ring-1 focus:ring-primary rounded-md"
           )}
         >
-          {selectedOption ? `${selectedOption.name}` : "Select company..."}
+          {selectedOption ? `${selectedOption.title}` : "Select internship..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -85,7 +82,7 @@ export function SearchableCombobox({
               {filteredOptions?.map((option) => (
                 <CommandItem
                   key={option.id}
-                  value={option.name}
+                  value={option.title}
                   onSelect={(currentValue) => {
                     setValue(currentValue);
                     setOpen(false);
@@ -97,14 +94,11 @@ export function SearchableCombobox({
                   <Check
                     className={cn(
                       "h-4 w-4 flex-shrink-0",
-                      value === option.name ? "opacity-100" : "opacity-0"
+                      value === option.title ? "opacity-100" : "opacity-0"
                     )}
                   />
                   <div className="flex flex-col gap-2 flex-1">
-                    <div className="font-medium">{option.name}</div>
-                    <div className="text-sm text-muted-foreground truncate">
-                      {option.location?.address}
-                    </div>
+                    <div className="font-medium">{option.title}</div>
                   </div>
                 </CommandItem>
               ))}
@@ -116,4 +110,4 @@ export function SearchableCombobox({
   );
 }
 
-export default SearchableCombobox;
+export default InternshipCommandSearch;
