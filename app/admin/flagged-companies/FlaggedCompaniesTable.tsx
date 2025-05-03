@@ -1,7 +1,8 @@
 "use client";
-import * as React from "react";
 
+import { flaggedCompanyColumns } from "./flaggedCompanyColumns";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -10,34 +11,30 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { FlaggedCompanyOverview } from "@/types/types";
 import {
-  ColumnDef,
+  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   SortingState,
   useReactTable,
-  ColumnFiltersState,
-  getFilteredRowModel,
 } from "@tanstack/react-table";
-import { Input } from "@/components/ui/input";
+import React from "react";
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+interface FlaggedCompaniesTableProps {
+  data: FlaggedCompanyOverview[];
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function FlaggedCompaniesTable({ data }: FlaggedCompaniesTableProps) {
+  const columns = flaggedCompanyColumns();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-
-  const table = useReactTable<TData>({
+  const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
@@ -53,7 +50,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div>
+    <div className="space-y-4">
       <div className="flex items-center py-4">
         <Input
           placeholder="Filter emails..."
@@ -64,6 +61,7 @@ export function DataTable<TData, TValue>({
           className="max-w-sm"
         />
       </div>
+
       <div className="rounded-md border">
         <Table className="rounded-sm overflow-hidden">
           <TableHeader>
@@ -113,16 +111,18 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
+                  No flagged companies found.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4 gap-2">
+
+      <div className="flex items-center justify-end space-x-4">
         <Button
           variant="outline"
+          size="sm"
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
@@ -130,6 +130,7 @@ export function DataTable<TData, TValue>({
         </Button>
         <Button
           variant="outline"
+          size="sm"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >

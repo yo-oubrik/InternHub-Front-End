@@ -67,6 +67,8 @@ export interface Company extends User {
   size: string;
   links?: Links;
   internships?: Internship[];
+  blocked: boolean;
+  blockedAt: Date | null;
 }
 
 export enum WorkMode {
@@ -270,5 +272,32 @@ export interface StudentFlag {
   companyName: string;
   studentEmail: string;
   companyEmail: string;
+  screenshots: string[];
+}
+
+export interface FlaggedCompanyOverview {
+  companyId: string;
+  name: string;
+  email: string;
+  unresolvedFlagsCount: number;
+  lastFlagDate: Date;
+  blocked: boolean;
+  blockedAt: Date | null;
+}
+
+export interface CompanyFlag {
+  id: string;
+  reason: string;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+  reportStatus: ReportStatus;
+  companyId: string;
+  studentId: string;
+  companyName: string;
+  studentFirstName: string;
+  studentLastName: string;
+  companyEmail: string;
+  studentEmail: string;
   screenshots: string[];
 }

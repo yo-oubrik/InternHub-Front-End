@@ -79,7 +79,7 @@ export const companyColumns: ColumnDef<Company>[] = [
                 <Building /> View Profile
               </DropdownMenuItem>
 
-              <DropdownMenuItem
+              {/* <DropdownMenuItem
                 className="flex items-center gap-2 cursor-pointer"
                 onClick={() =>
                   window.open(
@@ -91,22 +91,9 @@ export const companyColumns: ColumnDef<Company>[] = [
                 <Briefcase />
                 Company Internships
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => setIsRemoveOpen(true)}
-                className="text-red-600 cursor-pointer"
-              >
-                <Trash2 className="h-4 w-4" />
-                Remove Company
-              </DropdownMenuItem>
+              <DropdownMenuSeparator /> */}
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <RemoveCompanyDialog
-            companyToRemove={company}
-            isOpen={isRemoveOpen}
-            setIsOpen={setIsRemoveOpen}
-          />
         </>
       );
     },

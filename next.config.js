@@ -1,21 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    images: {
-        remotePatterns: [
-            {
-                protocol: 'https',
-                hostname: 'fastly.picsum.photos',
-                pathname: '**',
-            },
-            {
+  images: {
+    remotePatterns: [
+      {
         protocol: 'https',
-        hostname: 'picsum.photos',
+        hostname: '**',
         pathname: '**',
       },
-        ],
-      domains: ['ebhudrzrhgnxzbuayebh.supabase.co'],
-
-    },
+      {
+        protocol: 'http',
+        hostname: '**',
+        pathname: '**',
+      }
+    ],
+    unoptimized: true,
+  },
 }
 
 module.exports = nextConfig
