@@ -98,7 +98,7 @@ const Page = () => {
           <Link href={"/admin/companies/pending"}>Pending Companies</Link>
         </Button> */}
         <Button size={"lg"} className="hover:opacity-85 transition" asChild>
-          <Link href={"/admin/companies/flagged"}>Flagged Companies</Link>
+          <Link href={"/admin/flagged-companies"}>Flagged Companies</Link>
         </Button>
       </div>
     </div>
