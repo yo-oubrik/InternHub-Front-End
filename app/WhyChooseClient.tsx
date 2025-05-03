@@ -8,6 +8,10 @@ export interface HomeStatistics {
   onSiteInternshipsCount: number;
   totalCompaniesCount: number;
   totalStudentsCount: number;
+  privatePublicSchoolsCount: number;
+  universitiesCount: number;
+  totalApplicants: number;
+  totalAcceptedApplicants: number;
 }
 interface WhyChooseClientProps {
   statistics: HomeStatistics;
@@ -56,7 +60,7 @@ const WhyChooseClient: React.FC<WhyChooseClientProps> = ({ statistics }) => {
   ];
   return (
     <section className="py-20 bg-background-dark">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto">
         <h2 className="text-3xl font-bold text-center mb-12">
           Why Choose{" "}
           <span className="text-primary font-extrabold">InternHub</span>

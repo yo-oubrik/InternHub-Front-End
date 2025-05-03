@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import ContextProvider from "@/providers/ContextProvider";
 import { Poppins } from "next/font/google";
+import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 
 const poppins = Poppins({
@@ -37,7 +38,7 @@ export default function RootLayout({
 
         <ContextProvider>
           <Header />
-          <div className="px-14 min-h-[calc(100vh-var(--header-height))]">
+          <div className="min-h-[calc(100vh-var(--header-height))]">
             {children}
           </div>
           <Footer />
