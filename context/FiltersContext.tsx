@@ -15,6 +15,8 @@ interface FiltersProps {
   pfe: boolean;
   initiation: boolean;
   paid: boolean | null;
+  location: string;
+  title: string;
 }
 
 interface FiltersContextProps {
@@ -39,6 +41,8 @@ export const FiltersContextProvider: React.FC<{
     pfe: false,
     initiation: false,
     paid: null,
+    location: "",
+    title: "",
   });
 
   const handleFilterChange = (

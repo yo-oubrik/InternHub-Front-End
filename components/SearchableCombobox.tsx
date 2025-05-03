@@ -102,9 +102,9 @@ export function SearchableCombobox({
                   />
                   <div className="flex flex-col gap-2 flex-1">
                     <div className="font-medium">{option.name}</div>
-                    <div className="text-sm text-muted-foreground truncate">
+                    {/* <div className="text-sm text-muted-foreground truncate">
                       {option.location?.address}
-                    </div>
+                    </div> */}
                   </div>
                 </CommandItem>
               ))}

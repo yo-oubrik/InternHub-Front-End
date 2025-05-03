@@ -204,7 +204,7 @@ export default function page() {
 
             <div className="flex flex-col gap-2">
               <h1 className="text-2xl font-semibold">{internship?.title}</h1>
-              <p className="text-gray-500">{"Location Not Set"}</p>
+              {/* <p className="text-gray-500">{"Location Not Set"}</p> */}
             </div>
 
             <div className="mt-2 flex gap-4 justify-between items-stretch">

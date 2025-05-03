@@ -1,18 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { formatDates } from "@/utils/fotmatDates";
-import {
-  Pencil,
-  Trash,
-  Building2,
-  MapPin,
-  Calendar,
-  XCircle,
-} from "lucide-react";
+import { Trash, Calendar } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
-import { Internship, SalaryType } from "@/types/types";
+import { Internship } from "@/types/types";
 import formatMoney from "@/utils/formatMoney";
 import { cleanAndTruncateHTML } from "@/utils/Formating";
 import { Button } from "../ui/button";
@@ -25,7 +18,7 @@ interface InternshipProps {
 
 function Myinternship({ internship }: InternshipProps) {
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
   const { countInternshipApplications } = useInternship();
   const [countApplicants, setCountApplications] = useState<number>(0);
 
@@ -37,9 +30,9 @@ function Myinternship({ internship }: InternshipProps) {
     fetchCount();
   }, [internship.id, countInternshipApplications]);
 
-  const handleConfirm = () => {
-    // Handle confirmation logic here
-    setIsOpen(false);
+  const deleteInternship = () => {
+    setIsOpenDeleteDialog(false);
+    // Handle delete logic here
   };
 
   // const { isAuthenticated } = useAuth();
@@ -60,7 +53,7 @@ function Myinternship({ internship }: InternshipProps) {
           {!internship.isEnded ? (
             <div
               className="flex items-center rounded-md font-medium hover:bg-accent px-3 cursor-pointer gap-1 text-sm text-blue-400"
-              onClick={() => setIsOpen(true)}
+              // onClick={() => setIsOpenCloseDialog(true)}
             >
               Close Application
             </div>
@@ -73,6 +66,7 @@ function Myinternship({ internship }: InternshipProps) {
             variant="ghost"
             size="icon"
             className="text-red-500 hover:text-red-500"
+            onClick={() => setIsOpenDeleteDialog(true)}
           >
             <Trash size={14} />
           </Button>
@@ -110,24 +104,58 @@ function Myinternship({ internship }: InternshipProps) {
           Posted {formatDates(internship.createdAt)}
         </span>
 
-        <span>{countApplicants} applicant(s)</span>
+        <span
+          className="hover:text-primary cursor-pointer"
+          onClick={() => {
+            if (internship?.company?.id) {
+              const encodedTitle = encodeURIComponent(internship?.title || "");
+              router.push(
+                `/company/${internship.company.id}/applications/filter?internshipTitle=${encodedTitle}`
+              );
+            }
+          }}
+        >
+          {countApplicants} applicant(s)
+        </span>
       </div>
 
-      {isOpen && (
+      {isOpenDeleteDialog && (
         <EditModal
-          isOpenModal={isOpen}
-          setIsOpenModal={setIsOpen}
-          className="bg-white max-w-xl flex flex-col"
-          title="Close Application"
-          titleClassName="text-2xl font-medium"
-          description="Are you sure you want to close this application? This action cannot be undone."
-          descriptionClassName="text-sm text-muted-foreground mb-4"
+          isOpenModal={isOpenDeleteDialog}
+          setIsOpenModal={setIsOpenDeleteDialog}
+          className="bg-white p-0 max-w-md flex flex-col text-black"
+          title="Confirm to delete this application"
+          titleClassName="text-xl px-4 pt-4 font-medium"
           cancelButton="Cancel"
-          cancelButtonClassName="bg-white text-primary border border-primary focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
-          onCancel={() => setIsOpen(false)}
-          confirmButton="Close Anyway"
-          confirmButtonClassName="bg-primary text-white hover:bg-primary-hover"
-          onConfirm={handleConfirm}
+          cancelButtonClassName="bg-gray-200 text-black border-gray-300 hover:bg-gray-300"
+          onCancel={() => setIsOpenDeleteDialog(false)}
+          confirmButton="Delete internship"
+          confirmButtonClassName="bg-red-600 hover:bg-red-700 text-white"
+          onConfirm={deleteInternship}
+          footerClassName="flex justify-end p-4 border-t border-gray-300 w-full"
+          body={
+            <div className="flex flex-col gap-6">
+              <div className="bg-gray-100 p-4 -mt-2 border border-gray-300">
+                <div className="flex gap-3 items-start">
+                  <div className="bg-orange-600 p-2 rounded-md">
+                    <Trash className="text-white h-5 w-5" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <p className="font-medium">This action cannot be undone</p>
+                    <p className="text-sm text-gray-500">
+                      The internship will be permanently deleted and cannot be
+                      recovered
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-sm font-medium px-4">
+                Are you sure you want to delete the internship "
+                {internship.title}"?
+              </p>
+            </div>
+          }
         />
       )}
     </div>

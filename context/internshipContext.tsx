@@ -106,6 +106,7 @@ export const InternshipContextProvider: React.FC<{
   };
 
   const getCompanyInternships = async (companyId: string) => {
+    if (!companyId) return [];
     try {
       setLoading(true);
       const res = await fetchWithAuth(`internships/company/${companyId}`);

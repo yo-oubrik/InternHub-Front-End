@@ -158,7 +158,7 @@ function Summary() {
             <MapPinned className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h4 className="text-lg font-semibold">Location & Compensation</h4>
+            <h4 className="text-lg font-semibold">Compensation</h4>
             <p className="text-sm text-muted-foreground">
               Where the internship takes place and compensation details
             </p>

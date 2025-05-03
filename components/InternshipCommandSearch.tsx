@@ -48,10 +48,8 @@ export function InternshipCommandSearch({
   }, [defaultValue]);
 
   React.useEffect(() => {
-    setSelectedOption(
-      options.find((option) => option.title === value) || undefined
-    );
-  }, [value]);
+    setSelectedOption(options.find((option) => option.title === value));
+  }, [value, options]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -62,23 +60,54 @@ export function InternshipCommandSearch({
           aria-expanded={open}
           className={cx(
             selectedOption ? "text-black" : "text-muted-foreground",
-            "w-fit bg-white justify-between font-medium text-sm focus:ring-1 focus:ring-primary rounded-md"
+            "w-[250px] bg-white justify-between border-gray-300 hover:border-primary focus:border-primary transition-colors font-medium text-sm rounded-md"
           )}
         >
-          {selectedOption ? `${selectedOption.title}` : "Select internship..."}
+          <div className="flex items-center gap-2 truncate">
+            {selectedOption ? (
+              <>
+                <div className="w-2 h-2 rounded-full bg-primary"></div>
+                <span className="truncate">{selectedOption.title}</span>
+              </>
+            ) : (
+              "Filter by internship..."
+            )}
+          </div>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 w-fit">
+      <PopoverContent className="p-0 w-[350px] border-gray-300 shadow-lg">
         <Command>
           <CommandInput
-            placeholder="Search companies..."
+            placeholder="Search internships..."
             value={search}
             onValueChange={setSearch}
+            className="border-b border-gray-200"
           />
-          <CommandList>
-            <CommandEmpty>No companies found.</CommandEmpty>
-            <CommandGroup>
+          <CommandList className="max-h-[300px]">
+            <CommandEmpty>
+              <div className="flex flex-col items-center justify-center text-center">
+                <div className="text-gray-400 mb-2">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M21 21L15.0001 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+                <p className="text-sm text-gray-500">No internships found.</p>
+              </div>
+            </CommandEmpty>
+            <CommandGroup heading="Available Internships">
               {filteredOptions?.map((option) => (
                 <CommandItem
                   key={option.id}
@@ -89,17 +118,28 @@ export function InternshipCommandSearch({
                     setSearch("");
                     onSelect(currentValue);
                   }}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 py-2 px-2 hover:bg-gray-100 transition-colors"
                 >
+                  <div className="flex items-center gap-2 flex-1">
+                    <div
+                      className={cn(
+                        "w-2 h-2 rounded-full bg-primary",
+                        value === option.title ? "opacity-100" : "opacity-50"
+                      )}
+                    ></div>
+                    <div className="flex flex-col">
+                      <div className="font-medium truncate">{option.title}</div>
+                      <div className="text-xs text-gray-500 truncate">
+                        {option.company?.name || "Unknown company"}
+                      </div>
+                    </div>
+                  </div>
                   <Check
                     className={cn(
-                      "h-4 w-4 flex-shrink-0",
+                      "h-4 w-4 text-primary",
                       value === option.title ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  <div className="flex flex-col gap-2 flex-1">
-                    <div className="font-medium">{option.title}</div>
-                  </div>
                 </CommandItem>
               ))}
             </CommandGroup>

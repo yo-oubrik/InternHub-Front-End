@@ -3,6 +3,7 @@ import { useInternship } from "@/context/internshipContext";
 import { location } from "@/utils/Icons";
 import { Search } from "lucide-react";
 import React from "react";
+import { motion } from "framer-motion";
 
 function SearchForm() {
   // const { searchJobs, handleSearchChange, searchQuery } = useInternship();
@@ -17,10 +18,7 @@ function SearchForm() {
       <div className="flex bg-white rounded-full px-2 items-stretch h-[3.3rem] w-[50rem]">
         <div className="flex flex-row items-center w-[45%]">
           <span>
-            <Search
-              size={30}
-              className="text-primary-hover text-2xl"
-            />
+            <Search size={30} className="text-primary-hover text-2xl" />
           </span>
           <input
             type="text"
@@ -34,9 +32,7 @@ function SearchForm() {
         </div>
         <div className="w-[2px] h-11 bg-gray-300 my-auto"></div>
         <div className="flex flex-row items-center w-[55%]">
-          <span className="text-primary text-3xl ml-2">
-            {location}
-          </span>
+          <span className="text-primary text-3xl ml-2">{location}</span>
           <input
             type="text"
             id="location"
@@ -53,11 +49,6 @@ function SearchForm() {
             Search
           </button>
         </div>
-
-
-
-
-
       </div>
     </form>
   );
