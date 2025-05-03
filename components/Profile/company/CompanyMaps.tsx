@@ -1,14 +1,6 @@
 "use client";
-import { getCoordinatesFromAddress } from "@/lib/geocode";
-import { Location } from "@/types/types";
-import React, { useEffect, useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  useMapEvents,
-} from "react-leaflet";
+import React from "react";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import markerIcon from "@/public/icons/gps.png";

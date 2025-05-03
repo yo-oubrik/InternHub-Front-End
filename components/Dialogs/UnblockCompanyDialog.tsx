@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -7,49 +9,37 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { FileAttachment } from "../ui/file-attachment";
-import { calculateTotalSize } from "@/utils/utils";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { X } from "lucide-react";
-import dynamic from "next/dynamic";
-import { useState } from "react";
+import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { useState } from "react";
 
-const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
-
-interface StudentToBlock {
-  id: string;
-  firstName: string;
-  lastName: string;
-}
-
-interface BlockStudentDialogProps {
-  studentToBlock: StudentToBlock;
+interface UnblockCompanyDialogProps {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  onConfirm: (
-    message: string,
-    subject: string,
-    attachments: File[]
-  ) => Promise<void>;
+  setIsOpen: (open: boolean) => void;
+  companyToUnblock: {
+    id: string;
+    name: string;
+  };
+  onConfirm: (message: string, subject: string, attachments: File[]) => void;
 }
 
-const MAX_ATTACHMENT_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+const MAX_ATTACHMENT_SIZE = 5 * 1024 * 1024; // 5MB
 
-export const BlockStudentDialog: React.FC<BlockStudentDialogProps> = ({
-  studentToBlock: student,
+export function UnblockCompanyDialog({
   isOpen,
   setIsOpen,
+  companyToUnblock,
   onConfirm,
-}) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const defaultSubject = `Account Blocking Notification`;
-  const defaultMessage = `Dear ${student.firstName} ${student.lastName},
+}: UnblockCompanyDialogProps) {
+  const defaultSubject = `Account Unblocking Notification`;
+  const defaultMessage = `Dear ${companyToUnblock.name},
 
-We regret to inform you that your account has been blocked due to violation of our platform's policies.
+We are pleased to inform you that your account has been unblocked. You can now resume using our platform's services.
 
-Please be advised that this action has been taken in accordance with our terms of service.
+Please ensure to adhere to our platform's policies to avoid future incidents.
 
 Best regards,
 Admin Team`;
@@ -58,6 +48,11 @@ Admin Team`;
   const [subject, setSubject] = useState(defaultSubject);
   const [attachments, setAttachments] = useState<File[]>([]);
   const [sizeError, setSizeError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const calculateTotalSize = (files: File[]) => {
+    return files.reduce((acc, file) => acc + file.size, 0);
+  };
 
   const handleFileChange = (files: FileList | null) => {
     if (!files) return;
@@ -81,24 +76,13 @@ Admin Team`;
   };
 
   const removeAttachment = (index: number) => {
-    setAttachments((prev) => {
-      const newAttachments = prev.filter((_, i) => i !== index);
-      const newTotalSize = calculateTotalSize(newAttachments);
-      if (newTotalSize <= MAX_ATTACHMENT_SIZE) {
-        setSizeError(null);
-      }
-      return newAttachments;
-    });
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
+    setSizeError(null);
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = () => {
     setIsLoading(true);
-    try {
-      await onConfirm(message, subject, attachments);
-      setIsOpen(false);
-    } finally {
-      setIsLoading(false);
-    }
+    onConfirm(message, subject, attachments);
   };
 
   const handleCancel = () => {
@@ -113,18 +97,16 @@ Admin Team`;
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[800px]">
         <DialogHeader>
-          <DialogTitle>Block Student</DialogTitle>
+          <DialogTitle>Unblock Company</DialogTitle>
           <DialogDescription>
-            Block student account for{" "}
-            <span className="font-medium">
-              {student.firstName} {student.lastName}
-            </span>
+            Unblock company account for{" "}
+            <span className="font-medium">{companyToUnblock.name}</span>
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="subject">Block Notification Subject</Label>
+            <Label htmlFor="subject">Unblock Notification Subject</Label>
             <Input
               id="subject"
               value={subject}
@@ -134,7 +116,7 @@ Admin Team`;
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="message">Block Message</Label>
+            <Label htmlFor="message">Unblock Message</Label>
             <div className="min-h-[200px] bg-white rounded-md border">
               <ReactQuill
                 value={message}
@@ -146,30 +128,25 @@ Admin Team`;
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="attachments">Attachments (Optional)</Label>
-            <FileAttachment
-              onFilesChange={handleFileChange}
-              maxSize={MAX_ATTACHMENT_SIZE}
-              onSizeError={setSizeError}
+            <Label htmlFor="attachments">Attachments</Label>
+            <Input
+              id="attachments"
+              type="file"
+              onChange={(e) => handleFileChange(e.target.files)}
+              multiple
+              className="bg-white"
             />
-
-            {sizeError && <p className="text-red-500 text-sm">{sizeError}</p>}
-
+            {sizeError && (
+              <p className="text-sm text-red-500 mt-1">{sizeError}</p>
+            )}
             {attachments.length > 0 && (
-              <div className="mt-2 space-y-2">
+              <div className="flex flex-wrap gap-2 mt-2">
                 {attachments.map((file, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between bg-gray-50 p-2 rounded-md"
+                    className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full"
                   >
-                    <div className="flex items-center space-x-2 text-sm">
-                      <span className="font-medium truncate max-w-[200px]">
-                        {file.name}
-                      </span>
-                      <span className="text-gray-500">
-                        ({(file.size / 1024).toFixed(1)} KB)
-                      </span>
-                    </div>
+                    <span className="text-sm">{file.name}</span>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -196,14 +173,14 @@ Admin Team`;
           </Button>
           <Button
             type="button"
-            variant="destructive"
+            variant="default"
             onClick={handleConfirm}
             disabled={isLoading}
           >
-            {isLoading ? "Blocking..." : "Block Student"}
+            {isLoading ? "Unblocking..." : "Unblock Company"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-};
+}

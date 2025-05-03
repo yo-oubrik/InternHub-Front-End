@@ -58,9 +58,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({ className }) => {
     try {
       setIsLoading(true);
       const loginRequest: LoginRequest = data;
-      console.log("Login request:", loginRequest);
       const response = await api.post("/auth/login", loginRequest);
-      console.log("Login response:", response.data);
       const authResponse: AuthResponse = response.data;
       localStorage.setItem("token", authResponse.token);
       localStorage.setItem("expiresIn", authResponse.expiresIn.toString());
@@ -116,7 +114,7 @@ export const SignInForm: React.FC<SignInFormProps> = ({ className }) => {
                   <p className="text-red-500">{errors.password.message}</p>
                 )}
                 <a
-                  href="#"
+                  href="/forgot-password"
                   className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
                 >
                   Forgot your password?

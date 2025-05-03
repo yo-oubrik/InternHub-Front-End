@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,50 +7,57 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { StudentFlag } from "@/types/types";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { FileAttachment } from "../ui/file-attachment";
 import { calculateTotalSize } from "@/utils/utils";
 import { X } from "lucide-react";
-import { FileAttachment } from "../ui/file-attachment";
-import "react-quill/dist/quill.snow.css";
-import { Input } from "../ui/input";
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import "react-quill/dist/quill.snow.css";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
-interface WarnStudentDialogProps {
+interface StudentToUnblock {
+  id: string;
+  firstName: string;
+  lastName: string;
+}
+
+interface UnblockStudentDialogProps {
+  studentToUnblock: StudentToUnblock;
   isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  onConfirm: (message: string, subject: string, attachments: File[]) => Promise<void>;
-  studentFlag: StudentFlag;
+  setIsOpen: (isOpen: boolean) => void;
+  onConfirm: (
+    message: string,
+    subject: string,
+    attachments: File[]
+  ) => Promise<void>;
 }
 
 const MAX_ATTACHMENT_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 
-export function WarnStudentDialog({
+export const UnblockStudentDialog: React.FC<UnblockStudentDialogProps> = ({
+  studentToUnblock: student,
   isOpen,
-  onOpenChange,
+  setIsOpen,
   onConfirm,
-  studentFlag,
-}: WarnStudentDialogProps) {
-  const defaultSubject = `Warning: Inappropriate Behavior Report`;
-  const defaultReason = `Dear Student,
+}) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const defaultSubject = `Account Unblocking Notification`;
+  const defaultMessage = `Dear ${student.firstName} ${student.lastName},
 
-This is a warning regarding inappropriate behavior reported during your internship application process. 
+We are pleased to inform you that your account has been unblocked. You can now resume using our platform's services.
 
-Reason for warning: ${studentFlag.reason}
-
-Please be advised that such behavior is against our platform's policies and may result in account suspension if repeated.
+Please ensure to adhere to our platform's policies to avoid future incidents.
 
 Best regards,
 Admin Team`;
 
-  const [reason, setReason] = useState(defaultReason);
+  const [message, setMessage] = useState(defaultMessage);
   const [subject, setSubject] = useState(defaultSubject);
   const [attachments, setAttachments] = useState<File[]>([]);
   const [sizeError, setSizeError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleFileChange = (files: FileList | null) => {
     if (!files) return;
@@ -89,36 +94,37 @@ Admin Team`;
   const handleConfirm = async () => {
     setIsLoading(true);
     try {
-      await onConfirm(reason, subject, attachments);
+      await onConfirm(message, subject, attachments);
+      setIsOpen(false);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleCancel = () => {
-    setReason(defaultReason);
+    setMessage(defaultMessage);
     setSubject(defaultSubject);
     setAttachments([]);
     setSizeError(null);
-    onOpenChange(false);
+    setIsOpen(false);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-[800px]">
         <DialogHeader>
-          <DialogTitle>Send Warning to Student</DialogTitle>
+          <DialogTitle>Unblock Student</DialogTitle>
           <DialogDescription>
-            Send a warning notification to{" "}
+            Unblock student account for{" "}
             <span className="font-medium">
-              {studentFlag.firstName} {studentFlag.lastName}
+              {student.firstName} {student.lastName}
             </span>
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="subject">Warning Subject</Label>
+            <Label htmlFor="subject">Unblock Notification Subject</Label>
             <Input
               id="subject"
               value={subject}
@@ -128,11 +134,11 @@ Admin Team`;
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="message">Warning Message</Label>
+            <Label htmlFor="message">Unblock Message</Label>
             <div className="min-h-[200px] bg-white rounded-md border">
               <ReactQuill
-                value={reason}
-                onChange={setReason}
+                value={message}
+                onChange={setMessage}
                 theme="snow"
                 style={{ height: "150px" }}
               />
@@ -180,14 +186,24 @@ Admin Team`;
         </div>
 
         <DialogFooter className="flex gap-2 sm:justify-end">
-          <Button variant="outline" onClick={handleCancel} disabled={isLoading}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleCancel}
+            disabled={isLoading}
+          >
             Cancel
           </Button>
-          <Button variant="destructive" onClick={handleConfirm} disabled={isLoading}>
-            {isLoading ? "Sending Warning..." : "Send Warning"}
+          <Button
+            type="button"
+            variant="default"
+            onClick={handleConfirm}
+            disabled={isLoading}
+          >
+            {isLoading ? "Unblocking..." : "Unblock Student"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-}
+};

@@ -40,10 +40,6 @@ export function SearchableCombobox({
     Company | undefined
   >();
 
-  console.log("defaultValue : ", defaultValue);
-  console.log("value : ", value);
-  console.log("options : ", options);
-
   // Filter options based on search input (search companyName)
   const filteredOptions = options?.filter((option) =>
     option.name.toLowerCase().includes(search.toLowerCase())

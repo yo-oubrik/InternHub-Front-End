@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import PlusButton from "../PlusButton";
-import CustomAccordion from "../CustomAccordion";
 import { Formation, Role } from "@/types/types";
 import { useUser } from "@/context/userContext";
 import { useAuth } from "@/context/authContext";

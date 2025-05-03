@@ -3,7 +3,6 @@ import { Pencil, Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import PlusButton from "../PlusButton";
 import { Experience, Role } from "@/types/types";
-import CustomAccordion from "../CustomAccordion";
 import { useUser } from "@/context/userContext";
 import { useAuth } from "@/context/authContext";
 import ExperienceInfos from "./ExperienceInfos";
@@ -12,7 +11,6 @@ const ExperienceCard = () => {
   const { student, isUserProfile } = useUser();
   const { currentUser } = useAuth();
 
-  console.log(student);
   const [experiences, setExperiences] = useState<Experience[]>([]);
   const [wantToAdd, setWantToAdd] = useState<boolean>(false);
 

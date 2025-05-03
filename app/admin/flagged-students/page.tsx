@@ -1,9 +1,21 @@
 "use client";
+import { useEffect, useState } from "react";
 import { FlaggedStudentsTable } from "./FlaggedStudentsTable";
 import { useStudents } from "@/context/StudentsContext";
+import { FlaggedStudentOverview } from "@/types/types";
 
 const Page = () => {
-  const { flaggedStudentsOverview } = useStudents();
+  const { fetchFlaggedStudentsOverview } = useStudents();
+  const [flaggedStudentsOverview, setFlaggedStudentsOverview] = useState<
+    FlaggedStudentOverview[]
+  >([]);
+  useEffect(() => {
+    async function fetchData() {
+      const overviewOfFlaggedStudents = await fetchFlaggedStudentsOverview();
+      setFlaggedStudentsOverview(overviewOfFlaggedStudents);
+    }
+    fetchData();
+  }, []);
   return (
     <div className="container mx-auto py-10">
       <h3 className="header mb-5">Flagged Students Overview</h3>

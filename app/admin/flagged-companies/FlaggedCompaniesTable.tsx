@@ -1,6 +1,6 @@
 "use client";
 
-import { flaggedStudentColumns } from "@/app/admin/flagged-students/flaggedStudentColumns";
+import { flaggedCompanyColumns } from "./flaggedCompanyColumns";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { StudentFlag } from "@/types/types";
+import { FlaggedCompanyOverview } from "@/types/types";
 import {
   ColumnFiltersState,
   flexRender,
@@ -23,13 +23,13 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import React from "react";
-import { studentFlagsHistoryColumns } from "./studentFlagsHistoryColumns";
 
-interface StudentFlagsHistoryProps {
-  data: StudentFlag[];
+interface FlaggedCompaniesTableProps {
+  data: FlaggedCompanyOverview[];
 }
-export function StudentFlagsHistory({ data }: StudentFlagsHistoryProps) {
-  const columns = studentFlagsHistoryColumns();
+
+export function FlaggedCompaniesTable({ data }: FlaggedCompaniesTableProps) {
+  const columns = flaggedCompanyColumns();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -50,7 +50,18 @@ export function StudentFlagsHistory({ data }: StudentFlagsHistoryProps) {
   });
 
   return (
-    <div className="space-y-4 mx-28 py-20">
+    <div className="space-y-4">
+      <div className="flex items-center py-4">
+        <Input
+          placeholder="Filter emails..."
+          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("email")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
+        />
+      </div>
+
       <div className="rounded-md border">
         <Table className="rounded-sm overflow-hidden">
           <TableHeader>
@@ -100,7 +111,7 @@ export function StudentFlagsHistory({ data }: StudentFlagsHistoryProps) {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No flags history.
+                  No flagged companies found.
                 </TableCell>
               </TableRow>
             )}

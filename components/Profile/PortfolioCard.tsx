@@ -2,22 +2,18 @@
 import React, { useRef, useState } from "react";
 import ProfileAvatar from "./ProfileAvatar";
 import {
-  Check,
   Mail,
   MapPinHouse,
   Pencil,
   Phone,
+  RotateCcw,
   University,
   UserPen,
-  X,
-  RotateCcw,
 } from "lucide-react";
-import TooltipSocialLinks from "./TooltipSocialLinks";
 import { Separator } from "../ui/separator";
 import Overlay from "../Overlay";
 import AnimatedSocialButton from "./AnimatedSocialButton";
 import { useUser } from "@/context/userContext";
-import { useAuth } from "@/context/authContext";
 import {
   uploadFileToSupabase,
   deleteFileFromSupabase,
@@ -53,7 +49,6 @@ const PortfolioCard = () => {
             .split(".")
             .pop()}`,
         });
-
         // Update student? with the new profile picture URL
         updateStudent({
           ...student,

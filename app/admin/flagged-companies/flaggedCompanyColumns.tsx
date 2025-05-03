@@ -9,60 +9,54 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FlaggedStudentOverview } from "@/types/types";
+import { FlaggedCompanyOverview } from "@/types/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { InfoIcon, MoreHorizontal, User } from "lucide-react";
+import { InfoIcon, MoreHorizontal, Building2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-export const flaggedStudentColumns =
-  (): ColumnDef<FlaggedStudentOverview>[] => [
-    {
-      accessorKey: "firstName",
-      header: ({ column }) => (
-        <SortableHeader column={column} label="First Name" />
-      ),
-      sortingFn: "alphanumeric",
-    },
-    {
-      accessorKey: "lastName",
-      header: ({ column }) => (
-        <SortableHeader column={column} label="Last Name" />
-      ),
-    },
-    {
-      accessorKey: "email",
-      header: "Email",
-    },
-    {
-      accessorKey: "unresolvedFlagsCount",
-      header: ({ column }) => (
-        <SortableHeader column={column} label="Unresolved Flags Count" />
-      ),
-      cell: ({ row }) => {
-        const unresolvedFlagsCount = row.original.unresolvedFlagsCount;
-        return <div className="ml-20">{unresolvedFlagsCount}</div>;
-      },
-    },
-    {
-      accessorKey: "lastFlaggedAt",
-      header: ({ column }) => (
-        <SortableHeader column={column} label="Last Flag Date" />
-      ),
-      cell: ({ row }) => {
-        const rawDate = row.original.lastFlagDate;
-        const date = new Date(rawDate);
-        return <div>{date.toLocaleDateString("en-GB")}</div>;
-      },
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => {
-        const flaggedStudent = row.original;
+export const flaggedCompanyColumns =
+  (): ColumnDef<FlaggedCompanyOverview>[] => {
+    const router = useRouter();
 
-        const router = useRouter();
-        return (
-          <>
+    return [
+      {
+        accessorKey: "name",
+        header: ({ column }) => (
+          <SortableHeader column={column} label="Company Name" />
+        ),
+        sortingFn: "alphanumeric",
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
+      },
+      {
+        accessorKey: "unresolvedFlagsCount",
+        header: ({ column }) => (
+          <SortableHeader column={column} label="Unresolved Flags Count" />
+        ),
+        cell: ({ row }) => {
+          const unresolvedFlagsCount = row.original.unresolvedFlagsCount;
+          return <div className="ml-20">{unresolvedFlagsCount}</div>;
+        },
+      },
+      {
+        accessorKey: "lastFlagDate",
+        header: ({ column }) => (
+          <SortableHeader column={column} label="Last Flag Date" />
+        ),
+        cell: ({ row }) => {
+          const date = new Date(row.original.lastFlagDate);
+          return <div>{date.toLocaleDateString("en-GB")}</div>;
+        },
+      },
+      {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => {
+          const flaggedCompany = row.original;
+
+          return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -80,7 +74,7 @@ export const flaggedStudentColumns =
                 <DropdownMenuItem
                   onClick={() => {
                     router.push(
-                      `/admin/flagged-students/${flaggedStudent.studentId}`
+                      `/admin/flagged-companies/${flaggedCompany.companyId}`
                     );
                   }}
                   className="flex items-center gap-2 cursor-pointer"
@@ -92,17 +86,18 @@ export const flaggedStudentColumns =
                   className="flex items-center gap-2 cursor-pointer"
                   onClick={() => {
                     window.open(
-                      `/students/${flaggedStudent.studentId}`,
+                      `/company/${flaggedCompany.companyId}`,
                       "_blank"
                     );
                   }}
                 >
-                  <User /> View Profile
+                  <Building2 className="h-4 w-4" />
+                  View Profile
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </>
-        );
+          );
+        },
       },
-    },
-  ];
+    ];
+  };

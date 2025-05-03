@@ -124,9 +124,6 @@ const ExperienceInfos = ({
     if (setWantToAdd) setWantToAdd(false);
   };
 
-  console.log("companies : ", companies);
-  console.log("experience : ", experience);
-
   return (
     <Accordion
       type="single"
@@ -164,15 +161,7 @@ const ExperienceInfos = ({
               </div>
               <div className="h-full space-y-1 text-start">
                 {flag === "VIEW" ? (
-                  <>
-                    <p>{experience?.poste}</p>
-                    <p className="flex font-normal text-gray-700">
-                      {experience?.company.name} <Dot width={17} />{" "}
-                      {experience?.company.location?.city +
-                        " , " +
-                        experience?.company.location?.country}
-                    </p>
-                  </>
+                  <p>{experience?.poste}</p>
                 ) : (
                   <>
                     <InputField

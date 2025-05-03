@@ -1,25 +1,21 @@
 "use client";
+
 import { StatCard } from "@/components/Cards/StatCard";
-import { BlockStudentDialog } from "@/components/Dialogs/BlockStudentDialog";
-import { UnblockStudentDialog } from "@/components/Dialogs/UnblockStudentDialog";
-import { WarnStudentDialog } from "@/components/Dialogs/WarnStudentDialog";
-import { ReloveFlagDialog } from "@/components/Dialogs/ResolveFlag";
-import { StudentFlagDetails } from "../StudentFlagDetails";
+import { BlockCompanyDialog } from "@/components/Dialogs/BlockCompanyDialog";
+import { ResolveCompanyFlagDialog } from "@/components/Dialogs/ResolveCompanyFlag";
+import { UnblockCompanyDialog } from "@/components/Dialogs/UnblockCompanyDialog";
+import { WarnCompanyDialog } from "@/components/Dialogs/WarnCompanyDialog";
+import { SortableHeader } from "@/components/SortableHeader";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useStudents } from "@/context/StudentsContext";
 import {
-  Bell,
-  Flag,
-  InfoIcon,
-  MoreHorizontal,
-  ShieldX,
-  Lock,
-  Unlock,
-} from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { StudentFlag, Student, reportStatusMap } from "@/types/types";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -28,85 +24,92 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+import { useCompanies } from "@/context/CompaniesContext";
+import axios from "@/lib/axios";
+import { Company, CompanyFlag, reportStatusMap } from "@/types/types";
+import { getValidToken } from "@/utils/auth";
 import {
   ColumnDef,
   ColumnFiltersState,
+  SortingState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  SortingState,
   useReactTable,
 } from "@tanstack/react-table";
-import { SortableHeader } from "@/components/SortableHeader";
-import { sortDateColumn } from "@/utils/dates/sortDateColumn";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-} from "@/components/ui/dropdown-menu";
-import {
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@radix-ui/react-dropdown-menu";
+  Bell,
+  Flag,
+  InfoIcon,
+  Lock,
+  MoreHorizontal,
+  Unlock,
+} from "lucide-react";
+import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { CompanyFlagDetails } from "../CompanyFlagDetails";
 
 export default function Page() {
   const params = useParams();
-  const router = useRouter();
   const id = params.id as string;
   const [isLoading, setIsLoading] = useState(true);
-  const [isBlockStudentDialogOpen, setIsBlockStudentDialogOpen] =
+  const [isBlockCompanyDialogOpen, setIsBlockCompanyDialogOpen] =
     useState(false);
-  const [isUnblockStudentDialogOpen, setIsUnblockStudentDialogOpen] =
+  const [isUnblockCompanyDialogOpen, setIsUnblockCompanyDialogOpen] =
     useState(false);
-  const [isWarnStudentDialogOpen, setIsWarnStudentDialogOpen] = useState(false);
-  const [isIgnoreFlagDialogOpen, setIsIgnoreFlagDialogOpen] = useState(false);
+  const [isWarnCompanyDialogOpen, setIsWarnCompanyDialogOpen] = useState(false);
+  const [isResolveFlagDialogOpen, setIsResolveFlagDialogOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [flags, setFlags] = useState<StudentFlag[]>([]);
-  const [selectedFlag, setSelectedFlag] = useState<StudentFlag | null>(null);
+  const [flags, setFlags] = useState<CompanyFlag[]>([]);
+  const [selectedFlag, setSelectedFlag] = useState<CompanyFlag | null>(null);
   const [unresolvedCount, setUnresolvedCount] = useState(0);
   const [resolvedCount, setResolvedCount] = useState(0);
   const [warningsCount, setWarningsCount] = useState(0);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [student, setStudent] = useState<Student | null>(null);
+  const [company, setCompany] = useState<Company | null>(null);
 
   const {
-    fetchStudentFlagsHistory,
+    fetchCompanyFlagsHistory,
     resolveFlag,
-    warnStudent,
-    blockStudent,
-    unblockStudent,
+    warnCompany,
+    blockCompany,
+    unblockCompany,
     fetchUnresolvedFlagsCount,
     fetchResolvedFlagsCount,
     fetchWarningsCount,
-    fetchStudent,
-  } = useStudents();
+  } = useCompanies();
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
+        const token = getValidToken();
+        if (!token) return;
+
         const [
-          studentDetails,
-          historyOfStudentFlags,
+          companyDetails,
+          historyOfCompanyFlags,
           unresolvedFlags,
           resolvedFlags,
           warnings,
         ] = await Promise.all([
-          fetchStudent(id),
-          fetchStudentFlagsHistory(id),
+          axios
+            .get(`/companies/${id}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            })
+            .then((res) => res.data),
+          fetchCompanyFlagsHistory(id),
           fetchUnresolvedFlagsCount(id),
           fetchResolvedFlagsCount(id),
           fetchWarningsCount(id),
         ]);
 
-        setStudent(studentDetails);
-        setFlags(historyOfStudentFlags);
+        setCompany(companyDetails);
+        setFlags(historyOfCompanyFlags);
         setUnresolvedCount(unresolvedFlags);
         setResolvedCount(resolvedFlags);
         setWarningsCount(warnings);
@@ -117,7 +120,7 @@ export default function Page() {
     fetchData();
   }, [id]);
 
-  const handleIgnoreFlag = async (flagId: string) => {
+  const handleResolveFlag = async (flagId: string) => {
     const success = await resolveFlag(flagId);
     if (success) {
       setFlags((currentFlags) =>
@@ -125,20 +128,20 @@ export default function Page() {
           flag.id === flagId ? { ...flag, reportStatus: "RESOLVED" } : flag
         )
       );
-      setIsIgnoreFlagDialogOpen(false);
+      setIsResolveFlagDialogOpen(false);
       setUnresolvedCount((prev) => prev - 1);
       setResolvedCount((prev) => prev + 1);
     }
   };
 
-  const handleWarnStudent = async (
+  const handleWarnCompany = async (
     message: string,
     subject: string,
     attachments: File[]
   ) => {
     if (!selectedFlag) return;
 
-    const success = await warnStudent(
+    const success = await warnCompany(
       selectedFlag.id,
       message,
       subject,
@@ -152,48 +155,51 @@ export default function Page() {
             : flag
         )
       );
-      setIsWarnStudentDialogOpen(false);
+      setIsWarnCompanyDialogOpen(false);
       setUnresolvedCount((prev) => prev - 1);
       setWarningsCount((prev) => prev + 1);
     }
   };
 
-  const handleBlockStudent = async (
+  const handleBlockCompany = async (
     message: string,
     subject: string,
     attachments: File[]
   ) => {
-    const success = await blockStudent(id, message, subject, attachments);
+    const success = await blockCompany(id, message, subject, attachments);
     if (success) {
-      router.push("/admin/flagged-students");
+      setCompany((prev) =>
+        prev ? { ...prev, blocked: true, blockedAt: new Date() } : null
+      );
     }
-    setIsBlockStudentDialogOpen(false);
+
+    setIsBlockCompanyDialogOpen(false);
   };
 
-  const handleUnblockStudent = async (
+  const handleUnblockCompany = async (
     message: string,
     subject: string,
     attachments: File[]
   ) => {
-    const success = await unblockStudent(id, message, subject, attachments);
+    const success = await unblockCompany(id, message, subject, attachments);
     if (success) {
-      setStudent((prev) =>
+      setCompany((prev) =>
         prev ? { ...prev, blocked: false, blockedAt: null } : null
       );
     }
-    setIsUnblockStudentDialogOpen(false);
+    setIsUnblockCompanyDialogOpen(false);
   };
 
-  const columns: ColumnDef<StudentFlag>[] = [
+  const columns: ColumnDef<CompanyFlag>[] = [
     {
-      accessorKey: "companyName",
+      accessorKey: "studentName",
       header: ({ column }) => (
-        <SortableHeader column={column} label="Company" />
+        <SortableHeader column={column} label="Student" />
       ),
       cell: ({ row }) => (
         <Button variant="link" size="sm" className="text-sm p-0" asChild>
-          <Link href={`/companies/${row.original.companyId}`} target="_blank">
-            {row.original.companyName}
+          <Link href={`/students/${row.original.studentId}`} target="_blank">
+            {row.original.studentFirstName} {row.original.studentLastName}
           </Link>
         </Button>
       ),
@@ -202,7 +208,6 @@ export default function Page() {
     {
       accessorKey: "reason",
       header: ({ column }) => <SortableHeader column={column} label="Reason" />,
-      sortingFn: "alphanumeric",
     },
     {
       accessorKey: "createdAt",
@@ -213,7 +218,6 @@ export default function Page() {
         const date = new Date(row.original.createdAt);
         return <div>{date.toLocaleDateString("en-GB")}</div>;
       },
-      sortingFn: sortDateColumn,
     },
     {
       accessorKey: "reportStatus",
@@ -223,19 +227,18 @@ export default function Page() {
           {row.original.reportStatus}
         </Badge>
       ),
-      sortingFn: "alphanumeric",
     },
     {
       id: "actions",
       header: "Actions",
-      cell: ({ row }) => (
-        <>
+      cell: ({ row }) => {
+        return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
                 className="h-8 w-8 p-0 hover:bg-gray-100 hover:text-primary data-[state=open]:bg-gray-100 data-[state=open]:text-primary transition-colors rounded-full"
-                disabled={student?.blocked}
+                disabled={company?.blocked}
               >
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-5 w-5" />
@@ -255,25 +258,24 @@ export default function Page() {
                 <InfoIcon className="h-4 w-4" />
                 Show Details
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              {!student?.blocked && (
+              {!company?.blocked && (
                 <>
                   {row.original.reportStatus !== "WARNED" && (
                     <DropdownMenuItem
                       onClick={() => {
                         setSelectedFlag(row.original);
-                        setIsWarnStudentDialogOpen(true);
+                        setIsWarnCompanyDialogOpen(true);
                       }}
                     >
                       <Bell className="h-4 w-4" />
-                      Warn Student
+                      Warn Company
                     </DropdownMenuItem>
                   )}
                   {row.original.reportStatus === "UNRESOLVED" && (
                     <DropdownMenuItem
                       onClick={() => {
                         setSelectedFlag(row.original);
-                        setIsIgnoreFlagDialogOpen(true);
+                        setIsResolveFlagDialogOpen(true);
                       }}
                     >
                       <Flag className="h-4 w-4" />
@@ -284,8 +286,8 @@ export default function Page() {
               )}
             </DropdownMenuContent>
           </DropdownMenu>
-        </>
-      ),
+        );
+      },
     },
   ];
 
@@ -314,37 +316,37 @@ export default function Page() {
         <>
           <div className="flex justify-between items-center mb-6">
             <div>
-              <h1 className="text-2xl font-bold">Student Flags History</h1>
-              {student?.blocked && (
+              <h1 className="text-2xl font-bold">Company Flags History</h1>
+              {company?.blocked && (
                 <div className="mt-2">
                   <Badge
                     variant="destructive"
                     className="text-sm cursor-default"
                   >
                     Blocked{" "}
-                    {student.blockedAt &&
-                      ` on ${new Date(student.blockedAt).toLocaleDateString()}`}
+                    {company.blockedAt &&
+                      ` on ${new Date(company.blockedAt).toLocaleDateString()}`}
                   </Badge>
                 </div>
               )}
             </div>
-            {student?.blocked ? (
+            {company?.blocked ? (
               <Button
                 variant="default"
-                onClick={() => setIsUnblockStudentDialogOpen(true)}
+                onClick={() => setIsUnblockCompanyDialogOpen(true)}
                 className="flex items-center gap-2"
               >
                 <Unlock className="w-4 h-4" />
-                Unblock Student
+                Unblock Company
               </Button>
             ) : (
               <Button
                 variant="destructive"
-                onClick={() => setIsBlockStudentDialogOpen(true)}
+                onClick={() => setIsBlockCompanyDialogOpen(true)}
                 className="flex items-center gap-2"
               >
                 <Lock className="w-4 h-4" />
-                Block Student
+                Block Company
               </Button>
             )}
           </div>
@@ -458,48 +460,46 @@ export default function Page() {
             </div>
           </div>
 
-          <BlockStudentDialog
-            isOpen={isBlockStudentDialogOpen}
-            setIsOpen={setIsBlockStudentDialogOpen}
-            studentToBlock={{
+          <BlockCompanyDialog
+            isOpen={isBlockCompanyDialogOpen}
+            setIsOpen={setIsBlockCompanyDialogOpen}
+            companyToBlock={{
               id,
-              firstName: student?.firstName || "",
-              lastName: student?.lastName || "",
+              name: company?.name || "",
             }}
-            onConfirm={handleBlockStudent}
+            onConfirm={handleBlockCompany}
           />
 
-          <UnblockStudentDialog
-            isOpen={isUnblockStudentDialogOpen}
-            setIsOpen={setIsUnblockStudentDialogOpen}
-            studentToUnblock={{
+          <UnblockCompanyDialog
+            isOpen={isUnblockCompanyDialogOpen}
+            setIsOpen={setIsUnblockCompanyDialogOpen}
+            companyToUnblock={{
               id,
-              firstName: student?.firstName || "",
-              lastName: student?.lastName || "",
+              name: company?.name || "",
             }}
-            onConfirm={handleUnblockStudent}
+            onConfirm={handleUnblockCompany}
           />
 
-          {selectedFlag && !student?.blocked && (
+          {selectedFlag && !company?.blocked && (
             <>
-              <WarnStudentDialog
-                isOpen={isWarnStudentDialogOpen}
-                onOpenChange={setIsWarnStudentDialogOpen}
-                onConfirm={handleWarnStudent}
-                studentFlag={selectedFlag}
+              <WarnCompanyDialog
+                isOpen={isWarnCompanyDialogOpen}
+                onOpenChange={setIsWarnCompanyDialogOpen}
+                onConfirm={handleWarnCompany}
+                companyFlag={selectedFlag}
               />
 
-              <ReloveFlagDialog
-                isOpen={isIgnoreFlagDialogOpen}
-                setIsOpen={setIsIgnoreFlagDialogOpen}
-                studentFlag={selectedFlag}
-                onResolveFlag={handleIgnoreFlag}
+              <ResolveCompanyFlagDialog
+                isOpen={isResolveFlagDialogOpen}
+                setIsOpen={setIsResolveFlagDialogOpen}
+                companyFlag={selectedFlag}
+                onResolveFlag={handleResolveFlag}
               />
 
-              <StudentFlagDetails
+              <CompanyFlagDetails
                 isOpen={isDetailsOpen}
                 setIsOpen={setIsDetailsOpen}
-                studentFlag={selectedFlag}
+                companyFlag={selectedFlag}
               />
             </>
           )}

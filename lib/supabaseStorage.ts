@@ -21,11 +21,10 @@ export async function uploadFileToSupabase(
   file: File,
   options: UploadFileOptions
 ): Promise<string> {
-  console.log("file name: ", file.name);
   try {
     // Convert file to ArrayBuffer
     const fileBuffer = await file.arrayBuffer();
-    
+
     // Generate a unique file name with timestamp to prevent collisions
     const uniqueFileName = options.fileName;
 

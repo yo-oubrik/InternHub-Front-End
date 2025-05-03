@@ -32,16 +32,7 @@ export const CompanySignUpForm: React.FC<CompanySignUpFormProps> = ({}) => {
   const formSchema = z
     .object({
       name: z.string().min(1, "Company name is required"),
-      description: z
-        .string()
-        .min(10, "Description must be at least 10 characters")
-        .max(500, "Description must be less than 500 characters"),
-      address: z.string().min(1, "Address is required"),
       email: z.string().email("Invalid email format"),
-      ice: z
-        .string()
-        .min(1, "ICE number is required")
-        .regex(/^\d{15}$/, "ICE must be exactly 15 digits"),
       password: z.string().min(8, "Password should be at least 8 characters"),
       confirmPassword: z.string(),
     })
@@ -60,10 +51,7 @@ export const CompanySignUpForm: React.FC<CompanySignUpFormProps> = ({}) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      description: "",
-      address: "",
       email: "",
-      ice: "",
       password: "",
     },
   });
@@ -73,7 +61,7 @@ export const CompanySignUpForm: React.FC<CompanySignUpFormProps> = ({}) => {
       setIsLoading(true);
       setServerErrors({});
       const request = { ...data };
-      await axios.post("auth/register/companies", request);
+      await axios.post("auth/verify-email/companies", request);
       toast.success("Account created successfully");
       router.push("/signin");
     } catch (e) {
@@ -118,37 +106,6 @@ export const CompanySignUpForm: React.FC<CompanySignUpFormProps> = ({}) => {
               )}
             </div>
 
-            <div className="grid gap-2">
-              <Label>Description</Label>
-              <Textarea {...register("description")} className="resize-none" />
-              {(errors.description || serverErrors.description) && (
-                <p className="text-red-500">
-                  {errors.description?.message || serverErrors.description}
-                </p>
-              )}
-            </div>
-
-            <div className="grid gap-2">
-              <Label>Address</Label>
-              <Input {...register("address")} />
-              {(errors.address || serverErrors.address) && (
-                <p className="text-red-500">
-                  {errors.address?.message || serverErrors.address}
-                </p>
-              )}
-            </div>
-
-            <div className="grid gap-2">
-              <Label>ICE Number (Identifiant Commun de l'Entreprise)</Label>
-              <Input {...register("ice")} />
-              {(errors.ice || serverErrors.ice) && (
-                <p className="text-red-500">
-                  {errors.ice?.message || serverErrors.ice}
-                </p>
-              )}
-            </div>
-
-            <Separator />
             <div className="grid gap-2">
               <Label>Email</Label>
               <Input type="email" {...register("email")} />

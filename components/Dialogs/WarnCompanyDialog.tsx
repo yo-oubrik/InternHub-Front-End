@@ -10,49 +10,47 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { StudentFlag } from "@/types/types";
-import { calculateTotalSize } from "@/utils/utils";
+import { Input } from "@/components/ui/input";
+import { CompanyFlag } from "@/types/types";
 import { X } from "lucide-react";
-import { FileAttachment } from "../ui/file-attachment";
+import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { Input } from "../ui/input";
-import dynamic from "next/dynamic";
 import { useState } from "react";
 
-const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
-
-interface WarnStudentDialogProps {
+interface WarnCompanyDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  onConfirm: (message: string, subject: string, attachments: File[]) => Promise<void>;
-  studentFlag: StudentFlag;
+  onConfirm: (message: string, subject: string, attachments: File[]) => void;
+  companyFlag: CompanyFlag;
 }
 
-const MAX_ATTACHMENT_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+const MAX_ATTACHMENT_SIZE = 5 * 1024 * 1024; // 5MB
 
-export function WarnStudentDialog({
+export function WarnCompanyDialog({
   isOpen,
   onOpenChange,
   onConfirm,
-  studentFlag,
-}: WarnStudentDialogProps) {
-  const defaultSubject = `Warning: Inappropriate Behavior Report`;
-  const defaultReason = `Dear Student,
+  companyFlag,
+}: WarnCompanyDialogProps) {
+  const defaultSubject = `Warning Notification: Behavioral Concern`;
+  const defaultMessage = `Dear ${companyFlag.companyName},
 
-This is a warning regarding inappropriate behavior reported during your internship application process. 
+We are writing to inform you about a reported concern regarding your behavior on our platform. This warning serves as a notification that your actions have been flagged for review.
 
-Reason for warning: ${studentFlag.reason}
-
-Please be advised that such behavior is against our platform's policies and may result in account suspension if repeated.
+Please ensure that you adhere to our platform's guidelines and policies to maintain a professional and respectful environment for all users.
 
 Best regards,
 Admin Team`;
 
-  const [reason, setReason] = useState(defaultReason);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState(defaultMessage);
   const [subject, setSubject] = useState(defaultSubject);
   const [attachments, setAttachments] = useState<File[]>([]);
   const [sizeError, setSizeError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+
+  const calculateTotalSize = (files: File[]) => {
+    return files.reduce((acc, file) => acc + file.size, 0);
+  };
 
   const handleFileChange = (files: FileList | null) => {
     if (!files) return;
@@ -76,27 +74,17 @@ Admin Team`;
   };
 
   const removeAttachment = (index: number) => {
-    setAttachments((prev) => {
-      const newAttachments = prev.filter((_, i) => i !== index);
-      const newTotalSize = calculateTotalSize(newAttachments);
-      if (newTotalSize <= MAX_ATTACHMENT_SIZE) {
-        setSizeError(null);
-      }
-      return newAttachments;
-    });
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
+    setSizeError(null);
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = () => {
     setIsLoading(true);
-    try {
-      await onConfirm(reason, subject, attachments);
-    } finally {
-      setIsLoading(false);
-    }
+    onConfirm(message, subject, attachments);
   };
 
   const handleCancel = () => {
-    setReason(defaultReason);
+    setMessage(defaultMessage);
     setSubject(defaultSubject);
     setAttachments([]);
     setSizeError(null);
@@ -107,12 +95,10 @@ Admin Team`;
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[800px]">
         <DialogHeader>
-          <DialogTitle>Send Warning to Student</DialogTitle>
+          <DialogTitle>Send Warning to Company</DialogTitle>
           <DialogDescription>
             Send a warning notification to{" "}
-            <span className="font-medium">
-              {studentFlag.firstName} {studentFlag.lastName}
-            </span>
+            <span className="font-medium">{companyFlag.companyName}</span>
           </DialogDescription>
         </DialogHeader>
 
@@ -131,8 +117,8 @@ Admin Team`;
             <Label htmlFor="message">Warning Message</Label>
             <div className="min-h-[200px] bg-white rounded-md border">
               <ReactQuill
-                value={reason}
-                onChange={setReason}
+                value={message}
+                onChange={setMessage}
                 theme="snow"
                 style={{ height: "150px" }}
               />
@@ -140,30 +126,25 @@ Admin Team`;
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="attachments">Attachments (Optional)</Label>
-            <FileAttachment
-              onFilesChange={handleFileChange}
-              maxSize={MAX_ATTACHMENT_SIZE}
-              onSizeError={setSizeError}
+            <Label htmlFor="attachments">Attachments</Label>
+            <Input
+              id="attachments"
+              type="file"
+              onChange={(e) => handleFileChange(e.target.files)}
+              multiple
+              className="bg-white"
             />
-
-            {sizeError && <p className="text-red-500 text-sm">{sizeError}</p>}
-
+            {sizeError && (
+              <p className="text-sm text-red-500 mt-1">{sizeError}</p>
+            )}
             {attachments.length > 0 && (
-              <div className="mt-2 space-y-2">
+              <div className="flex flex-wrap gap-2 mt-2">
                 {attachments.map((file, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between bg-gray-50 p-2 rounded-md"
+                    className="flex items-center gap-2 bg-gray-100 px-3 py-1 rounded-full"
                   >
-                    <div className="flex items-center space-x-2 text-sm">
-                      <span className="font-medium truncate max-w-[200px]">
-                        {file.name}
-                      </span>
-                      <span className="text-gray-500">
-                        ({(file.size / 1024).toFixed(1)} KB)
-                      </span>
-                    </div>
+                    <span className="text-sm">{file.name}</span>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -180,10 +161,20 @@ Admin Team`;
         </div>
 
         <DialogFooter className="flex gap-2 sm:justify-end">
-          <Button variant="outline" onClick={handleCancel} disabled={isLoading}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleCancel}
+            disabled={isLoading}
+          >
             Cancel
           </Button>
-          <Button variant="destructive" onClick={handleConfirm} disabled={isLoading}>
+          <Button
+            type="button"
+            variant="default"
+            onClick={handleConfirm}
+            disabled={isLoading}
+          >
             {isLoading ? "Sending Warning..." : "Send Warning"}
           </Button>
         </DialogFooter>
