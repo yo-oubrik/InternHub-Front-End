@@ -10,43 +10,36 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Internship, Student, StudentFlag } from "@/types/types";
+import { Internship, Student } from "@/types/types";
 import { calculateTotalSize } from "@/utils/utils";
 import { X } from "lucide-react";
 import { FileAttachment } from "../ui/file-attachment";
 import { Input } from "../ui/input";
 
-import ReactQuill from "react-quill-new";
 import TextEditor from "../TextEditor";
 import { useState } from "react";
 
-interface AcceptApplicationDialogProps {
+interface RejectApplicationDialogProps {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   onConfirm: (message: string, subject: string, attachments: File[]) => void;
-  studentAccepted: Student;
+  studentRejected: Student;
   internshipConcerned : Internship;
 }
 
-export function AcceptApplicationDialog({
+export function RejectApplicationDialog({
   isOpen,
   setIsOpen,
   onConfirm,
-  studentAccepted,
-  internshipConcerned,
-}: AcceptApplicationDialogProps) {
-  const defautlSubject = `Internship Application Accepted`;
-  const defaultBody = `<p>Dear candidate ${studentAccepted.firstName + " " + studentAccepted.lastName},</p></br>
+  studentRejected,
+  internshipConcerned ,
+}: RejectApplicationDialogProps) {
+  const defautlSubject = `Internship Application Rejected`;
+  const defaultBody = `<p>Dear ${studentRejected.firstName + " " + studentRejected.lastName},</p></br>
 
-<p>We are pleased to inform you that your application in the internship ${internshipConcerned.title} has been accepted. We were impressed with your qualifications and believe you would be a valuable addition to our team.</p></br>
+<p>We regret to inform you that your application for the internship ${internshipConcerned.title} has been rejected. We appreciate the time you took to apply and hope you will consider other opportunities.</p></br>
 
-<b>Please note that we would like to schedule an interview with you to discuss the internship details further.</b> </br> </br>
-
-<p>We will contact you shortly to arrange a suitable time.</p></br>
-
-<p>Please review the attached documents for further details about your internship, including potential start dates, duration, and other important information.</p></br>
-
-<p>We look forward to meeting you and welcoming you to our team.</p></br>
+<p>We wish you the best of luck in your job search.</p></br>
 
 <p>Best regards.</p>`;
 
@@ -105,11 +98,11 @@ export function AcceptApplicationDialog({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="sm:max-w-2xl max-h-[calc(100vh-10rem)] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Accept Application</DialogTitle>
+          <DialogTitle>Reject Application</DialogTitle>
           <DialogDescription>
-            Send acceptance notification to{" "}
+            Send rejection notification to{" "}
             <span className="font-medium">
-              {studentAccepted.firstName + " " + studentAccepted.lastName}
+              {studentRejected.firstName + " " + studentRejected.lastName}
             </span>
           </DialogDescription>
         </DialogHeader>
@@ -126,7 +119,7 @@ export function AcceptApplicationDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="message">Acceptance Message</Label>
+            <Label htmlFor="message">Rejection Message</Label>
             <TextEditor
               value={bodyMessage}
               onChange={setBodyMessage}
@@ -185,7 +178,7 @@ export function AcceptApplicationDialog({
             Cancel
           </Button>
           <Button variant="default" onClick={handleConfirm}>
-            Accept Application
+            Reject Application
           </Button>
         </DialogFooter>
       </DialogContent>

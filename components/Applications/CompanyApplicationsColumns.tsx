@@ -25,28 +25,32 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import EditModal from "../Profile/EditModal";
-import PdfViewer from "../PdfViewer";
-import PrepareInterview from "./PrepareInterview";
 import { SortableHeader } from "../SortableHeader";
 import { sortDateColumn } from "@/utils/dates/sortDateColumn";
-import { WarnStudentDialog } from "../Dialogs/WarnStudentDialog";
 import { AcceptApplicationDialog } from "./AcceptApplicationDialog";
-import { AcceptApplication } from "./AcceptApplicationFunction";
+import { useInternship } from "@/context/internshipContext";
+import { RejectApplicationDialog } from "./RejectApplicationDialog";
 
 export const CompanyApplicationsColumns: ColumnDef<Application>[] = [
   {
     header: "Full Name",
     cell: ({ row }) =>
-      row.original.student.firstName + " " + row.original.student.lastName,
+      row.original.studentResponse.firstName +
+      " " +
+      row.original.studentResponse.lastName,
   },
   {
-    header: "email",
-    cell: ({ row }) => row.original.student.email,
+    accessorFn: (row) => row.studentResponse.email,
+    id: "email",
+    header: "Email",
+    cell: ({ row }) => row.original.studentResponse.email,
+    filterFn: "includesString",
   },
   {
+    accessorFn: (row) => row.internshipResponse.title,
     header: "Internship",
-    cell: ({ row }) => row.original.internship.title,
+    cell: ({ row }) => row.original.internshipResponse.title,
+    filterFn: "includesString",
   },
   {
     accessorKey: "applicationDate",
@@ -69,18 +73,40 @@ export const CompanyApplicationsColumns: ColumnDef<Application>[] = [
     sortingFn: sortDateColumn,
   },
   {
+    accessorKey: "status",
     header: "Status",
     cell: ({ row }) => (
       <Badge className={getColorsByApplicationStatus(row.original.status)}>
         {row.original.status}
       </Badge>
     ),
+    filterFn: "equalsString",
   },
   {
     id: "actions",
     cell: ({ row }: { row: { original: Application } }) => {
       const router = useRouter();
-      const [withInterview, setWithInterview] = useState<boolean>(false);
+      const [acceptDialog, setAcceptDialog] = useState<boolean>(false);
+      const [rejectDialog, setRejectDialog] = useState<boolean>(false);
+      const {acceptApplication , rejectApplication} = useInternship();
+
+      const handleAcceptApplication = async (
+        message: string,
+        subject: string,
+        attachments: File[]
+      ) => {
+        await acceptApplication(row.original.id , message, subject, attachments);
+        setAcceptDialog(false);
+      };
+
+      const handleRejectApplication = async (
+        message: string,
+        subject: string,
+        attachments: File[]
+      ) => {
+        await rejectApplication(row.original.id , message, subject, attachments);
+        setRejectDialog(false);
+      };
 
       return (
         <>
@@ -94,19 +120,24 @@ export const CompanyApplicationsColumns: ColumnDef<Application>[] = [
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
                 onClick={() =>
-                  router.push(`/profile/student/${row.original.student.id}`)
+                  router.push(
+                    `/profile/student/${row.original.studentResponse.id}`
+                  )
                 }
               >
                 <User strokeWidth={3} className="mr-2 h-4 w-4" />
                 Go to Applicant Profile
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() =>
+                  router.push(
+                    `/internships/${row.original.internshipResponse.id}`
+                  )
+                }
+              >
                 <SquareArrowOutUpRight
                   strokeWidth={3}
                   className="mr-2 h-4 w-4"
-                  onClick={() =>
-                    router.push(`/internships/${row.original.internship.id}`)
-                  }
                 />
                 Go to Internship Page
               </DropdownMenuItem>
@@ -121,25 +152,27 @@ export const CompanyApplicationsColumns: ColumnDef<Application>[] = [
                   View CV
                 </a>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Eye strokeWidth={3} className="mr-2 h-4 w-4" />
-                <a
-                  href={row.original.motivationLetter}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 no-underline"
-                >
-                  View Motivation Letter
-                </a>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setWithInterview(true)}>
+              {row.original.motivationLetter && (
+                <DropdownMenuItem>
+                  <Eye strokeWidth={3} className="mr-2 h-4 w-4" />
+                  <a
+                    href={row.original.motivationLetter}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 no-underline"
+                  >
+                    View Motivation Letter
+                  </a>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuItem onClick={() => setAcceptDialog(true)}>
                 <CheckCheck
                   strokeWidth={3}
                   className="mr-2 h-4 w-4 hover-text-green-500"
                 />
                 Accept
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setRejectDialog(true)}>
                 <X strokeWidth={3} className="mr-2 h-4" />
                 Reject
               </DropdownMenuItem>
@@ -147,10 +180,19 @@ export const CompanyApplicationsColumns: ColumnDef<Application>[] = [
           </DropdownMenu>
 
           <AcceptApplicationDialog
-            isOpen={withInterview}
-            setIsOpen={setWithInterview}
-            onConfirm={AcceptApplication}
-            studentAccepted={row.original.student}
+            isOpen={acceptDialog}
+            setIsOpen={setAcceptDialog}
+            onConfirm={handleAcceptApplication}
+            studentAccepted={row.original.studentResponse}
+            internshipConcerned={row.original.internshipResponse}
+          />
+
+          <RejectApplicationDialog
+            isOpen={rejectDialog}
+            setIsOpen={setRejectDialog}
+            onConfirm={handleRejectApplication}
+            studentRejected={row.original.studentResponse}
+            internshipConcerned={row.original.internshipResponse}
           />
         </>
       );

@@ -1,5 +1,16 @@
 "use client";
 import * as React from "react";
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+  ColumnFiltersState,
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -9,93 +20,218 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
 import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  useReactTable,
-  ColumnFiltersState,
-  getFilteredRowModel,
-} from "@tanstack/react-table";
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import Button from "../Button";
-import InputField from "../InputField";
-import { ApplicationStatus } from "@/types/types";
+import SearchableCombobox from "../SearchableCombobox";
+import { useInternship } from "@/context/internshipContext";
+import { useUser } from "@/context/userContext";
+import { Internship } from "@/types/types";
+import InternshipCommandSearch from "../InternshipCommandSearch";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  defaultInternship?: string;
+  hiddenEmailInput?: boolean ;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  defaultInternship,
+  hiddenEmailInput=false
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  const [statusFilter, setStatusFilter] = React.useState<string>("");
-  const [recentFilter, setRecentFilter] = React.useState<string>("");
+  const [emailFilter, setEmailFilter] = React.useState("");
+  const [statusFilter, setStatusFilter] = React.useState("all");
+  const [internshipFilter, setInternshipFilter] = React.useState("");
+
+  const { getCompanyInternships } = useInternship();
+  const { company } = useUser();
+  const [companyInternships, setCompanyInternships] = React.useState<
+    Internship[]
+  >([]);
+  const [loading, setLoading] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    const fetchInternshipsOptions = async () => {
+      try {
+        setLoading(true);
+        const companyInternships = await getCompanyInternships(company.id);
+        setCompanyInternships(companyInternships);
+      } catch (error) {
+        console.error("failed to fetch internships");
+      } finally {
+        setLoading(true);
+      }
+    };
+    fetchInternshipsOptions();
+  }, [company.id]);
+
+  React.useEffect(() => {
+    if (defaultInternship) {
+      setInternshipFilter(defaultInternship);
+    }
+  }, [defaultInternship]);
 
   const table = useReactTable<TData>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
     state: {
       sorting,
       columnFilters,
     },
   });
 
-  const handleStatusFilterChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setStatusFilter(event.target.value);
-    table.getColumn("status")?.setFilterValue(event.target.value);
-  };
-
-  const handleRecentFilterChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setRecentFilter(event.target.value);
-    table.getColumn("applicationDate")?.setFilterValue(event.target.value);
-  };
+  console.log("hidden email : ",hiddenEmailInput);
 
   return (
     <div>
+      <div className="flex items-center gap-4 py-4">
+        {!hiddenEmailInput && (
+          <Input
+            placeholder="Filter emails..."
+            value={emailFilter}
+            onChange={(event) => {
+              const value = event.target.value;
+            setEmailFilter(value);
+            table.getColumn("email")?.setFilterValue(value);
+          }}
+          className="max-w-sm"
+        />
+        )}
+        <InternshipCommandSearch
+          options={companyInternships || []}
+          onSelect={(value) => {
+            setInternshipFilter(value);
+            table.getColumn("Internship")?.setFilterValue(value);
+          }}
+          defaultValue={internshipFilter}
+        />
+
+        <Select
+          value={statusFilter}
+          onValueChange={(value) => {
+            setStatusFilter(value);
+            table
+              .getColumn("status")
+              ?.setFilterValue(value === "all" ? undefined : value);
+          }}
+          defaultValue="all"
+        >
+          <SelectTrigger className="ml-4 w-[180px] bg-white border-gray-300 hover:border-primary focus:border-primary transition-colors">
+            <div className="flex items-center gap-2">
+              {/* <div
+                className={`w-2 h-2 rounded-full ${
+                  statusFilter === "pending"
+                    ? "bg-blue-500"
+                    : statusFilter === "accepted"
+                    ? "bg-green-500"
+                    : statusFilter === "rejected"
+                    ? "bg-red-500"
+                    : "bg-gray-400"
+                }`}
+              ></div> */}
+              <SelectValue placeholder="Filter by status" />
+            </div>
+          </SelectTrigger>
+          <SelectContent className="border-gray-300 shadow-md">
+            <SelectItem
+              value="all"
+              className="flex items-center gap-2 py-2 hover:bg-gray-100"
+            >
+              <div className="flex items-center gap-2 font-medium">
+                <div className="w-2 h-2 rounded-full bg-gray-400"></div>
+                All
+              </div>
+            </SelectItem>
+            <SelectItem
+              value="pending"
+              className="flex items-center gap-2 py-2 hover:bg-blue-50"
+            >
+              <div className="flex items-center gap-2 text-blue-600 font-medium">
+                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                Pending
+              </div>
+            </SelectItem>
+            <SelectItem
+              value="accepted"
+              className="flex items-center gap-2 py-2 hover:bg-green-50"
+            >
+              <div className="flex items-center gap-2 text-green-600 font-medium">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                Accepted
+              </div>
+            </SelectItem>
+            <SelectItem
+              value="rejected"
+              className="flex items-center gap-2 py-2 hover:bg-red-50"
+            >
+              <div className="flex items-center gap-2 text-red-600 font-medium">
+                <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                Rejected
+              </div>
+            </SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Button
+          label="Clear All Filters"
+          className="bg-white border border-primary !text-primary hover-bg-primary-hover"
+          onClick={() => {
+            // Clear all filters in the table
+            table.resetColumnFilters();
+
+            setEmailFilter("");
+            setStatusFilter("all");
+            setInternshipFilter("");
+
+            table.getColumn("email")?.setFilterValue("");
+            table.getColumn("status")?.setFilterValue(undefined);
+            table.getColumn("Internship")?.setFilterValue("");
+          }}
+        />
+      </div>
+
       <div className="rounded-md border">
-        <Table className="rounded-sm overflow-hidden">
+        <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className="bg-primary-dark/80 text-white"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className="bg-primary-dark/80 text-white"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody className="bg-white/85">
-            {table.getRowModel().rows?.length ? (
+            {table?.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
