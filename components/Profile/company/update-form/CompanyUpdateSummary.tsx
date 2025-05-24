@@ -24,7 +24,7 @@ import dynamic from "next/dynamic";
 //   { ssr: false }
 // );
 
-const CompanyUpdateSummary = () => {
+const CompanyUpdateSummary = ({ logo }: { logo: File | null }) => {
   const { company } = useUser();
   const [showFullDescription, setShowFullDescription] = useState(false);
 
@@ -52,7 +52,11 @@ const CompanyUpdateSummary = () => {
             <div className="flex flex-col items-center mb-4">
               <ProfileAvatar
                 className="w-24 h-24 text-4xl bg-gray-800 mb-4"
-                avatarImage={company.profilePicture || ""}
+                avatarImage={
+                  logo
+                    ? URL.createObjectURL(logo as File)
+                    : company?.profilePicture ?? ""
+                }
                 avatarFallback={
                   <span className="text-white">
                     {company.name?.charAt(0) || "C"}
@@ -67,7 +71,7 @@ const CompanyUpdateSummary = () => {
               )}
               <Badge variant="outline" className="space-x-2 mt-2 bg-green-100">
                 <Phone className="w-4 h-4 text-gray-500" />
-                <span>{company.phone || "No phone provided"}</span>
+                <span>{company?.tel || "No phone provided"}</span>
               </Badge>
             </div>
           </div>
@@ -184,13 +188,13 @@ const CompanyUpdateSummary = () => {
             <div className="flex items-center gap-2 mt-3 text-gray-600  rounded">
               <MapPin className="w-4 h-4 text-gray-500 flex-shrink-0" />
               <span className="text-sm">
-                Latitude: {company.location.lat.toFixed(6)}, Longitude:{" "}
-                {company.location.lng.toFixed(6)}
+                Latitude: {company?.location?.latitude?.toFixed(6)}, Longitude:{" "}
+                {company?.location?.longitude?.toFixed(6)}
               </span>
             </div>
           </div>
 
-          {company.location?.lat && company.location?.lng ? (
+          {company.location?.latitude && company.location?.longitude ? (
             <div className="flex flex-col flex-grow">
               <div className="flex-grow min-h-full">
                 {/* Use the dynamic import to avoid SSR issues with Leaflet */}

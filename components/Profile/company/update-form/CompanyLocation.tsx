@@ -1,15 +1,16 @@
 "use client";
-import markerIcon from "@/public/icons/gps.png";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   MapContainer,
+  TileLayer,
   Marker,
   Popup,
-  TileLayer,
   useMapEvents,
 } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import markerIcon from "@/public/icons/gps.png";
+import { useUser } from "@/context/userContext";
 
 const customIcon = new L.Icon({
   iconUrl: markerIcon.src,
@@ -33,9 +34,20 @@ const LocationSelector = ({
 };
 
 export const CompanyLocation = () => {
+  const { company, setCompany } = useUser();
   const [position, setPosition] = useState<[number, number]>([
-    30.406984625615515, -9.53809421587912,
+    33.587418, -7.664078,
   ]);
+
+  useEffect(() => {
+    setCompany({
+      ...company,
+      location: {
+        latitude: position[0],
+        longitude: position[1],
+      },
+    });
+  }, [position]);
 
   return (
     <div className="w-full mt-5 flex flex-col gap-4">
