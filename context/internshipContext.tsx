@@ -8,12 +8,11 @@ import {
   ApplicationStatus,
   Internship,
   InternshipRequest,
-  InternshipType,
   SalaryType,
-  Student,
   WorkMode,
 } from "@/types/types";
-import { RequestWithAuth as fetchWithAuth } from "@/utils/auth";
+import axios from "@/lib/axios";
+import { RequestWithAuth as fetchWithAuth , getValidToken, } from "@/utils/auth";
 import { useRouter } from "next/navigation";
 
 interface InternshipContextType {
@@ -24,6 +23,7 @@ interface InternshipContextType {
   applications: Application[];
   // setApplications: (applications: Application[]) => void;
   getCompanyApplications: (companyId: string) => void;
+  getStudentApplications: (studentId: string) => void;
   countInternshipApplications: (internshipId: string) => Promise<number>;
   countCompanyApplications: (companyId: string) => Promise<number>;
   countCompanyApplicationsWithStatus: (
@@ -39,6 +39,8 @@ interface InternshipContextType {
   getCompanyInternships: (id: string) => Promise<Internship[]>;
   likeInternship: (internshipId: string) => void;
   applyToInternship: (application: ApplicationRequest) => void;
+  acceptApplication: (applicationId : string , message: string, subject: string, attachments: File[]) => Promise<void>;
+  rejectApplication: (applicationId : string , message: string, subject: string, attachments: File[]) => Promise<void>;
   handleSearchChange: (searchName: string, value: string) => void;
   resetInternshipForm: () => void;
 }
@@ -69,7 +71,6 @@ export const InternshipContextProvider: React.FC<{
   const [applications, setApplications] = useState<Application[]>([]);
 
   // get the user contextundefined
-  const { company, setCompany } = useUser();
   const router = useRouter();
 
   const createInternship = async () => {
@@ -225,6 +226,82 @@ export const InternshipContextProvider: React.FC<{
     }
   };
 
+  const acceptApplication = async (
+    applicationId: string,
+    message: string,
+    subject: string,
+    attachments: File[]
+  ) => {
+    setLoading(true);
+    const token = getValidToken();
+    if (!token) {
+      toast.error("Failed to accept application", { id: "accept-application" });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("message", message);
+      formData.append("subject", subject);
+      attachments.forEach((file) => {
+        formData.append("attachments", file);
+      });
+
+      await axios.post(`/applications/${applicationId}/accept`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      toast.success("Application accepted successfully");
+    } catch (error) {
+      console.error("Failed to accept application:", error);
+      toast.error("Failed to accept application");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const rejectApplication = async (
+    applicationId: string,
+    message: string,
+    subject: string,
+    attachments: File[]
+  ) => {
+    setLoading(true);
+    const token = getValidToken();
+    if (!token) {
+      toast.error("Failed to reject application", { id: "reject-application" });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("message", message);
+      formData.append("subject", subject);
+      attachments.forEach((file) => {
+        formData.append("attachments", file);
+      });
+
+      await axios.post(`/applications/${applicationId}/reject`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      toast.success("Application rejected successfully");
+    } catch (error) {
+      console.error("Failed to reject application:", error);
+      toast.error("Failed to reject application");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // reset Internship Form for post-internship page
   const resetInternshipForm = () => {
     setInternship({} as Internship);
@@ -240,6 +317,21 @@ export const InternshipContextProvider: React.FC<{
       setLoading(true);
       const response = await fetchWithAuth(
         `/applications/company/${companyId}`
+      );
+      setApplications(response);
+    } catch (error) {
+      console.error("Error getting applications", error);
+      toast.error("Ooops! Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStudentApplications = async (studentId: string) => {
+    try {
+      setLoading(true);
+      const response = await fetchWithAuth(
+        `/applications/student/${studentId}`
       );
       setApplications(response);
     } catch (error) {
@@ -324,6 +416,7 @@ export const InternshipContextProvider: React.FC<{
         applications,
         isApplied,
         getCompanyApplications,
+        getStudentApplications,
         countInternshipApplications,
         countCompanyApplications,
         countCompanyApplicationsWithStatus,
@@ -335,6 +428,8 @@ export const InternshipContextProvider: React.FC<{
         updateInternship,
         likeInternship,
         applyToInternship,
+        acceptApplication,
+        rejectApplication,
         handleSearchChange,
         resetInternshipForm,
       }}

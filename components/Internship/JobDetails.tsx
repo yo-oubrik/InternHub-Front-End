@@ -45,6 +45,30 @@ function JobDetails() {
 
       <div className="grid grid-cols-2 gap-6">
         <div className="flex-1">
+          <h3 className="text-black font-bold">City</h3>
+          <Label htmlFor="city" className="text-gray-500 mt-2">
+            Enter the city where the internship will take place.
+          </Label>
+        </div>
+        <div className="flex-1">
+          <Input
+            type="text"
+            id="city"
+            name="city"
+            value={internship.city}
+            onChange={(e) =>
+              setInternship({ ...internship, city: e.target.value })
+            }
+            className="flex-1 w-full mt-2"
+            placeholder="Enter city"
+          />
+        </div>
+      </div>
+
+      <Separator className="my-2" />
+
+      <div className="grid grid-cols-2 gap-6">
+        <div className="flex-1">
           <h3 className="text-black font-bold">Internship Duration</h3>
           <Label htmlFor="duration" className="text-gray-500 mt-2">
             Enter the duration of the internship post.

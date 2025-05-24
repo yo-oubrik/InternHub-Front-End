@@ -43,10 +43,12 @@ function PostInternshipForm() {
     const salary = internship?.salary;
     const paid = internship?.paid;
     const salaryType = internship?.salaryType;
+    const city = internship?.city;
 
     if (
       !description ||
       !duration ||
+      !city ||
       (paid && (!salary || salary < 500 || !salaryType))
     ) {
       return false;

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { formatDates } from "@/utils/fotmatDates";
-import { Trash, Calendar } from "lucide-react";
+import { Trash, Calendar, Flag, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CardTitle } from "../ui/card";
 import { Badge } from "../ui/badge";
@@ -19,6 +19,7 @@ interface InternshipProps {
 function Myinternship({ internship }: InternshipProps) {
   const router = useRouter();
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
+  const [isOpenCloseDialog, setIsOpenCloseDialog] = useState(false);
   const { countInternshipApplications } = useInternship();
   const [countApplicants, setCountApplications] = useState<number>(0);
 
@@ -33,6 +34,11 @@ function Myinternship({ internship }: InternshipProps) {
   const deleteInternship = () => {
     setIsOpenDeleteDialog(false);
     // Handle delete logic here
+  };
+
+  const closeInternship = () => {
+    setIsOpenCloseDialog(false);
+    // Handle close logic here
   };
 
   // const { isAuthenticated } = useAuth();
@@ -53,7 +59,7 @@ function Myinternship({ internship }: InternshipProps) {
           {!internship.isEnded ? (
             <div
               className="flex items-center rounded-md font-medium hover:bg-accent px-3 cursor-pointer gap-1 text-sm text-blue-400"
-              // onClick={() => setIsOpenCloseDialog(true)}
+              onClick={() => setIsOpenCloseDialog(true)}
             >
               Close Application
             </div>
@@ -152,6 +158,47 @@ function Myinternship({ internship }: InternshipProps) {
 
               <p className="text-sm font-medium px-4">
                 Are you sure you want to delete the internship "
+                {internship.title}"?
+              </p>
+            </div>
+          }
+        />
+      )}
+
+
+      {isOpenCloseDialog && (
+        <EditModal
+          isOpenModal={isOpenCloseDialog}
+          setIsOpenModal={setIsOpenCloseDialog}
+          className="bg-white p-0 max-w-md flex flex-col text-black"
+          title="Confirm to close this application"
+          titleClassName="text-xl px-4 pt-4 font-medium"
+          cancelButton="Cancel"
+          cancelButtonClassName="bg-gray-200 text-black border-gray-300 hover:bg-gray-300"
+          onCancel={() => setIsOpenCloseDialog(false)}
+          confirmButton="Close internship"
+          confirmButtonClassName="bg-red-600 hover:bg-red-700 text-white"
+          onConfirm={closeInternship}
+          footerClassName="flex justify-end p-4 border-t border-gray-300 w-full"
+          body={
+            <div className="flex flex-col gap-6">
+              <div className="bg-gray-100 p-4 -mt-2 border border-gray-300">
+                <div className="flex gap-3 items-start">
+                  <div className="bg-orange-600 p-2 rounded-md">
+                    <AlertTriangle className="text-white h-5 w-5" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <p className="text-sm text-gray-500">
+                      The internship will be closed and no further applications
+                      will be accepted. You can reopen the internship at a later
+                      time if needed.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <p className="text-sm font-medium px-4">
+                Are you sure you want to close the internship "
                 {internship.title}"?
               </p>
             </div>

@@ -167,7 +167,7 @@ export default function page() {
 
   return (
     <main>
-      <div className="py-8 mb-8 w-[100%] rounded-md flex gap-8">
+      <div className="py-8 mb-8 px-14 w-[100%] rounded-md flex gap-4">
         <div className="flex flex-col w-[70%] bg-white p-6 rounded-md">
           <div className="flex flex-col gap-4">
             <div className="flex justify-between items-center">
@@ -183,7 +183,7 @@ export default function page() {
                 </div>
 
                 <div>
-                  <p className="font-bold text-xl">
+                  <p className="font-bold text-xl" onClick={() => internship?.company?.name && router.push(`/profile/company/${internship?.company?.id}`)}>
                     {internship?.company?.name || "Not set"}
                   </p>
                   <p className="text-lg">Recruiter</p>
@@ -204,7 +204,7 @@ export default function page() {
 
             <div className="flex flex-col gap-2">
               <h1 className="text-2xl font-semibold">{internship?.title}</h1>
-              {/* <p className="text-gray-500">{"Location Not Set"}</p> */}
+              <p className="text-gray-500">{internship?.city}</p>
             </div>
 
             <div className="mt-2 flex gap-4 justify-between items-stretch">
@@ -249,18 +249,17 @@ export default function page() {
               </p>
             </div>
             {/* <Separator/> */}
-            <h2 className="font-bold text-2xl mt-2">Description</h2>
           </div>
 
           <div
-            className="wysiwyg mt-2 whitespace-pre"
+            className="wysiwyg mt-8 whitespace-wrap"
             dangerouslySetInnerHTML={{
               __html: internship?.description || "",
             }}
           />
         </div>
 
-        <div className="w-[26%] flex flex-col gap-8">
+        <div className="w-[30%] flex flex-col gap-4">
           {currentUser?.role === Role.STUDENT && (
             <button
               className={`text-white rounded-xl py-4 cursor-pointer ${
@@ -285,10 +284,10 @@ export default function page() {
               {isApplied ? "Applied" : "Apply Now"}
             </button>
           )}
-          <div className="flex flex-col gap-2 rounded-xl border-b-2 border-primary shadow-md">
+          <div className="flex flex-col gap-2 rounded-xl border-b-2 border-primary">
             <InternshipItem internship={internship} />
 
-            {otherJobs.map((internship) => (
+            {otherJobs.slice(0, 3).map((internship) => (
               <InternshipCard internship={internship} key={internship?.id} />
             ))}
           </div>
