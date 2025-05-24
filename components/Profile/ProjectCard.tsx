@@ -29,13 +29,13 @@ const ProjectCard = () => {
   };
 
   const handleConfirm = async () => {
-    if (!newProject.title.trim()) {
+    if (!newProject?.title) {
       toast.error("Please enter a project title");
       return;
     }
 
-    if (!newProject.link.trim()) {
-      toast.error("Please enter a project link");
+    if (!newProject?.link) {
+      toast.error("Please enter a link to your project");
       return;
     }
 
@@ -63,9 +63,12 @@ const ProjectCard = () => {
         ...newProject,
         image: publicUrl,
       });
-      setProjects((prev: Project[]) => [...prev, result]);
+      if (!result) toast.error("Failed to create project");
+      toast.success("Project created successfully");
     } catch (error) {
       toast.error("Failed to create project : " + error);
+    } finally {
+      window.location.reload();
     }
     setIsOpenModal(false);
     setNewProject({
@@ -83,7 +86,7 @@ const ProjectCard = () => {
   }, [student?.projects]);
 
   return (
-    <div className="bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[90%] mx-auto space-y-7">
+    <div className="bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-full space-y-7">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl text-gray-800 font-medium">Projects</h2>
       </div>
@@ -94,13 +97,13 @@ const ProjectCard = () => {
       >
         {projects.map((project) => (
           <ProjectContent
-            key={project.id}
+            key={project?.id}
             project={project}
             projects={projects}
             setProjects={setProjects}
           />
         ))}
-        {projects.length === 0 && !isUserProfile && (
+        {projects?.length === 0 && !isUserProfile && (
           <div className="col-span-4 text-center">
             <p className="text-lg text-gray-600">No projects found.</p>
           </div>

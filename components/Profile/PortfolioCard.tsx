@@ -38,7 +38,7 @@ const PortfolioCard = () => {
     if (file) {
       deleteFileFromSupabase(
         "images",
-        student.profilePicture?.split(".").pop() || ""
+        student.profilePicture?.split("/").pop() || ""
       );
 
       try {
@@ -95,7 +95,7 @@ const PortfolioCard = () => {
   };
 
   return (
-    <div className="flex flex-row-reverse gap-2 w-[90%] mx-auto">
+    <div className="flex flex-row-reverse gap-2 w-full">
       <div className="flex flex-col items-center gap-2 bg-gray-50 border-primary-hover shadow-sm py-4 px-5 rounded-lg w-[30%]">
         <div className="flex-row-reverse flex justify-around items-center">
           <div className="flex flex-col items-center gap-3">

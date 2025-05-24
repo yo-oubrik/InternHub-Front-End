@@ -1,4 +1,4 @@
-import { Building2, Dot, Pencil, Trash2 } from "lucide-react";
+import { Building2, Dot, Pencil, School, Trash2 } from "lucide-react";
 import React, { Dispatch, SetStateAction, useState, useEffect } from "react";
 import {
   Accordion,
@@ -13,6 +13,7 @@ import { Company, Formation, Role } from "@/types/types";
 import { useUser } from "@/context/userContext";
 import toast from "react-hot-toast";
 import { useAuth } from "@/context/authContext";
+import { universitiesSchools } from "@/utils/universities-schools";
 
 interface FormationInfosProps {
   object: Formation | null;
@@ -34,43 +35,21 @@ const FormationInfos = ({
   // const [isOpen, setIsOpen] = useState<boolean>(FLAG !== "VIEW");
   // const initialCompanyState = { name: "", logo: "", address: "" };
   // const initialFormationState = { domain: "", company: initialCompanyState, startDate: "", endDate: "", diploma: "" };
-  const [selectedCompany, setSelectedCompany] = useState<Company>(
-    object?.company || ({} as Company)
+  const [selectedCompany, setSelectedCompany] = useState<string>(
+    object?.company || ""
   );
   const [formation, setFormation] = useState<Formation>(
     object || ({} as Formation)
   );
   const {
-    companies,
-    getCompanies,
     createFormation,
     updateFormation,
     deleteFormation,
     isUserProfile,
   } = useUser();
 
-  console.log("flag : ", flag);
-  // const options = [
-  //     {
-  //         name: "Oracle",
-  //         logo: "https://imgs.search.brave.com/SaJEFkC6CkHpv_F2fJqFC5PB1NSDKGGr8LWLC8FZb88/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9vcmFjbGUt/b3JpZ2luYWwtaWNv/bi0yMDQ4eDI2Ni02/eDJwOWZjby5wbmc",
-  //         address: "Casablanca",
-  //     },
-  //     {
-  //         name: "Google",
-  //         logo: "https://imgs.search.brave.com/AtwSiN4R1HWHuQ8ufel7QsF-fatKfuSV000El5av_O0/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9nb29nbGUt/aWNvbi01MTJ4NTEy/LXRxYzllbDNyLnBu/Zw",
-  //         address: "USA",
-  //     },
-  //     {
-  //         name: "Vala",
-  //         logo: "",
-  //         address: "Agadir",
-  //     },
-  // ];
 
-  useEffect(() => {
-    getCompanies();
-  }, []);
+
   useEffect(() => {
     if (flag === "EDIT") {
       setSelectedCompany(formation?.company);
@@ -78,30 +57,19 @@ const FormationInfos = ({
   }, [flag, formation.company]);
 
   const handleSelectCombobox = (value: string) => {
-    const selectedCompany = companies.find(
-      (company) => company.name === value
-    ) as Company;
-    setSelectedCompany(selectedCompany);
+    setSelectedCompany(value);
     setFormation({
       ...formation,
-      company: selectedCompany,
+      company: value,
     });
   };
 
   const handleSave = async () => {
     try {
       if (flag === "NEW") {
-        const newFormation = await createFormation(formation);
-        console.log("newFormation : ", newFormation);
-        setFormations((prev: Formation[]) => [...prev, newFormation]);
+        await createFormation(formation);
       } else {
-        const updatedFormation = await updateFormation(formation);
-        console.log("updatedFormation : ", updatedFormation);
-        setFormations((prev: Formation[]) =>
-          prev.map((form) =>
-            form.id === formation.id ? updatedFormation : form
-          )
-        );
+        await updateFormation(formation);
       }
       setFlag("VIEW");
       if (setWantToAdd) setWantToAdd(false);
@@ -110,6 +78,9 @@ const FormationInfos = ({
       toast.error(
         error instanceof Error ? error.message : "Failed to save formation"
       );
+    } finally {
+      if (setWantToAdd) setWantToAdd(false);
+      window.location.reload();
     }
   };
 
@@ -138,24 +109,12 @@ const FormationInfos = ({
           <div className="w-full flex justify-between">
             <div className="flex gap-4 justify-center items-center">
               <div className="w-14 h-14">
-                {selectedCompany?.profilePicture ||
-                formation?.company?.profilePicture ? (
-                  <img
-                    src={
-                      flag !== "VIEW"
-                        ? selectedCompany?.profilePicture || ""
-                        : formation?.company?.profilePicture || ""
-                    }
-                    className="object-contain w-full h-full"
-                  />
-                ) : (
-                  <Building2 className="w-full h-full" />
-                )}
+                <School className="w-full h-full" />
               </div>
               <div className="h-full space-y-1 text-start">
                 {flag === "VIEW" ? (
                   <>
-                    <p>{formation?.company.name}</p>
+                    <p>{formation?.company}</p>
                     <p className="flex font-normal text-gray-700">
                       {formation?.domain} <Dot width={17} />{" "}
                       {formation?.diploma}
@@ -165,9 +124,10 @@ const FormationInfos = ({
                   <>
                     <p className="flex font-normal text-gray-700">
                       <SearchableCombobox
-                        defaultValue={formation?.company?.name ?? ""}
-                        options={companies}
+                        defaultValue={formation?.company ?? ""}
+                        options={universitiesSchools}
                         onSelect={handleSelectCombobox}
+                        classNameButton="bg-background border border-gray-300 hover:bg-gray-100/50 hover:text-gray-700"
                       />
                     </p>
                     <div className="flex items-center">
@@ -175,6 +135,7 @@ const FormationInfos = ({
                         value={formation?.domain}
                         type="text"
                         placeholder="Domain..."
+                        className="border border-gray-300 focus:bg-gray-100/50 hover:bg-gray-100/50 focus:text-gray-700 hover:text-gray-700"
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                           setFormation({
                             ...formation,
@@ -187,6 +148,7 @@ const FormationInfos = ({
                         value={formation?.diploma}
                         type="text"
                         placeholder="Diploma..."
+                        className="border border-gray-300 focus:bg-gray-100/50 hover:bg-gray-100/50 focus:text-gray-700 hover:text-gray-700"
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                           setFormation({
                             ...formation,
@@ -214,8 +176,8 @@ const FormationInfos = ({
                       <Trash2
                         className="text-primary h-6 w-6 hover:text-primary-hover cursor-pointer"
                         onClick={() => {
-                          console.log("formation to delete : ", formation);
                           deleteFormation(formation);
+                          toast.success("Formation deleted successfully");
                           setFormations((prev) =>
                             prev.filter((exp) => exp.id !== formation.id)
                           );
@@ -231,6 +193,7 @@ const FormationInfos = ({
                     setDateValue={(value: string) =>
                       setFormation({ ...formation, startDate: value })
                     }
+                    className="bg-background border border-gray-300 hover:bg-gray-100/50 hover:text-gray-700"
                   />
                   <span className="mt-2">-</span>
                   <div
@@ -250,12 +213,13 @@ const FormationInfos = ({
                         setFormation({ ...formation, endDate: value })
                       }
                       resetDate={formation?.endDate === "PRESENT"}
+                      className="bg-background border border-gray-300 hover:bg-gray-100/50 hover:text-gray-700"
                     />
                     <div
                       onClick={() =>
                         setFormation({ ...formation, endDate: "PRESENT" })
                       }
-                      className="rounded-md bg-background py-2 px-4 border border-gray-200 font-medium text-sm cursor-pointer"
+                      className="rounded-md bg-background border border-gray-300 hover:bg-gray-100/50 hover:text-gray-700 text-black py-2 px-4 font-medium text-sm cursor-pointer"
                     >
                       PRESENT
                     </div>

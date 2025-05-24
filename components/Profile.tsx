@@ -32,7 +32,7 @@ export const Profile: React.FC<ProfileProps> = ({ user }) => {
           />
         </DropdownMenuTrigger>
       </div>
-      <DropdownMenuContent className="w-56" align="end">
+      <DropdownMenuContent className="w-56 z-[1000]" align="end">
         <DropdownMenuItem
           onClick={() =>
             router.push(`/profile/${user.role.toLowerCase()}/${user.id}`)

@@ -22,6 +22,7 @@ import { useUser } from "@/context/userContext";
 import toast from "react-hot-toast";
 import { useAuth } from "@/context/authContext";
 import { Button } from "../ui/button";
+import { universitiesSchools } from "@/utils/universities-schools";
 
 interface ExperienceInfosProps {
   object: Experience | null;
@@ -41,8 +42,8 @@ const ExperienceInfos = ({
   const { currentUser } = useAuth();
   // const initialCompanyState = { name: "", logo: "", address: "" };
   // const initialExperienceState = { poste: "", company: initialCompanyState, startDate: "", endDate: "", description: "" };
-  const [selectedCompany, setSelectedCompany] = useState<Company>(
-    object?.company || ({} as Company)
+  const [selectedCompany, setSelectedCompany] = useState<string>(
+    object?.company || ""
   );
   const [experience, setExperience] = useState<Experience>(
     object || ({} as Experience)
@@ -56,24 +57,6 @@ const ExperienceInfos = ({
     isUserProfile,
   } = useUser();
 
-  // const options = [
-  //     {
-  //         name: "Oracle",
-  //         logo: "https://imgs.search.brave.com/SaJEFkC6CkHpv_F2fJqFC5PB1NSDKGGr8LWLC8FZb88/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9vcmFjbGUt/b3JpZ2luYWwtaWNv/bi0yMDQ4eDI2Ni02/eDJwOWZjby5wbmc",
-  //         address: "Casablanca",
-  //     },
-  //     {
-  //         name: "Google",
-  //         logo: "https://imgs.search.brave.com/AtwSiN4R1HWHuQ8ufel7QsF-fatKfuSV000El5av_O0/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMtMDAuaWNvbmR1/Y2suY29tL2Fzc2V0/cy4wMC9nb29nbGUt/aWNvbi01MTJ4NTEy/LXRxYzllbDNyLnBu/Zw",
-  //         address: "USA",
-  //     },
-  //     {
-  //         name: "Vala",
-  //         logo: "",
-  //         address: "Agadir",
-  //     },
-  // ];
-
   useEffect(() => {
     getCompanies();
   }, []);
@@ -86,35 +69,49 @@ const ExperienceInfos = ({
     }
   }, [flag, experience?.description, experience?.company]);
 
+  useEffect(()=>{
+    companies.push(
+      ...universitiesSchools.map<Company>((school) => ({
+        id: school.name,
+        name: school.name,
+        location: { latitude: 0, longitude: 0 },
+        description: "",
+        ice: "",
+        blocked: false,
+        blockedAt: null,
+        internships: [],
+        links: {},
+        tel: "",
+        email: "",
+        role: Role.COMPANY,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }))
+    );
+  },[companies])
+
   const handleSelectCombobox = (value: string) => {
-    const selectedCompany = companies.find(
-      (company) => company.name === value
-    ) as Company;
-    setSelectedCompany(selectedCompany);
+    console.log("value : ", value);
+    setSelectedCompany(value);
     setExperience({
       ...experience,
-      company: selectedCompany,
+      company: value,
     });
   };
 
   const handleSave = async () => {
     try {
       if (flag === "NEW") {
-        const newExperience = await createExperience(experience);
-        setExperiences((prev: Experience[]) => [...prev, newExperience]);
+        await createExperience(experience);
       } else {
-        const updatedExperience = await updateExperience(experience);
-        setExperiences((prev: Experience[]) =>
-          prev.map((exp) =>
-            exp.id === experience.id ? updatedExperience : exp
-          )
-        );
+        await updateExperience(experience);
       }
       setFlag("VIEW");
     } catch (error) {
       toast.error("Failed to save experience : " + error);
     } finally {
       if (setWantToAdd) setWantToAdd(false);
+      window.location.reload();
     }
   };
 
@@ -145,23 +142,16 @@ const ExperienceInfos = ({
           <div className="w-full flex justify-between">
             <div className="flex gap-4 justify-center items-center">
               <div className="w-14 h-14">
-                {selectedCompany?.profilePicture ||
-                experience?.company?.profilePicture ? (
-                  <img
-                    src={
-                      flag !== "VIEW"
-                        ? selectedCompany?.profilePicture || ""
-                        : experience?.company?.profilePicture || ""
-                    }
-                    className="object-contain w-full h-full"
-                  />
-                ) : (
-                  <Building2 className="w-full h-full" />
-                )}
+                <Building2 className="w-full h-full" />
               </div>
               <div className="h-full space-y-1 text-start">
                 {flag === "VIEW" ? (
-                  <p>{experience?.poste}</p>
+                  <>
+                    <p>{experience?.poste}</p>
+                    <p className="flex font-normal text-gray-700">
+                      {experience?.company}
+                    </p>
+                  </>
                 ) : (
                   <>
                     <InputField
@@ -178,7 +168,7 @@ const ExperienceInfos = ({
                     />
                     <p className="flex font-normal text-gray-700">
                       <SearchableCombobox
-                        defaultValue={experience?.company?.name ?? ""}
+                        defaultValue={experience?.company || ""}
                         options={companies}
                         onSelect={handleSelectCombobox}
                         classNameButton="bg-background border border-gray-300 hover:bg-gray-100/50 hover:text-gray-700"
@@ -204,8 +194,9 @@ const ExperienceInfos = ({
                         className="text-primary h-6 w-6 hover:text-primary-hover cursor-pointer"
                         onClick={() => {
                           deleteExperience(experience);
+                          toast.success("Experience deleted successfully");
                           setExperiences((prev) =>
-                            prev.filter((exp) => exp.id !== experience.id)
+                            prev.filter((exp) => exp?.id !== experience?.id)
                           );
                         }}
                       />

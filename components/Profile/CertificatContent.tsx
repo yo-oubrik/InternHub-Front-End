@@ -39,18 +39,18 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
   };
 
   const handleConfirm = async () => {
-    if (!editedCertificat.title.trim()) {
+    if (!editedCertificat.title) {
       toast.error("Please enter a certificate title");
       return;
     }
 
     if (!editedCertificat.thumbnail) {
-      toast.error("Please upload a certificate image");
+      toast.error("Please upload your certificat image");
       return;
     }
 
-    if (!editedCertificat.date.trim()) {
-      toast.error("Please enter the certificate date");
+    if (!editedCertificat.date) {
+      toast.error("Please enter the year when you obtain your certificat");
       return;
     }
 
@@ -68,12 +68,14 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
           bucketName: "images",
           fileName: `certificate-${editedCertificat.title}-${
             student?.id
-          }.${file?.name.split(".").pop()}`,
+          }-${Date.now()}.${file?.name.split(".").pop()}`,
         });
         const updatedCertificat = await updateCertificat({
           ...editedCertificat,
           thumbnail: publicUrl,
         });
+        if (!updatedCertificat) toast.error("Failed to update certificate");
+        toast.success("Certificate updated successfully");
         setEditedCertificat(updatedCertificat);
         setCertificats(
           certificats.map((c: Certificat) =>
@@ -92,6 +94,7 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
         )
       );
     }
+    window.location.reload();
     setIsOpenModal(false);
   };
 
@@ -128,7 +131,7 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
       <div className="relative overflow-hidden w-full rounded-t-lg border-b-gray-300 border-[1px] group">
         <div className="cursor-pointer">
           <img
-            src={certificat.thumbnail}
+            src={certificat?.thumbnail}
             alt="certificat image"
             className="w-full h-40 object-cover group-hover:rotate-2 group-hover:scale-110 duration-100 ease-in"
           />
@@ -139,11 +142,11 @@ const CertificatContent: React.FC<CertificatContentProps> = ({
       </div>
       <div className="px-2 mt-4 mb-3 space-y-3">
         <div className="text-base font-medium text-start">
-          {certificat.title}
+          {certificat?.title}
         </div>
         <div className="flex items-center justify-end gap-2 text-gray-500 text-sm">
           <Calendar className="w-4 h-4" />
-          <span>{certificat.date}</span>
+          <span>{certificat?.date}</span>
         </div>
       </div>
 

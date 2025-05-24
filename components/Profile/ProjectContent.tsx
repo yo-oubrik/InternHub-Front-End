@@ -38,13 +38,13 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
   };
 
   const handleConfirm = async () => {
-    if (!editedProject.title.trim()) {
+    if (!editedProject?.title) {
       toast.error("Please enter a project title");
       return;
     }
 
-    if (!editedProject.link.trim()) {
-      toast.error("Please enter a project link");
+    if (!editedProject?.link) {
+      toast.error("Please enter a link to your project");
       return;
     }
 
@@ -92,11 +92,11 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
       }
     } else {
       const updatedProject = await updateProject(editedProject);
+      if (!updatedProject) toast.error("Failed to update project");
+      toast.success("Project updated successfully");
       setEditedProject(updatedProject);
-      setProjects(
-        projects.map((p: Project) => (p.id === project.id ? updatedProject : p))
-      );
     }
+    window.location.reload();
     setIsOpenModal(false);
   };
 
@@ -138,12 +138,12 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
     <div className="rounded-lg flex flex-col justify-between border shadow-md hover:scale-105 transition-all duration-300">
       <div className="relative overflow-hidden w-full rounded-t-lg border-b-gray-300 border-[1px] group">
         <a
-          href={getFullUrl(project.link)}
+          href={getFullUrl(project?.link)}
           target="_blank"
           rel="noopener noreferrer"
         >
           <img
-            src={project.image}
+            src={project?.image}
             alt="Thumbnail"
             className="w-full h-40 object-cover group-hover:rotate-2 group-hover:scale-110 duration-100 ease-in cursor-pointer"
           />
@@ -154,7 +154,7 @@ const ProjectContent: React.FC<ProjectContentProps> = ({
       </div>
 
       <div className="text-base font-medium text-start px-2 mt-4 mb-6">
-        {project.title}
+        {project?.title}
       </div>
 
       {isUserProfile && (

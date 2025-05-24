@@ -43,18 +43,18 @@ const CertificateCard = () => {
 
   const handleConfirm = async () => {
     if (!isUserProfile) return;
-    if (!newCertificat.title.trim()) {
-      toast.error("Please enter a certificate title");
+    if (!newCertificat.title) {
+      toast.error("Please enter a certificat title");
       return;
     }
 
     if (!newCertificat.thumbnail || !file) {
-      toast.error("Please upload a certificate image");
+      toast.error("Please upload your certificat image");
       return;
     }
 
     if (!newCertificat.date) {
-      toast.error("Please enter a certificate date");
+      toast.error("Please enter a year when you obtain your certificat");
       return;
     }
 
@@ -63,15 +63,19 @@ const CertificateCard = () => {
         bucketName: "images",
         fileName: `certificate-${newCertificat.title}-${
           student?.id
-        }.${newCertificat.thumbnail.split(".").pop()}`,
+        }-${Date.now()}.${newCertificat.thumbnail.split(".").pop()}`,
       });
       const result = await createCertificat({
         ...newCertificat,
         thumbnail: publicUrl,
       });
+      if (!result) toast.error("Failed to create certificate");
+      toast.success("Certificate created successfully");
       setCertificats((prev: Certificat[]) => [...prev, result]);
     } catch (error) {
       toast.error("Failed to create certificate : " + error);
+    } finally {
+      window.location.reload();
     }
     setIsOpenModal(false);
     setNewCertificat({
@@ -89,14 +93,14 @@ const CertificateCard = () => {
   }, [student?.certificates]);
 
   return (
-    <div className="bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-[90%] mx-auto space-y-7">
+    <div className="bg-gray-50 border-primary-hover shadow-sm rounded-lg py-6 px-5 w-full space-y-7">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl text-gray-800 font-medium">Certificates</h2>
       </div>
       <div className="px-4 gap-6 grid grid-cols-4">
         {certificats.map((certificat) => (
           <CertificatContent
-            key={certificat.id}
+            key={certificat?.id}
             certificat={certificat}
             certificats={certificats}
             setCertificats={setCertificats}
