@@ -34,10 +34,10 @@ export function SearchableCombobox({
   classNameButton,
 }: Props) {
   const [open, setOpen] = React.useState<boolean>(false);
-  const [value, setValue] = React.useState<string>(defaultValue);
+  const [value, setValue] = React.useState<string>("");
   const [search, setSearch] = React.useState<string>("");
   const [selectedOption, setSelectedOption] = React.useState<
-    Company | undefined
+    string | undefined
   >();
 
   // Filter options based on search input (search companyName)
@@ -46,10 +46,17 @@ export function SearchableCombobox({
   );
 
   React.useEffect(() => {
-    setSelectedOption(
-      options.find((option) => option.name === value) || undefined
-    );
-  }, [value]);
+    setValue(defaultValue);
+  }, [defaultValue]);
+
+  React.useEffect(() => {
+    const selectedOption =
+      options.find((option) => option.name === value) || defaultValue;
+    setSelectedOption(selectedOption?.name || defaultValue);
+  }, [value, options]);
+
+  console.log("selectedOption : ", selectedOption);
+  console.log("defaultValue : ", defaultValue);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -60,23 +67,37 @@ export function SearchableCombobox({
           aria-expanded={open}
           className={cx(
             selectedOption ? "text-black" : "text-muted-foreground",
-            "w-full justify-between font-medium text-sm focus:ring-1 focus:ring-primary rounded-md",
+            "w-full max-w-96 justify-between font-medium text-sm focus:ring-1 focus:ring-primary rounded-md",
             classNameButton
           )}
         >
-          {selectedOption ? `${selectedOption.name}` : "Select company..."}
+          <span className="truncate">
+            {selectedOption
+              ? `${selectedOption}`
+              : "Select company or school..."}
+          </span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 w-fit">
+      <PopoverContent className="p-0 w-fit max-w-96 divide-y-2">
         <Command>
           <CommandInput
-            placeholder="Search companies..."
+            placeholder="Search companies or schools..."
+            defaultValue={defaultValue}
             value={search}
             onValueChange={setSearch}
           />
           <CommandList>
-            <CommandEmpty>No companies found.</CommandEmpty>
+            <CommandEmpty
+              onClick={() => {
+                setSelectedOption(search);
+                onSelect(search);
+                setOpen(false);
+              }}
+              className="m-1 rounded-sm py-4 px-2 text-sm text-center font-semibold cursor-pointer text-white bg-primary hover:bg-primary-hover"
+            >
+              + Create
+            </CommandEmpty>
             <CommandGroup>
               {filteredOptions?.map((option) => (
                 <CommandItem

@@ -8,10 +8,10 @@ export interface HomeStatistics {
   onSiteInternshipsCount: number;
   totalCompaniesCount: number;
   totalStudentsCount: number;
-  privatePublicSchoolsCount: number;
-  universitiesCount: number;
-  totalApplicants: number;
-  totalAcceptedApplicants: number;
+  privatePublicSchoolsCount: number; // to be added
+  universitiesCount: number; // to be added
+  totalApplicants: number; // right now
+  totalAcceptedApplicants: number; // right now
 }
 interface WhyChooseClientProps {
   statistics: HomeStatistics;

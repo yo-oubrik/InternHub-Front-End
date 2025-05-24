@@ -5,6 +5,7 @@ import {
   Certificat,
   CertificatRequest,
   Company,
+  CompanyRequest,
   Experience,
   ExperienceRequest,
   Formation,
@@ -16,6 +17,7 @@ import {
   StudentRequest,
 } from "@/types/types";
 import { RequestWithAuth } from "@/utils/auth";
+import toast from "react-hot-toast";
 
 interface UserContextType {
   company: Company;
@@ -29,6 +31,7 @@ interface UserContextType {
   getStudent: (id: string) => Promise<Student>;
   getCompanies: () => Promise<void>;
   updateStudent: (student: Student) => Promise<void>;
+  updateCompany: (company: Company) => Promise<void>;
   createExperience: (experience: Experience) => Promise<Experience>;
   updateExperience: (experience: Experience) => Promise<Experience>;
   deleteExperience: (experience: Experience) => Promise<void>;
@@ -51,7 +54,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   const { isAuthenticated, currentUser } = useAuth();
   // const { getCompanyInternships } = useInternship();
   const [isUserProfile, setIsUserProfile] = useState<boolean>(false);
-  const [company, setCompany] = useState<Company>({} as Company);
+  const [company, setCompany] = useState<Company>({ name: "" } as Company);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [student, setStudent] = useState<Student>({
     firstName: "",
@@ -59,6 +62,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   } as Student);
 
   const getCompany = async (id: string) => {
+    if (!id) return null;
     const data = await RequestWithAuth(`companies/${id}`);
     if (!data) {
       console.error("Failed to fetch company");
@@ -94,43 +98,62 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
         method: "PUT",
         body: JSON.stringify(studentRequest),
       });
+      if (!data) toast.error("Failed to update student");
+      else toast.success("Student updated successfully");
       setStudent(data as Student);
     } catch (error) {
       console.error("Failed to update student", error);
+      toast.error("Failed to update student");
     }
   };
+
+  const updateCompany = async (company: Company) => {
+    try {
+      const companyRequest: CompanyRequest = company as CompanyRequest;
+      console.log("company before update : ", companyRequest);
+      const data = await RequestWithAuth(`companies/${company.id}`, {
+        method: "PUT",
+        body: JSON.stringify(companyRequest),
+      });
+      if (!data) toast.error("Failed to update company");
+      else toast.success("Company updated successfully");
+      setCompany(data as Company);
+    } catch (error) {
+      console.error("Failed to update company", error);
+    }
+  };
+
   const createExperience = async (experience: Experience) => {
     try {
-      console.log(
-        "created ... " +
-          JSON.stringify({
-            ...experience,
-            companyId: experience.company.id,
-            studentId: student.id,
-          } as ExperienceRequest)
-      );
-      return await RequestWithAuth(`/experiences`, {
+      const data = await RequestWithAuth(`/experiences`, {
         method: "POST",
         body: JSON.stringify({
           ...experience,
-          companyId: experience.company.id,
+          company: experience.company,
           studentId: student.id,
         } as ExperienceRequest),
       });
+      if (!data) toast.error("Failed to create experience");
+      else toast.success("Experience created successfully");
+      return data;
     } catch (error) {
       console.error("Failed to create experience", error);
+      return null;
     }
   };
   const updateExperience = async (experience: Experience) => {
     try {
-      return await RequestWithAuth(`/experiences/${experience.id}`, {
+      const res = await RequestWithAuth(`/experiences/${experience.id}`, {
         method: "PUT",
         body: JSON.stringify({
           ...experience,
-          companyId: experience.company.id,
+          company: experience.company,
           studentId: student.id,
         } as ExperienceRequest),
       });
+      if (!res) toast.error("Failed to update experience");
+      else toast.success("Experience updated successfully");
+      return res;
     } catch (error) {
       console.error("Failed to update experience", error);
     }
@@ -146,28 +169,34 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const createFormation = async (formation: Formation) => {
     try {
-      return await RequestWithAuth(`/formations`, {
+      const data = await RequestWithAuth(`/formations`, {
         method: "POST",
         body: JSON.stringify({
           ...formation,
-          companyId: formation.company.id,
+          companyId: formation.company,
           studentId: student.id,
         } as FormationRequest),
       });
+      if (!data) toast.error("Failed to create formation");
+      else toast.success("Formation created successfully");
+      return data;
     } catch (error) {
       console.error("Failed to create formation", error);
     }
   };
   const updateFormation = async (formation: Formation) => {
     try {
-      return await RequestWithAuth(`/formations/${formation.id}`, {
+      const res = await RequestWithAuth(`/formations/${formation.id}`, {
         method: "PUT",
         body: JSON.stringify({
           ...formation,
-          companyId: formation.company.id,
+          companyId: formation.company,
           studentId: student.id,
         } as FormationRequest),
       });
+      if (!res) toast.error("Failed to update formation");
+      else toast.success("Formation updated successfully");
+      return res;
     } catch (error) {
       console.error("Failed to update formation", error);
     }
@@ -218,7 +247,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const createCertificat = async (certificat: Certificat) => {
     try {
-      return await RequestWithAuth(`/certificats`, {
+      return await RequestWithAuth(`/certificates`, {
         method: "POST",
         body: JSON.stringify({
           ...certificat,
@@ -231,7 +260,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const updateCertificat = async (certificat: Certificat) => {
     try {
-      return await RequestWithAuth(`/certificats/${certificat.id}`, {
+      return await RequestWithAuth(`/certificates/${certificat.id}`, {
         method: "PUT",
         body: JSON.stringify({
           ...certificat,
@@ -244,7 +273,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   };
   const deleteCertificat = async (certificat: Certificat) => {
     try {
-      await RequestWithAuth(`/certificats/${certificat.id}`, {
+      await RequestWithAuth(`/certificates/${certificat.id}`, {
         method: "DELETE",
       });
     } catch (error) {
@@ -286,6 +315,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
         setStudent,
         getStudent,
         updateStudent,
+        updateCompany,
         createExperience,
         updateExperience,
         deleteExperience,

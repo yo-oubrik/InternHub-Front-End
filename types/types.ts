@@ -62,29 +62,25 @@ export interface Company extends User {
   location: MapLocation;
   description: string;
   ice: string;
-  rc: string;
-  phone: string;
-  size: string;
+  tel?: string;
   links?: Links;
   internships?: Internship[];
   blocked: boolean;
   blockedAt: Date | null;
 }
 
-export interface CompanyRequest {
-  name: string;
-  location: MapLocation;
-  description: string;
-  ice: string;
-  rc: string;
-  phone: string;
-  size: string;
-  links?: Links;
+export interface MapLocation {
+  latitude: number;
+  longitude: number;
 }
 
-export interface MapLocation {
-  lat: number;
-  lng: number;
+export interface CompanyRequest {
+  name: string;
+  location: MapLocation ;
+  description: string;
+  ice: string;
+  tel?: string;
+  links?: Links;
 }
 
 export enum WorkMode {
@@ -109,7 +105,6 @@ export interface Internship {
   id: string;
   company?: Company;
   createdAt: Date;
-  // Location : Location;
   description: string;
   duration: number;
   salary: number | null;
@@ -119,6 +114,7 @@ export interface Internship {
   workMode: WorkMode;
   tags: InternshipType[];
   skills: string[];
+  city : string;
   motivationLetterRequired : boolean;
   negotiable: boolean;
   paid: boolean ;
@@ -139,9 +135,11 @@ export interface InternshipRequest {
   skills: string[];
   negotiable: boolean;
   paid: boolean;
+  city : string;
 }
 
 export interface Application {
+  id : string ;
   studentResponse : Student;
   internshipResponse : Internship;
   status: ApplicationStatus;
@@ -202,7 +200,7 @@ export interface Experience {
   poste: string;
   startDate: string;
   endDate: string;
-  company: Company;
+  company: string;
   description: string;
 }
 
@@ -211,7 +209,7 @@ export type ExperienceRequest = {
   startDate: string;
   endDate: string;
   description: string;
-  companyId: string;
+  company: string;
   studentId: string;
 };
 
@@ -221,7 +219,7 @@ export interface Formation {
   diploma: string;
   startDate: string;
   endDate: string;
-  company: Company;
+  company: string ;
 }
 
 export type FormationRequest = {
@@ -229,7 +227,7 @@ export type FormationRequest = {
   diploma: string;
   startDate: string;
   endDate: string;
-  companyId: string;
+  company: string;
   studentId: string;
 };
 

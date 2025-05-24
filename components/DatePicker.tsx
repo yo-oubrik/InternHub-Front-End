@@ -28,7 +28,7 @@ export function DatePicker({
   className,
 }: Props) {
   const [date, setDate] = useState<Date | undefined>(
-    value ? parse(value, "MMM - yyyy", new Date()) : undefined
+    value ? parse(value, "MMM-yyyy", new Date()) : undefined
   );
 
   console.log("date : ", date);
@@ -60,7 +60,7 @@ export function DatePicker({
           selected={date}
           onSelect={(value) => {
             setDate(value);
-            value && setDateValue(format(value, "MMM - yyyy"));
+            value && setDateValue(format(value, "MMM-yyyy"));
           }}
           initialFocus
         />

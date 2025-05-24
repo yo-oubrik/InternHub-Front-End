@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import axios from "@/lib/axios";
 import HeroSection from "@/components/HeroSection";
 import FeatureSections from "@/components/Features/FeatureSections";
+import { useAuth } from "@/context/authContext";
 
 interface SquareProps {
   size: number;
@@ -68,12 +69,16 @@ export default function Home() {
           { data: totalInternships },
           { data: remoteInternships },
           { data: onSiteInternships },
+          { data: totalApplicants },
+          { data: totalAcceptedApplicants },
         ] = await Promise.all([
           axios.get("/companies/count"),
           axios.get("/students/count"),
           axios.get("/internships/count"),
           axios.get("/internships/count/remote"),
           axios.get("/internships/count/on-site"),
+          axios.get("/applications/count/students"),
+          axios.get("/applications/count/students/ACCEPTED"),
         ]);
 
         setStatistics({
@@ -84,8 +89,8 @@ export default function Home() {
           onSiteInternshipsCount: onSiteInternships || 0,
           privatePublicSchoolsCount: 30,
           universitiesCount: 20,
-          totalApplicants: 100,
-          totalAcceptedApplicants: 50,
+          totalApplicants: totalApplicants || 0,
+          totalAcceptedApplicants: totalAcceptedApplicants || 0,
         });
       } catch (err) {
         toast.error("Failed to fetch statistics", {
@@ -130,6 +135,9 @@ export default function Home() {
 
     setSquares(newSquares);
   }, []);
+
+  const { currentUser } = useAuth();
+  console.log("current User : ", currentUser);
 
   return (
     <main className="relative">

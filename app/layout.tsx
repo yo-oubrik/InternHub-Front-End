@@ -2,6 +2,7 @@
 import "@/app/globals.css";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import { useAuth } from "@/context/authContext";
 import ContextProvider from "@/providers/ContextProvider";
 import { Poppins } from "next/font/google";
 import { useEffect, useState } from "react";
