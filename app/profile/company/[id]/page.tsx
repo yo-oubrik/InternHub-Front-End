@@ -1,32 +1,32 @@
 "use client";
+import InputField from "@/components/InputField";
 import Myinternship from "@/components/InternshipItem/MyInternship";
-import { mockInternships } from "@/components/InternshipItem/MyInternshipsList";
+import NotFound from "@/components/not-found";
 import { CompanyMaps } from "@/components/Profile/company/CompanyMaps";
 import CompanyProfile from "@/components/Profile/company/CompanyProfile";
 import CompanyProfileStats from "@/components/Profile/company/CompanyProfileStats";
+import EditModal from "@/components/Profile/EditModal";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/context/authContext";
 import { useInternship } from "@/context/internshipContext";
 import { useUser } from "@/context/userContext";
+import axios from "@/lib/axios";
+import { getValidToken } from "@/utils/auth";
 import { ApplicationStatus } from "@/types/types";
-import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import NotFound from "@/components/not-found";
-import Loading from "@/app/loading";
 import { AlertTriangle, Flag, X } from "lucide-react";
-import EditModal from "@/components/Profile/EditModal";
-import InputField from "@/components/InputField";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const page = () => {
   const { currentUser, loading } = useAuth();
   const router = useRouter();
   const param = useParams();
   const companyId = param.id.toString();
-  const [flagReason , setFlagReason] = useState("");
-  const [flagDescription , setFlagDescription] = useState("");
+  const [flagReason, setFlagReason] = useState("");
+  const [flagDescription, setFlagDescription] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [showAlert, setShowAlert] = useState(true);
   const [isFlagModalOpen, setIsFlagModalOpen] = useState(false);
@@ -122,6 +122,43 @@ const page = () => {
 
   const handleFlagCompany = () => {
     setIsFlagModalOpen(true);
+  };
+
+  const submitFlagRequest = async () => {
+    try {
+      const token = getValidToken();
+      if (!token) {
+        toast.error("Authentication required");
+        return false;
+      }
+
+      if (!flagReason.trim()) {
+        toast.error("Please provide a reason for flagging");
+        return false;
+      }
+
+      const flagData = {
+        targetId: companyId,
+        reason: flagReason.trim(),
+        description: flagDescription.trim(),
+        screenshots: [], // Add screenshot handling if needed later
+      };
+
+      await axios.post("/flagged-companies", flagData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      toast.success("Company has been flagged successfully");
+      setFlagReason("");
+      setFlagDescription("");
+      return true;
+    } catch (error) {
+      console.error("Error flagging company:", error);
+      toast.error("Failed to flag company");
+      return false;
+    }
   };
 
   const scrollToFlag = () => {
@@ -255,80 +292,85 @@ const page = () => {
       )}
 
       {isFlagModalOpen && (
-      <EditModal
-      isOpenModal={isFlagModalOpen}
-      setIsOpenModal={setIsFlagModalOpen}
-      className="bg-white max-w-lg flex flex-col text-black"
-      title="Flag Company as Suspicious"
-      titleClassName="text-xl font-medium"
-      cancelButton="Cancel"
-      cancelButtonClassName="bg-gray-200 text-black border-gray-300 hover:bg-gray-300"
-      onCancel={() => setIsFlagModalOpen(false)}
-      confirmButton="Submit Flag"
-      confirmButtonClassName="bg-red-600 hover:bg-red-700 text-white"
-      onConfirm={() => {
-        // Handle flag submission
-        setIsFlagModalOpen(false);
-        alert("Thank you for your report. Our team will review it shortly.");
-      }}
-      body={
-        <div className="flex flex-col gap-6">
-          <div className="bg-gray-100 p-4 -mx-6 -mt-2 border-b border-gray-200">
-            <div className="flex gap-3 items-start">
-              <div className="bg-orange-600 p-2 rounded-md">
-                <AlertTriangle className="text-white h-5 w-5" />
+        <EditModal
+          isOpenModal={isFlagModalOpen}
+          setIsOpenModal={setIsFlagModalOpen}
+          className="bg-white max-w-lg flex flex-col text-black"
+          title="Flag Company as Suspicious"
+          titleClassName="text-xl font-medium"
+          cancelButton="Cancel"
+          cancelButtonClassName="bg-gray-200 text-black border-gray-300 hover:bg-gray-300"
+          onCancel={() => setIsFlagModalOpen(false)}
+          confirmButton="Submit Flag"
+          confirmButtonClassName="bg-red-600 hover:bg-red-700 text-white"
+          onConfirm={async () => {
+            const success = await submitFlagRequest();
+            if (success) {
+              setIsFlagModalOpen(false);
+              toast.success(
+                "Thank you for your report. Our team will review it shortly."
+              );
+            }
+          }}
+          body={
+            <div className="flex flex-col gap-6">
+              <div className="bg-gray-100 p-4 -mx-6 -mt-2 border-b border-gray-200">
+                <div className="flex gap-3 items-start">
+                  <div className="bg-orange-600 p-2 rounded-md">
+                    <AlertTriangle className="text-white h-5 w-5" />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <p className="font-medium">Please provide details</p>
+                    <p className="text-sm text-gray-500">
+                      Explain why you believe this company as suspicious or fake
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="flex flex-col gap-1">
-                <p className="font-medium">Please provide details</p>
-                <p className="text-sm text-gray-500">
-                  Explain why you believe this company as suspicious or fake
-                </p>
+
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="flag-reason">Reason</Label>
+                  <InputField
+                    type="text"
+                    placeholder="Select reason..."
+                    value={flagReason}
+                    onChange={(e) => setFlagReason(e.target.value)}
+                    className="w-full bg-white"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="flag-description">Description</Label>
+                  <Textarea
+                    value={flagDescription}
+                    onChange={(e) => setFlagDescription(e.target.value)}
+                    placeholder="Please provide specific details about why you are flagging this company..."
+                    className="w-full bg-white"
+                  />
+                </div>
+
+                <div className="bg-yellow-50 p-3 rounded-md text-sm">
+                  <p className="font-medium text-yellow-800 mb-1">
+                    Important Information
+                  </p>
+                  <ul className="list-disc list-inside text-yellow-700 space-y-1">
+                    <li>
+                      Repeatedly flagging legitimate users may result in your
+                      account being restricted
+                    </li>
+                    <li>
+                      Please provide specific details that can help us
+                      investigate
+                    </li>
+                    <li>Our team will review your report within 48 hours</li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="flag-reason">Reason</Label>
-              <InputField
-                type="text"
-                placeholder="Select reason..."
-                value={flagReason}
-                onChange={(e)=>setFlagReason(e.target.value)}
-                className="w-full bg-white"
-                required
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="flag-description">Description</Label>
-              <Textarea
-                value={flagDescription}
-                onChange={(e)=>setFlagDescription(e.target.value)}
-                placeholder="Please provide specific details about why you are flagging this company..."
-                className="w-full bg-white"
-              />
-            </div>
-
-            <div className="bg-yellow-50 p-3 rounded-md text-sm">
-              <p className="font-medium text-yellow-800 mb-1">
-                Important Information
-              </p>
-              <ul className="list-disc list-inside text-yellow-700 space-y-1">
-                <li>
-                  Repeatedly flagging legitimate users may result in your
-                  account being restricted
-                </li>
-                <li>
-                  Please provide specific details that can help us investigate
-                </li>
-                <li>Our team will review your report within 48 hours</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      }
-    />
+          }
+        />
       )}
     </div>
   ) : (

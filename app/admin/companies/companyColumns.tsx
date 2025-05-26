@@ -1,8 +1,5 @@
 "use client";
 
-import { EditCompanyDialog } from "@/components/Dialogs/EditCompanyDialog";
-import { RemoveCompanyDialog } from "@/components/Dialogs/RemoveCompanyDialog";
-import { CompanyInformationDialog } from "@/components/Dialogs/CompanyInformationDialog";
 import { SortableHeader } from "@/components/SortableHeader";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,24 +7,18 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Company } from "@/types/types";
 import { sortDateColumn } from "@/utils/dates/sortDateColumn";
 import { ColumnDef } from "@tanstack/react-table";
 import {
-  MoreHorizontal,
-  PenBox,
-  Trash2,
   Building,
-  Info,
-  Briefcase,
   InfoIcon,
+  MoreHorizontal,
   ShieldAlert,
-  ShieldCheck
+  ShieldCheck,
 } from "lucide-react";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export const companyColumns: ColumnDef<Company>[] = [
@@ -60,9 +51,7 @@ export const companyColumns: ColumnDef<Company>[] = [
   },
   {
     accessorKey: "blocked",
-    header: ({ column }) => (
-      <SortableHeader column={column} label="Status" />
-    ),
+    header: ({ column }) => <SortableHeader column={column} label="Status" />,
     cell: ({ row }) => {
       const blocked = row.original.blocked;
       return (
@@ -101,7 +90,7 @@ export const companyColumns: ColumnDef<Company>[] = [
               <DropdownMenuItem
                 className="flex items-center gap-2 cursor-pointer"
                 onClick={() => {
-                  window.open(`/companies/${row.original.id}`, "_blank");
+                  window.open(`/profile/company/${row.original.id}`, "_blank");
                 }}
               >
                 <Building /> View Profile

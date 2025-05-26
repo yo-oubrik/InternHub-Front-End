@@ -4,7 +4,6 @@ import NotFound from "@/components/not-found";
 import CertificateCard from "@/components/Profile/CertificateCard";
 import EditModal from "@/components/Profile/EditModal";
 import ExperienceCard from "@/components/Profile/ExperienceCard";
-import { FlagStudentDialog } from "@/components/Profile/FlagStudentDialog";
 import FormationCard from "@/components/Profile/FormationCard";
 import InfosCard from "@/components/Profile/InfosCard";
 import PortfolioCard from "@/components/Profile/PortfolioCard";
@@ -14,10 +13,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/context/authContext";
 import { useUser } from "@/context/userContext";
-import { StudentFlag } from "@/types/types";
-import { AlertTriangle, X, Flag } from "lucide-react";
+import { Role } from "@/types/types";
+import { AlertTriangle, Flag, X } from "lucide-react";
 import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const page = () => {
   const params = useParams();
@@ -25,8 +24,8 @@ const page = () => {
   const [isFlagModalOpen, setIsFlagModalOpen] = useState(false);
   const [showAlert, setShowAlert] = useState(true);
   const { currentUser, loading, setLoading } = useAuth();
-  const [ flagReason , setFlagReason ] = useState("");
-  const [ flagDescription , setFlagDescription ] = useState("");
+  const [flagReason, setFlagReason] = useState("");
+  const [flagDescription, setFlagDescription] = useState("");
   const { checkIsUserProfile, getStudent, setStudent, student, isUserProfile } =
     useUser();
 
@@ -171,7 +170,7 @@ const page = () => {
             </div>
           </div>
         }
-      /> 
+      />
     </div>
   ) : (
     <NotFound
