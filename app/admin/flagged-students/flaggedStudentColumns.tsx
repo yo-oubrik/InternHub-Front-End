@@ -92,7 +92,7 @@ export const flaggedStudentColumns =
                   className="flex items-center gap-2 cursor-pointer"
                   onClick={() => {
                     window.open(
-                      `/students/${flaggedStudent.studentId}`,
+                      `/profile/student/${flaggedStudent.studentId}`,
                       "_blank"
                     );
                   }}

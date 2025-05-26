@@ -92,7 +92,7 @@ export const studentColumns: ColumnDef<Student>[] = [
               <DropdownMenuItem
                 className="flex items-center gap-2 cursor-pointer"
                 onClick={() => {
-                  window.open(`/student/${row.original.id}`, "_blank");
+                  window.open(`/profile/student/${row.original.id}`, "_blank");
                 }}
               >
                 <User /> View Profile

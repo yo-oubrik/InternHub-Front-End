@@ -61,13 +61,17 @@ export const CompanyFlagDetails = ({
                   href={`/student/${companyFlag.studentId}`}
                   target="_blank"
                 >
-                  {companyFlag.studentName}
+                  {companyFlag.studentFirstName +
+                    " " +
+                    companyFlag.studentLastName}
                 </Link>
               </Button>
             </div>
 
             <div>
-              <h3 className="font-medium text-gray-500 mb-1">Description</h3>
+              <h3 className="font-medium text-gray-500 mb-1 bg-white">
+                Description
+              </h3>
               {companyFlag.description}
             </div>
 
