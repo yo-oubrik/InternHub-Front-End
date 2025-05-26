@@ -22,6 +22,8 @@ export interface User extends BaseEntity {
   email: string;
   role: Role;
   profilePicture?: string;
+  blocked?: boolean;
+  blockedAt?: Date | null;
 }
 
 export interface Admin extends User {
@@ -42,8 +44,6 @@ export interface Student extends User {
   formations?: Formation[];
   projects?: Project[];
   certificates?: Certificat[];
-  blocked: boolean;
-  blockedAt: Date | null;
 }
 
 export interface StudentRequest {
@@ -65,8 +65,6 @@ export interface Company extends User {
   tel?: string;
   links?: Links;
   internships?: Internship[];
-  blocked: boolean;
-  blockedAt: Date | null;
 }
 
 export interface MapLocation {
@@ -76,7 +74,7 @@ export interface MapLocation {
 
 export interface CompanyRequest {
   name: string;
-  location: MapLocation ;
+  location: MapLocation;
   description: string;
   ice: string;
   tel?: string;
@@ -114,13 +112,13 @@ export interface Internship {
   workMode: WorkMode;
   tags: InternshipType[];
   skills: string[];
-  city : string;
-  motivationLetterRequired : boolean;
+  city: string;
+  motivationLetterRequired: boolean;
   negotiable: boolean;
-  paid: boolean ;
+  paid: boolean;
   likes: string[];
-  isEnded : boolean ;
-  applicants : Student[];
+  isEnded: boolean;
+  applicants: Student[];
 }
 
 export interface InternshipRequest {
@@ -130,20 +128,20 @@ export interface InternshipRequest {
   salaryType: SalaryType;
   title: string;
   workMode: WorkMode;
-  motivationLetterRequired : boolean ;
+  motivationLetterRequired: boolean;
   tags: InternshipType[];
   skills: string[];
   negotiable: boolean;
   paid: boolean;
-  city : string;
+  city: string;
 }
 
 export interface Application {
-  id : string ;
-  studentResponse : Student;
-  internshipResponse : Internship;
+  id: string;
+  studentResponse: Student;
+  internshipResponse: Internship;
   status: ApplicationStatus;
-  applicationDate : Date;
+  applicationDate: Date;
   motivationLetter: string | null;
   cv: string;
 }
@@ -151,7 +149,7 @@ export interface Application {
 export interface ApplicationRequest {
   internshipId: string;
   status: ApplicationStatus;
-  motivationLetter: string | null ;
+  motivationLetter: string | null;
   cv: string;
 }
 
@@ -161,7 +159,7 @@ export enum ApplicationStatus {
   REJECTED = "REJECTED",
 }
 
-export const getColorsByApplicationStatus = (status : ApplicationStatus ) => {
+export const getColorsByApplicationStatus = (status: ApplicationStatus) => {
   switch (status) {
     case ApplicationStatus.ACCEPTED:
       return "bg-green-500 hover:bg-green-600";
@@ -219,7 +217,7 @@ export interface Formation {
   diploma: string;
   startDate: string;
   endDate: string;
-  company: string ;
+  company: string;
 }
 
 export type FormationRequest = {

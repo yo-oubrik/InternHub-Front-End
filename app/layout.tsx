@@ -2,10 +2,9 @@
 import "@/app/globals.css";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import { useAuth } from "@/context/authContext";
+import { BlockedUserCheck } from "@/components/BlockedUserCheck";
 import ContextProvider from "@/providers/ContextProvider";
 import { Poppins } from "next/font/google";
-import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 
 const poppins = Poppins({
@@ -40,7 +39,9 @@ export default function RootLayout({
         <ContextProvider>
           <Header />
           <div className="min-h-[calc(100vh-var(--header-height))]">
-            {children}
+            <BlockedUserCheck>
+              {children}
+            </BlockedUserCheck>
           </div>
           <Footer />
         </ContextProvider>
