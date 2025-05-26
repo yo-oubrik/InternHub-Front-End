@@ -23,8 +23,10 @@ import {
   Building,
   Info,
   Briefcase,
+  InfoIcon,
 } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export const companyColumns: ColumnDef<Company>[] = [
   {
@@ -57,8 +59,7 @@ export const companyColumns: ColumnDef<Company>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const company = row.original;
-      const [isRemoveOpen, setIsRemoveOpen] = useState<boolean>(false);
+      const router = useRouter();
       return (
         <>
           <DropdownMenu>
@@ -78,20 +79,15 @@ export const companyColumns: ColumnDef<Company>[] = [
               >
                 <Building /> View Profile
               </DropdownMenuItem>
-
-              {/* <DropdownMenuItem
+              <DropdownMenuItem
+                onClick={() => {
+                  router.push(`/admin/flagged-companies/${row.original.id}`);
+                }}
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() =>
-                  window.open(
-                    `/admin/companies/${row.original.id}/internships`,
-                    "_blank"
-                  )
-                }
               >
-                <Briefcase />
-                Company Internships
+                <InfoIcon className="h-4 w-4" />
+                Flags History
               </DropdownMenuItem>
-              <DropdownMenuSeparator /> */}
             </DropdownMenuContent>
           </DropdownMenu>
         </>

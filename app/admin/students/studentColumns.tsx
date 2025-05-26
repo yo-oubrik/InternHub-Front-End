@@ -1,6 +1,5 @@
 "use client";
 
-import { RemoveStudentDialog } from "@/components/Dialogs/RemoveStudentDialog";
 import { SortableHeader } from "@/components/SortableHeader";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,15 +7,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Student } from "@/types/types";
 import { sortDateColumn } from "@/utils/dates/sortDateColumn";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Trash2, User } from "lucide-react";
-import { useState } from "react";
-
+import { InfoIcon, MoreHorizontal, User } from "lucide-react";
+import { useRouter } from "next/navigation";
 export const studentColumns: ColumnDef<Student>[] = [
   {
     accessorKey: "firstName",
@@ -51,6 +48,7 @@ export const studentColumns: ColumnDef<Student>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+      const router = useRouter();
       return (
         <>
           <DropdownMenu>
@@ -69,6 +67,15 @@ export const studentColumns: ColumnDef<Student>[] = [
                 }}
               >
                 <User /> View Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  router.push(`/admin/flagged-students/${row.original.id}`);
+                }}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <InfoIcon className="h-4 w-4" />
+                Flags History
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
