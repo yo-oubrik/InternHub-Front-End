@@ -24,6 +24,8 @@ import {
   Info,
   Briefcase,
   InfoIcon,
+  ShieldAlert,
+  ShieldCheck
 } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -55,6 +57,31 @@ export const companyColumns: ColumnDef<Company>[] = [
       return <div>{date.toLocaleDateString("en-CA")}</div>;
     },
     sortingFn: sortDateColumn,
+  },
+  {
+    accessorKey: "blocked",
+    header: ({ column }) => (
+      <SortableHeader column={column} label="Status" />
+    ),
+    cell: ({ row }) => {
+      const blocked = row.original.blocked;
+      return (
+        <div className="flex items-center">
+          {blocked ? (
+            <div className="flex items-center gap-2 text-red-500">
+              <ShieldAlert className="h-4 w-4" />
+              <span>Blocked</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-green-500">
+              <ShieldCheck className="h-4 w-4" />
+              <span>Active</span>
+            </div>
+          )}
+        </div>
+      );
+    },
+    sortingFn: "basic",
   },
   {
     id: "actions",
