@@ -6,6 +6,7 @@ import axios from "@/lib/axios";
 import HeroSection from "@/components/HeroSection";
 import FeatureSections from "@/components/Features/FeatureSections";
 import { useAuth } from "@/context/authContext";
+import { Role } from "@/types/types";
 
 interface SquareProps {
   size: number;
@@ -49,6 +50,7 @@ const Square: React.FC<SquareProps> = ({
 };
 
 export default function Home() {
+  const { currentUser } = useAuth();
   const [statistics, setStatistics] = useState<HomeStatistics>({
     onSiteInternshipsCount: 0,
     remoteInternshipsCount: 0,
@@ -122,21 +124,23 @@ export default function Home() {
     ];
 
     // Create more squares for a vibrant background
-    const newSquares = Array.from({ length: 60 }, () => ({
-      size: Math.floor(Math.random() * 80) + 20, // 20-100px
-      top: Math.floor(Math.random() * 95), // 0-95%
-      left: Math.floor(Math.random() * 90) + 5, // 5-95%
-      color: colors[Math.floor(Math.random() * colors.length)],
-      delay: Math.random() * 5, // 0-5s delay
-      duration: Math.random() * 4 + 3, // 3-7s duration
-      rotation: Math.floor(Math.random() * 45), // 0-45 degrees rotation
-      blur: Math.random() < 0.3 ? Math.random() * 5 : 0, // 30% chance of blur effect
-    }));
+    const newSquares = Array.from(
+      { length: currentUser?.role === Role.ADMIN ? 25 : 60 },
+      () => ({
+        size: Math.floor(Math.random() * 80) + 20, // 20-100px
+        top: Math.floor(Math.random() * 95), // 0-95%
+        left: Math.floor(Math.random() * 90) + 5, // 5-95%
+        color: colors[Math.floor(Math.random() * colors.length)],
+        delay: Math.random() * 5, // 0-5s delay
+        duration: Math.random() * 4 + 3, // 3-7s duration
+        rotation: Math.floor(Math.random() * 45), // 0-45 degrees rotation
+        blur: Math.random() < 0.3 ? Math.random() * 5 : 0, // 30% chance of blur effect
+      })
+    );
 
     setSquares(newSquares);
-  }, []);
+  }, [currentUser]);
 
-  const { currentUser } = useAuth();
   console.log("current User : ", currentUser);
 
   return (
@@ -148,7 +152,9 @@ export default function Home() {
         ))}
       </div>
       <HeroSection />
-      <FeatureSections statistics={statistics} />
+      {currentUser?.role != Role.ADMIN && (
+        <FeatureSections statistics={statistics} />
+      )}
     </main>
   );
 }
