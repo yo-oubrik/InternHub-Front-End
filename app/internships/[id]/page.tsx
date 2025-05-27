@@ -105,19 +105,47 @@ export default function page() {
   //   }
   // }, [internship?.applicants, student?.id]);
 
+  // const uploadCV = async (file: File) => {
+  //   try {
+  //     // Upload cv to Supabase
+  //     const publicUrl = await uploadFileToSupabase(file, {
+  //       bucketName: "images",
+  //       fileName: `application-toInternship-${internship?.id}-fromStudent-${
+  //         student?.id
+  //       }-${Date.now()}-cv-${cv?.name}`,
+  //     });
+  //     return publicUrl;
+  //   } catch (error) {
+  //     toast.error("Failed to upload CV:" + error);
+  //   }
+  // };
+
+
   const uploadCV = async (file: File) => {
     try {
+      // Check internet connection
+      if (!navigator.onLine) {
+        throw new Error("No internet connection");
+      }
+  
       // Upload cv to Supabase
       const publicUrl = await uploadFileToSupabase(file, {
         bucketName: "images",
-        fileName: `application-toInternship-${internship?.id}-fromStudent-${
-          student?.id
-        }-${Date.now()}-cv-${cv?.name}`,
+        fileName: `application-toInternship-${internship?.id}-fromStudent-${student?.id}-${Date.now()}-cv-${file.name}`,
       });
+  
       return publicUrl;
-    } catch (error) {
-      console.error("Error uploading CV:", error);
-      toast.error("Failed to upload CV:" + error);
+    } catch (error: any) {
+      if (error.message === "No internet connection") {
+        toast.error("No internet connection. Please check your connection and try again.");
+      } else if (error.message?.includes("Network Error")) {
+        toast.error("Network error occurred. Please check your connection and try again.");
+      } else if (error.message?.includes("timeout")) {
+        toast.error("Request timed out. Please check your connection and try again.");
+      } else {
+        toast.error("Failed to upload CV: " + error.message);
+      }
+      return null;
     }
   };
 

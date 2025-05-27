@@ -129,7 +129,7 @@ function JobDetails() {
                 disabled={!internship.paid ? true : false}
                 defaultValue={SalaryType.MONTH}
               >
-                <SelectTrigger>
+                <SelectTrigger className="bg-background border border-gray-300 hover:bg-gray-100/50 hover:text-gray-700">
                   <SelectValue placeholder="Select Type" />
                 </SelectTrigger>
                 <SelectContent className="w-[120px] mt-2">

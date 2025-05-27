@@ -119,7 +119,7 @@ export interface Internship {
   negotiable: boolean;
   paid: boolean ;
   likes: string[];
-  isEnded : boolean ;
+  closed : boolean ;
   applicants : Student[];
 }
 

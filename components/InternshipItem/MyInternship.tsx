@@ -11,6 +11,8 @@ import { cleanAndTruncateHTML } from "@/utils/Formating";
 import { Button } from "../ui/button";
 import EditModal from "../Profile/EditModal";
 import { useInternship } from "@/context/internshipContext";
+import { useDeprecatedAnimatedState } from "framer-motion";
+import { useUser } from "@/context/userContext";
 
 interface InternshipProps {
   internship: Internship;
@@ -20,8 +22,10 @@ function Myinternship({ internship }: InternshipProps) {
   const router = useRouter();
   const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false);
   const [isOpenCloseDialog, setIsOpenCloseDialog] = useState(false);
-  const { countInternshipApplications } = useInternship();
+  const [isOpenOpenDialog, setIsOpenOpenDialog] = useState(false);
+  const { countInternshipApplications , closeInternship : closeApp , openInternship : openApp, deleteInternship : deleteApp} = useInternship();
   const [countApplicants, setCountApplications] = useState<number>(0);
+  const {company, setCompany} = useUser();
 
   useEffect(() => {
     const fetchCount = async () => {
@@ -33,15 +37,46 @@ function Myinternship({ internship }: InternshipProps) {
 
   const deleteInternship = () => {
     setIsOpenDeleteDialog(false);
-    // Handle delete logic here
+    deleteApp(internship?.id);
+    setCompany({
+      ...company,
+      internships : company.internships?.filter((internship) => internship.id !== internship.id)
+    })
   };
 
   const closeInternship = () => {
+    const res = closeApp(internship?.id);
+    setCompany({
+      ...company,
+      internships : company.internships?.map((internship) => {
+        if (internship.id === internship.id) {
+          return {
+            ...internship,
+            closed: true,
+          };
+        }
+        return internship;
+      })
+    })
     setIsOpenCloseDialog(false);
-    // Handle close logic here
   };
 
-  // const { isAuthenticated } = useAuth();
+  const openInternship = () => {
+    openApp(internship?.id);
+    setCompany({
+      ...company,
+      internships : company.internships?.map((internship) => {
+        if (internship.id === internship.id) {
+          return {
+            ...internship,
+            closed: false,
+          };
+        }
+        return internship;
+      })
+    })
+    setIsOpenOpenDialog(false);
+  };
 
   return (
     <div className="p-8 bg-white rounded-xl flex flex-col gap-5">
@@ -56,7 +91,7 @@ function Myinternship({ internship }: InternshipProps) {
         </div>
 
         <div className="flex gap-2">
-          {!internship.isEnded ? (
+          {!internship.closed ? (
             <div
               className="flex items-center rounded-md font-medium hover:bg-accent px-3 cursor-pointer gap-1 text-sm text-blue-400"
               onClick={() => setIsOpenCloseDialog(true)}
@@ -64,7 +99,7 @@ function Myinternship({ internship }: InternshipProps) {
               Close Application
             </div>
           ) : (
-            <div className="flex items-center rounded-md font-medium px-3 gap-1 text-sm text-gray-400">
+            <div className="flex items-center rounded-md font-medium px-3 gap-1 text-sm text-gray-400 hover:bg-accent cursor-pointer" onClick={() => setIsOpenOpenDialog(true)}>
               Closed
             </div>
           )}
@@ -165,7 +200,6 @@ function Myinternship({ internship }: InternshipProps) {
         />
       )}
 
-
       {isOpenCloseDialog && (
         <EditModal
           isOpenModal={isOpenCloseDialog}
@@ -204,6 +238,45 @@ function Myinternship({ internship }: InternshipProps) {
             </div>
           }
         />
+      )}
+
+      {isOpenOpenDialog && (
+        <EditModal
+        isOpenModal={isOpenOpenDialog}
+        setIsOpenModal={setIsOpenOpenDialog}
+        className="bg-white p-0 max-w-md flex flex-col text-black"
+        title="Confirm to reopen this application"
+        titleClassName="text-xl px-4 pt-4 font-medium"
+        cancelButton="Cancel"
+        cancelButtonClassName="bg-gray-200 text-black border-gray-300 hover:bg-gray-300"
+        onCancel={() => setIsOpenOpenDialog(false)}
+        confirmButton="Reopen internship"
+        confirmButtonClassName="bg-red-600 hover:bg-red-700 text-white"
+        onConfirm={openInternship}
+        footerClassName="flex justify-end p-4 border-t border-gray-300 w-full"
+        body={
+          <div className="flex flex-col gap-6">
+            <div className="bg-gray-100 p-4 -mt-2 border border-gray-300">
+              <div className="flex gap-3 items-start">
+                <div className="bg-orange-600 p-2 rounded-md">
+                  <AlertTriangle className="text-white h-5 w-5" />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <p className="text-sm text-gray-500">
+                    The internship will be reopened and applications will be accepted. You can close the internship at a later
+                    time if needed.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-sm font-medium px-4">
+              Are you sure you want to reopen the internship "
+              {internship.title}"?
+            </p>
+          </div>
+        }
+      />
       )}
     </div>
   );
