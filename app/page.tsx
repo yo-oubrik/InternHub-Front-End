@@ -6,6 +6,7 @@ import axios from "@/lib/axios";
 import HeroSection from "@/components/HeroSection";
 import FeatureSections from "@/components/Features/FeatureSections";
 import { useAuth } from "@/context/authContext";
+import { universitiesSchools } from "@/utils/universities-schools";
 
 interface SquareProps {
   size: number;
@@ -48,7 +49,7 @@ const Square: React.FC<SquareProps> = ({
   );
 };
 
-export default function Home() {
+export default function Home() { 
   const [statistics, setStatistics] = useState<HomeStatistics>({
     onSiteInternshipsCount: 0,
     remoteInternshipsCount: 0,
@@ -87,8 +88,8 @@ export default function Home() {
           totalInternshipsCount: totalInternships || 0,
           remoteInternshipsCount: remoteInternships || 0,
           onSiteInternshipsCount: onSiteInternships || 0,
-          privatePublicSchoolsCount: 30,
-          universitiesCount: 20,
+          privatePublicSchoolsCount: universitiesSchools.filter((school) => school.type === "school").length,
+          universitiesCount: universitiesSchools.filter((univ) => univ.type === "university").length,
           totalApplicants: totalApplicants || 0,
           totalAcceptedApplicants: totalAcceptedApplicants || 0,
         });

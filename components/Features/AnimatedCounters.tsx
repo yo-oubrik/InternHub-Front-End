@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { Briefcase, Building, Users, Globe, GraduationCap } from "lucide-react";
+import { universitiesSchools } from "@/utils/universities-schools";
 
 interface AnimatedCountersProps {
   statistics: HomeStatistics;
@@ -112,7 +113,7 @@ const AnimatedCounters = ({ statistics }: AnimatedCountersProps) => {
       delay: 0.3,
     },
     {
-      value: 50,
+      value: universitiesSchools.length,
       label: "Universities & Schools",
       icon: <GraduationCap className="w-8 h-8 text-primary" />,
       delay: 0.4,
