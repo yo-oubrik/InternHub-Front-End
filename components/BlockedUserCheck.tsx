@@ -7,11 +7,7 @@ interface BlockedUserCheckProps {
 }
 
 export const BlockedUserCheck = ({ children }: BlockedUserCheckProps) => {
-  const { currentUser, loading } = useAuth();
-
-  if (loading) {
-    return null;
-  }
+  const { currentUser } = useAuth();
 
   if (currentUser?.blocked) {
     return <YouAreBlocked />;

@@ -7,7 +7,7 @@ import ExperienceCard from "@/components/Profile/ExperienceCard";
 import FormationCard from "@/components/Profile/FormationCard";
 import InfosCard from "@/components/Profile/InfosCard";
 import PortfolioCard from "@/components/Profile/PortfolioCard";
-import ProjectCard from "@/components/Profile/ProjectCard";
+import ProjectCard from "@/components/Profile/ProjectCard"
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
