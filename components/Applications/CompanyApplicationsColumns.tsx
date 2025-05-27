@@ -1,5 +1,6 @@
 import {
   Application,
+  ApplicationStatus,
   getColorsByApplicationStatus,
   Internship,
 } from "@/types/types";
@@ -179,21 +180,27 @@ export const CompanyApplicationsColumns: ColumnDef<Application>[] = [
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <AcceptApplicationDialog
-            isOpen={acceptDialog}
-            setIsOpen={setAcceptDialog}
-            onConfirm={handleAcceptApplication}
-            studentAccepted={row.original.studentResponse}
-            internshipConcerned={row.original.internshipResponse}
-          />
-
-          <RejectApplicationDialog
-            isOpen={rejectDialog}
-            setIsOpen={setRejectDialog}
-            onConfirm={handleRejectApplication}
-            studentRejected={row.original.studentResponse}
-            internshipConcerned={row.original.internshipResponse}
-          />
+          {
+            row.original.status === ApplicationStatus.PENDING && (
+            <AcceptApplicationDialog
+              isOpen={acceptDialog}
+              setIsOpen={setAcceptDialog}
+              onConfirm={handleAcceptApplication}
+              studentAccepted={row.original.studentResponse}
+              internshipConcerned={row.original.internshipResponse}
+            />
+          )}
+          { 
+            row.original.status === ApplicationStatus.PENDING && (
+            <RejectApplicationDialog
+              isOpen={rejectDialog}
+              setIsOpen={setRejectDialog}
+              onConfirm={handleRejectApplication}
+              studentRejected={row.original.studentResponse}
+              internshipConcerned={row.original.internshipResponse}
+            />
+            )
+          }
         </>
       );
     },

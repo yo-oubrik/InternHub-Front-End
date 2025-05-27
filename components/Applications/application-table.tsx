@@ -137,17 +137,6 @@ export function DataTable<TData, TValue>({
         >
           <SelectTrigger className="ml-4 w-[180px] bg-white border-gray-300 hover:border-primary focus:border-primary transition-colors">
             <div className="flex items-center gap-2">
-              {/* <div
-                className={`w-2 h-2 rounded-full ${
-                  statusFilter === "pending"
-                    ? "bg-blue-500"
-                    : statusFilter === "accepted"
-                    ? "bg-green-500"
-                    : statusFilter === "rejected"
-                    ? "bg-red-500"
-                    : "bg-gray-400"
-                }`}
-              ></div> */}
               <SelectValue placeholder="Filter by status" />
             </div>
           </SelectTrigger>

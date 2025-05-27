@@ -45,12 +45,17 @@ function PostInternshipForm() {
     const salaryType = internship?.salaryType;
     const city = internship?.city;
 
+    if (!description || description.length < 120) {
+      toast.error("Description should be at least 120 characters", { id: "error" });
+      return false;
+    }
+
     if (
-      !description ||
       !duration ||
       !city ||
       (paid && (!salary || salary < 500 || !salaryType))
     ) {
+      toast.error("Please fill all the fields", { id: "error" });
       return false;
     }
     return true;
@@ -74,7 +79,6 @@ function PostInternshipForm() {
     }
     if (activeSection === "Post Details") {
       if (!validateInternshipDetailsForm()) {
-        toast.error("Please fill all the fields", { id: "error" });
         return;
       }
     }

@@ -12,7 +12,7 @@ import {
   WorkMode,
 } from "@/types/types";
 import axios from "@/lib/axios";
-import { RequestWithAuth as fetchWithAuth , getValidToken, } from "@/utils/auth";
+import { RequestWithAuth as fetchWithAuth, getValidToken, RequestWithAuth } from "@/utils/auth";
 import { useRouter } from "next/navigation";
 
 interface InternshipContextType {
@@ -33,16 +33,19 @@ interface InternshipContextType {
   createInternship: () => void;
   getAllInternships: () => void;
   isApplied: (internshipId: string, studentId: string) => Promise<boolean>;
-  searchInternships: (location: string, title: string) => void;
+  searchInternships: (filters: any) => void;
   updateInternship: (internshipId: string) => void;
   getInternshipById: (id: string) => Promise<Internship | null>;
   getCompanyInternships: (id: string) => Promise<Internship[]>;
   likeInternship: (internshipId: string) => void;
   applyToInternship: (application: ApplicationRequest) => void;
-  acceptApplication: (applicationId : string , message: string, subject: string, attachments: File[]) => Promise<void>;
-  rejectApplication: (applicationId : string , message: string, subject: string, attachments: File[]) => Promise<void>;
+  acceptApplication: (applicationId: string, message: string, subject: string, attachments: File[]) => Promise<void>;
+  rejectApplication: (applicationId: string, message: string, subject: string, attachments: File[]) => Promise<void>;
   handleSearchChange: (searchName: string, value: string) => void;
   resetInternshipForm: () => void;
+  closeInternship: (internshipId: string) => Promise<Internship | null>;
+  openInternship: (internshipId: string) => Promise<Internship | null>;
+  deleteInternship: (internshipId: string) => Promise<void>;
 }
 
 export interface Location {
@@ -153,22 +156,49 @@ export const InternshipContextProvider: React.FC<{
     }
   };
 
-  const searchInternships = async (location: string, title: string) => {
+  const searchInternships = async (filters: any , size?: number , page?: number) => {
+    console.log(filters);
     setLoading(true);
     try {
-      // build query string
+      // Build query string
       const query = new URLSearchParams();
+      
+      // Add title and city filters
+      if (filters.title) query.append("title", filters.title);
+      if (filters.location) query.append("city", filters.location);
 
-      if (location) query.append("location", location);
-      if (title) query.append("title", title);
+      // Add work mode filters
+      const workModes: string[] = [];
+      if (filters.remote) workModes.push("REMOTE");
+      if (filters.onSite) workModes.push("ON_SITE");
+      if (filters.hybrid) workModes.push("HYBRID");
+      if (workModes.length > 0) query.append("workModes", workModes.join(","));
 
-      // send the request
+      // Add internship type filters
+      const types: string[] = [];
+      if (filters.pfa) types.push("PFA");
+      if (filters.pfe) types.push("PFE");
+      if (filters.initiation) types.push("INITIATION");
+      if (types.length > 0) query.append("types", types.join(","));
+
+      // Add paid filter
+      if (filters.paid !== null) query.append("paid", filters.paid.toString());
+
+      // Add pagination
+      query.append("page", page?.toString() || "0");
+      query.append("size", size ? size.toString() : "40");
+
+      console.log(query.toString());
+
+      // Send the request
       const res = await fetchWithAuth(
-        `/internships/search?${query.toString()}`
+        `internships/search?${query.toString()}`
       );
 
-      // set internships to the response data
-      setInternships(res.data);
+      console.log(res.content);
+
+      // Set internships to the response data
+      setInternships(res.content);
       setLoading(false);
     } catch (error) {
       console.log("Error searching internships", error);
@@ -395,6 +425,60 @@ export const InternshipContextProvider: React.FC<{
     }
   };
 
+  const closeInternship = async (internshipId: string) => {
+    setLoading(true);
+    try {
+      const res = await fetchWithAuth(`/internships/${internshipId}/close`);
+      
+      if (res) {
+        toast.success(`Internship closed successfully`);
+        return res;
+      } else {
+        toast.error("Failed to close internship");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error closing internship", error);
+      toast.error("Failed to close internship");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const openInternship = async (internshipId: string) => {
+    setLoading(true);
+    try {
+      const res = await fetchWithAuth(`/internships/${internshipId}/close`);
+      
+      if (res) {
+        toast.success(`Internship opened successfully`);
+        return res;
+      } else {
+        toast.error("Failed to open internship");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error opening internship", error);
+      toast.error("Failed to open internship");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteInternship = async (internshipId: string) => {
+    setLoading(true);
+    try {
+      await fetchWithAuth(`/internships/${internshipId}`, {
+        method: "DELETE",
+      });
+      toast.success(`Internship deleted successfully`);
+    } catch (error) {
+      toast.error("Failed to delete internship");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     getAllInternships();
   }, []);
@@ -414,7 +498,6 @@ export const InternshipContextProvider: React.FC<{
         setInternship,
         internships,
         applications,
-        isApplied,
         getCompanyApplications,
         getStudentApplications,
         countInternshipApplications,
@@ -422,16 +505,20 @@ export const InternshipContextProvider: React.FC<{
         countCompanyApplicationsWithStatus,
         createInternship,
         getAllInternships,
+        isApplied,
         searchInternships,
+        updateInternship,
         getInternshipById,
         getCompanyInternships,
-        updateInternship,
         likeInternship,
         applyToInternship,
         acceptApplication,
         rejectApplication,
         handleSearchChange,
         resetInternshipForm,
+        closeInternship,
+        openInternship,
+        deleteInternship
       }}
     >
       {children}

@@ -117,8 +117,8 @@ export interface Internship {
   negotiable: boolean;
   paid: boolean;
   likes: string[];
-  isEnded: boolean;
-  applicants: Student[];
+  closed : boolean ;
+  applicants : Student[];
 }
 
 export interface InternshipRequest {

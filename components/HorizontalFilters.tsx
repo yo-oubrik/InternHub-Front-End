@@ -17,8 +17,6 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import InputField from "./InputField";
-import { get } from "http";
-import { Separator } from "./ui/separator";
 
 function HorizontalFilters() {
   const { handleFilterChange, filters, setFilters } = useFilters();

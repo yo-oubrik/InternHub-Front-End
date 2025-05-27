@@ -11,6 +11,9 @@ export default {
 	],
 	theme: {
 		extend: {
+			fontFamily: {
+				poppins: ['Poppins', 'sans-serif'],
+			},
 			colors: {
 				'primary-lightest': '#ffffff',
 				'primary-light': '#ffac97',
