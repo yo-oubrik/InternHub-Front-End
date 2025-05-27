@@ -1,6 +1,5 @@
 "use client";
 
-import { RemoveStudentDialog } from "@/components/Dialogs/RemoveStudentDialog";
 import { SortableHeader } from "@/components/SortableHeader";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,20 +7,24 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Student } from "@/types/types";
 import { sortDateColumn } from "@/utils/dates/sortDateColumn";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Trash2, User } from "lucide-react";
-import { useState } from "react";
-
+import {
+  InfoIcon,
+  MoreHorizontal,
+  User,
+  ShieldAlert,
+  ShieldCheck,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 export const studentColumns: ColumnDef<Student>[] = [
   {
     accessorKey: "firstName",
     header: ({ column }) => {
-      return <SortableHeader column={column} label="Last Name" />;
+      return <SortableHeader column={column} label="First Name" />;
     },
     sortingFn: "alphanumeric",
   },
@@ -49,8 +52,32 @@ export const studentColumns: ColumnDef<Student>[] = [
     sortingFn: sortDateColumn,
   },
   {
+    accessorKey: "blocked",
+    header: ({ column }) => <SortableHeader column={column} label="Status" />,
+    cell: ({ row }) => {
+      const blocked = row.original.blocked;
+      return (
+        <div className="flex items-center">
+          {blocked ? (
+            <div className="flex items-center gap-2 text-red-500">
+              <ShieldAlert className="h-4 w-4" />
+              <span>Blocked</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-green-500">
+              <ShieldCheck className="h-4 w-4" />
+              <span>Active</span>
+            </div>
+          )}
+        </div>
+      );
+    },
+    sortingFn: "basic",
+  },
+  {
     id: "actions",
     cell: ({ row }) => {
+      const router = useRouter();
       return (
         <>
           <DropdownMenu>
@@ -69,6 +96,15 @@ export const studentColumns: ColumnDef<Student>[] = [
                 }}
               >
                 <User /> View Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  router.push(`/admin/flagged-students/${row.original.id}`);
+                }}
+                className="flex items-center gap-2 cursor-pointer"
+              >
+                <InfoIcon className="h-4 w-4" />
+                Flags History
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

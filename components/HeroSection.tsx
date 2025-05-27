@@ -18,11 +18,14 @@ const HeroSection = () => {
               ? "Find Your Dream Internship"
               : currentUser?.role === Role.COMPANY
               ? "Find Your Perfect Candidate"
+              : currentUser?.role === Role.ADMIN
+              ? "Platform Administration"
               : "Find Your Dream Internship or Perfect Candidate"}
           </h1>
           <p className="text-lg md:text-xl mb-8 max-w-[600px] mx-auto md:mx-0">
-            Connect with thousands of employers and internship seekers on our
-            platform
+            {currentUser?.role === Role.ADMIN
+              ? "Manage users, internships, and platform content with advanced administrative tools"
+              : "Connect with thousands of employers and internship seekers on our platform"}
           </p>
           <div className="flex flex-wrap gap-4 justify-center md:justify-start">
             <button
@@ -37,6 +40,8 @@ const HeroSection = () => {
                   `/${
                     currentUser?.role === Role.STUDENT
                       ? "profile/student/" + currentUser.id
+                      : currentUser?.role === Role.ADMIN
+                      ? "admin"
                       : !currentUser
                       ? "signup/company"
                       : "post-internship"
@@ -47,6 +52,8 @@ const HeroSection = () => {
             >
               {currentUser?.role === Role.STUDENT
                 ? "See your profile"
+                : currentUser?.role === Role.ADMIN
+                ? "Admin Dashboard"
                 : "Post an Internship"}
             </button>
           </div>

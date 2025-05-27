@@ -6,14 +6,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/context/authContext";
-import { Company, Student, User } from "@/types/types";
+import { User } from "@/types/types";
 import { LogOut, User as UserIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 
 interface ProfileProps {
-  user: User | Company | Student;
+  user: User;
 }
 export const Profile: React.FC<ProfileProps> = ({ user }) => {
   const { logout } = useAuth();
@@ -33,14 +33,16 @@ export const Profile: React.FC<ProfileProps> = ({ user }) => {
         </DropdownMenuTrigger>
       </div>
       <DropdownMenuContent className="w-56 z-[1000]" align="end">
-        <DropdownMenuItem
-          onClick={() =>
-            router.push(`/profile/${user.role.toLowerCase()}/${user.id}`)
-          }
-        >
-          <UserIcon className="mr-2 h-4 w-4" />
-          <span>Profile</span>
-        </DropdownMenuItem>
+        {!user?.blocked && (
+          <DropdownMenuItem
+            onClick={() =>
+              router.push(`/profile/${user.role.toLowerCase()}/${user.id}`)
+            }
+          >
+            <UserIcon className="mr-2 h-4 w-4" />
+            <span>Profile</span>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
           className="cursor-pointer"
           onClick={() => {

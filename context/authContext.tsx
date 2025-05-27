@@ -16,6 +16,8 @@ export interface User {
   email: string;
   profilePicture: string;
   role: Role;
+  blocked: boolean;
+  blockedAt: Date;
 }
 interface AuthContextType {
   isAuthenticated: boolean;

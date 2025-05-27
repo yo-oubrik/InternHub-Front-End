@@ -1,8 +1,5 @@
 "use client";
 
-import { EditCompanyDialog } from "@/components/Dialogs/EditCompanyDialog";
-import { RemoveCompanyDialog } from "@/components/Dialogs/RemoveCompanyDialog";
-import { CompanyInformationDialog } from "@/components/Dialogs/CompanyInformationDialog";
 import { SortableHeader } from "@/components/SortableHeader";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,21 +7,19 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Company } from "@/types/types";
 import { sortDateColumn } from "@/utils/dates/sortDateColumn";
 import { ColumnDef } from "@tanstack/react-table";
 import {
-  MoreHorizontal,
-  PenBox,
-  Trash2,
   Building,
-  Info,
-  Briefcase,
+  InfoIcon,
+  MoreHorizontal,
+  ShieldAlert,
+  ShieldCheck,
 } from "lucide-react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export const companyColumns: ColumnDef<Company>[] = [
   {
@@ -55,10 +50,32 @@ export const companyColumns: ColumnDef<Company>[] = [
     sortingFn: sortDateColumn,
   },
   {
+    accessorKey: "blocked",
+    header: ({ column }) => <SortableHeader column={column} label="Status" />,
+    cell: ({ row }) => {
+      const blocked = row.original.blocked;
+      return (
+        <div className="flex items-center">
+          {blocked ? (
+            <div className="flex items-center gap-2 text-red-500">
+              <ShieldAlert className="h-4 w-4" />
+              <span>Blocked</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 text-green-500">
+              <ShieldCheck className="h-4 w-4" />
+              <span>Active</span>
+            </div>
+          )}
+        </div>
+      );
+    },
+    sortingFn: "basic",
+  },
+  {
     id: "actions",
     cell: ({ row }) => {
-      const company = row.original;
-      const [isRemoveOpen, setIsRemoveOpen] = useState<boolean>(false);
+      const router = useRouter();
       return (
         <>
           <DropdownMenu>
@@ -73,25 +90,20 @@ export const companyColumns: ColumnDef<Company>[] = [
               <DropdownMenuItem
                 className="flex items-center gap-2 cursor-pointer"
                 onClick={() => {
-                  window.open(`/companies/${row.original.id}`, "_blank");
+                  window.open(`/profile/company/${row.original.id}`, "_blank");
                 }}
               >
                 <Building /> View Profile
               </DropdownMenuItem>
-
-              {/* <DropdownMenuItem
+              <DropdownMenuItem
+                onClick={() => {
+                  router.push(`/admin/flagged-companies/${row.original.id}`);
+                }}
                 className="flex items-center gap-2 cursor-pointer"
-                onClick={() =>
-                  window.open(
-                    `/admin/companies/${row.original.id}/internships`,
-                    "_blank"
-                  )
-                }
               >
-                <Briefcase />
-                Company Internships
+                <InfoIcon className="h-4 w-4" />
+                Flags History
               </DropdownMenuItem>
-              <DropdownMenuSeparator /> */}
             </DropdownMenuContent>
           </DropdownMenu>
         </>

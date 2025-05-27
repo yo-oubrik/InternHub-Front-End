@@ -211,7 +211,13 @@ export default function page() {
                 </div>
 
                 <div>
-                  <p className="font-bold text-xl" onClick={() => internship?.company?.name && router.push(`/profile/company/${internship?.company?.id}`)}>
+                  <p
+                    className="font-bold text-xl cursor-pointer"
+                    onClick={() =>
+                      internship?.company?.name &&
+                      router.push(`/profile/company/${internship?.company?.id}`)
+                    }
+                  >
                     {internship?.company?.name || "Not set"}
                   </p>
                   <p className="text-lg">Recruiter</p>

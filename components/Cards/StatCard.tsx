@@ -22,8 +22,8 @@ export const StatCard = ({
       <div className="flex items-center gap-4">
         <Image
           src={icon}
-          height={60}
-          width={60}
+          height={80}
+          width={80}
           alt={alt}
           className="size-8 w-fit"
         />

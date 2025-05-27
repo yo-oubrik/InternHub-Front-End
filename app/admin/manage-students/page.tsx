@@ -11,6 +11,7 @@ import { getValidToken } from "@/utils/auth";
 const Page = () => {
   const [totalStudentsCount, setTotalStudentsCount] = useState(0);
   const [flaggedStudentsCount, setFlaggedStudentsCount] = useState(0);
+  const [blockedStudentsCount, setBlockedStudentsCount] = useState(0);
   const [studentsByMonth, setStudentsByMonth] = useState<{
     [key: string]: number;
   }>({});
@@ -29,10 +30,16 @@ const Page = () => {
           { data: totalStudents },
           { data: monthlyData },
           { data: countOfFlaggedStudents },
+          { data: countOfBlockedStudents },
         ] = await Promise.all([
           axios.get("/students/count"),
           axios.get("/students/count-by-month"),
-          axios.get("/flagged-companies/count", {
+          axios.get("/flagged-students/count", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          axios.get("/students/count-blocked", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -40,6 +47,7 @@ const Page = () => {
         ]);
         setTotalStudentsCount(totalStudents);
         setFlaggedStudentsCount(countOfFlaggedStudents);
+        setBlockedStudentsCount(countOfBlockedStudents);
         setStudentsByMonth(monthlyData || {});
       } catch (error) {
         console.error("Error fetching statistics:", error);
@@ -58,6 +66,13 @@ const Page = () => {
     <div className="min-h-full-except-header max-w-screen-lg mx-auto flex flex-col gap-10 justify-center py-10">
       <h1 className="header">Manage Students</h1>
       <div className={"bg-primary-dark/75 p-5 rounded-lg flex flex-col gap-5"}>
+        <div className="stats">
+          <StatCard
+            count={blockedStudentsCount}
+            label="Blocked Students"
+            icon={"/admin/students/icons/blocked_student.png"}
+          />
+        </div>
         <div className="stats">
           <StatCard
             count={totalStudentsCount}

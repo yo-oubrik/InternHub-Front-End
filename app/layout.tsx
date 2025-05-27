@@ -3,6 +3,7 @@ import "@/app/globals.css";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import ContextProvider from "@/providers/ContextProvider";
+import { BlockedUserCheck } from "@/components/BlockedUserCheck";
 import { Toaster } from "react-hot-toast";
 
 export default function RootLayout({
@@ -32,7 +33,9 @@ export default function RootLayout({
         <ContextProvider>
           <Header />
           <div className="min-h-[calc(100vh-var(--header-height))]">
-            {children}
+            <BlockedUserCheck>
+              {children}
+            </BlockedUserCheck>
           </div>
           <Footer />
         </ContextProvider>

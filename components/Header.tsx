@@ -1,18 +1,16 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/authContext";
+import { useUser } from "@/context/userContext";
 import { LogIn } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Profile from "./Profile";
 import SignUpDropDown from "./SignUpDropDown";
 import { Badge } from "./ui/badge";
-import { Role } from "@/types/types";
-import { useUser } from "@/context/userContext";
 
 function Header() {
   const { isAuthenticated, currentUser } = useAuth();
-  const { student, company } = useUser();
   const router = useRouter();
   return (
     <header className="px-14 bg-background flex justify-between items-center">

@@ -10,8 +10,8 @@ import toast from "react-hot-toast";
 
 const Page = () => {
   const [totalCompaniesCount, setTotalCompaniesCount] = useState(0);
-  const [totalInternshipsCount, setTotalInternshipsCount] = useState(0);
   const [flaggedCompaniesCount, setFlaggedCompaniesCount] = useState(0);
+  const [blockedCompaniesCount, setBlockedCompaniesCount] = useState(0);
 
   const [companiesByMonth, setCompaniesByMonth] = useState<{
     [key: string]: number;
@@ -29,13 +29,17 @@ const Page = () => {
         const [
           { data: totalCompanies },
           { data: monthlyData },
-          { data: totalInternships },
           { data: countOfFlaggedCompanies },
+          { data: countOfBlockedCompanies },
         ] = await Promise.all([
           axios.get("/companies/count"),
           axios.get("/companies/count-by-month"),
-          axios.get("/internships/count"),
           axios.get("/flagged-companies/count", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          axios.get("/companies/count-blocked", {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -43,8 +47,8 @@ const Page = () => {
         ]);
         setTotalCompaniesCount(totalCompanies);
         setFlaggedCompaniesCount(countOfFlaggedCompanies);
+        setBlockedCompaniesCount(countOfBlockedCompanies);
         setCompaniesByMonth(monthlyData || {});
-        setTotalInternshipsCount(totalInternships);
       } catch (error) {
         console.error("Error fetching statistics:", error);
         toast.error("Failed to fetch statistics", {
@@ -62,21 +66,16 @@ const Page = () => {
       <div className={"bg-primary-dark/75 p-5 rounded-lg flex flex-col gap-5"}>
         <div className="stats">
           <StatCard
-            count={totalCompaniesCount}
-            label="Total Companies"
-            icon={"/admin/companies/icons/companies.png"}
+            count={blockedCompaniesCount}
+            label="Blocked Companies"
+            icon={"/admin/companies/icons/blocked_company.png"}
           />
-          {/* <StatCard
-            count={0}
-            label="Pending Companies"
-            icon={"/admin/companies/icons/pending.png"}
-          /> */}
         </div>
         <div className="stats">
           <StatCard
-            count={totalInternshipsCount}
-            label="Total Internships"
-            icon={"/admin/companies/icons/internships.png"}
+            count={totalCompaniesCount}
+            label="Total Companies"
+            icon={"/admin/companies/icons/companies.png"}
           />
           <StatCard
             count={flaggedCompaniesCount}
@@ -94,9 +93,6 @@ const Page = () => {
         <Button size={"lg"} className="hover:opacity-85 transition" asChild>
           <Link href={"/admin/companies"}>Registered Companies</Link>
         </Button>
-        {/* <Button size={"lg"} className="hover:opacity-85 transition" asChild>
-          <Link href={"/admin/companies/pending"}>Pending Companies</Link>
-        </Button> */}
         <Button size={"lg"} className="hover:opacity-85 transition" asChild>
           <Link href={"/admin/flagged-companies"}>Flagged Companies</Link>
         </Button>
