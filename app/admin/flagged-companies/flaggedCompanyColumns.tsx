@@ -86,7 +86,7 @@ export const flaggedCompanyColumns =
                   className="flex items-center gap-2 cursor-pointer"
                   onClick={() => {
                     window.open(
-                      `/company/${flaggedCompany.companyId}`,
+                      `/profile/company/${flaggedCompany.companyId}`,
                       "_blank"
                     );
                   }}
